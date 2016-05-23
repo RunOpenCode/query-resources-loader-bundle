@@ -7,49 +7,56 @@
 
     <parameters>
 
-        <parameter key="run_open_code.query_resources_loader.loader.filesystem_loader.class">RunOpenCode\Bundle\QueryResourcesLoader\Loader\FilesystemLoader</parameter>
+        <parameter key="run_open_code.query_resources_loader.twig.loader.chain.class">Twig_Loader_Chain</parameter>
 
-        <parameter key="run_open_code.query_resources_loader.loader.chained_loader.class">RunOpenCode\Bundle\QueryResourcesLoader\Loader\ChainedLoader</parameter>
+        <parameter key="run_open_code.query_resources_loader.twig.configurator.environment.class">Symfony\Bundle\TwigBundle\DependencyInjection\Configurator\EnvironmentConfigurator</parameter>
 
-        <parameter key="run_open_code.query_resources_loader.loader.cached_loader.class">RunOpenCode\Bundle\QueryResourcesLoader\Loader\CachedLoader</parameter>
+        <parameter key="run_open_code.query_resources_loader.twig.loader.filesystem.class">Symfony\Bundle\TwigBundle\Loader\FilesystemLoader</parameter>
 
-        <parameter key="run_open_code.query_resources_loader.manager.static.class">RunOpenCode\Bundle\QueryResourcesLoader\Manager\StaticSourceManager</parameter>
+        <parameter key="run_open_code.query_resources_loader.manager.class">RunOpenCode\Bundle\QueryResourcesLoader\Manager\TwigSqlSourceManager</parameter>
+
+        <parameter key="run_open_code.query_resources_loader.twig.class">Twig_Environment</parameter>
 
     </parameters>
 
     <services>
 
-        <service
-                id="run_open_code.query_resources_loader.loader.filesystem_loader"
-                class="%run_open_code.query_resources_loader.loader.filesystem_loader.class%"
-                public="false"
-        >
-            <tag name="run_open_code.query_resources_loader.loader" priority="0" />
+        <service id="run_open_code.query_resources_loader.twig.loader.chain" class="%run_open_code.query_resources_loader.twig.loader.chain.class%" public="false"/>
+
+        <service id="run_open_code.query_resources_loader.twig.loader.filesystem" class="%run_open_code.query_resources_loader.twig.loader.filesystem.class%" public="false">
+            <argument type="service" id="templating.locator" />
+            <argument type="service" id="templating.name_parser" />
+            <tag name="run_open_code.query_resources_loader.twig.loader"/>
+        </service>
+
+        <service id="run_open_code.query_resources_loader.twig.loader" alias="run_open_code.query_resources_loader.twig.loader.filesystem" />
+
+        <service id="run_open_code.query_resources_loader.twig" class="%run_open_code.query_resources_loader.twig.class%">
+            <argument type="service" id="run_open_code.query_resources_loader.twig.loader" />
+            <argument /> <!-- Twig options -->
+            <configurator service="run_open_code.query_resources_loader.twig.configurator.environment" method="configure" />
+        </service>
+
+        <service id="run_open_code.query_resources_loader.twig.configurator.environment" class="%run_open_code.query_resources_loader.twig.configurator.environment.class%" public="false">
+            <argument /> <!-- date format, set in TwigExtension -->
+            <argument /> <!-- interval format, set in TwigExtension -->
+            <argument /> <!-- timezone, set in TwigExtension -->
+            <argument /> <!-- decimals, set in TwigExtension -->
+            <argument /> <!-- decimal point, set in TwigExtension -->
+            <argument /> <!-- thousands separator, set in TwigExtension -->
         </service>
 
         <service
-                id="run_open_code.query_resources_loader.loader.chained_loader"
-                class="%run_open_code.query_resources_loader.loader.chained_loader.class%"
+                id="run_open_code.query_resources_loader"
+                class="%run_open_code.query_resources_loader.manager.class%"
                 public="false"
         >
-
+            <argument type="service" id="run_open_code.query_resources_loader.twig" />
         </service>
 
-        <service
-                id="run_open_code.query_resources_loader.loader.cached_loader"
-                class="%run_open_code.query_resources_loader.loader.cached_loader.class%"
-                public="false"
-        >
+        <service id="roc.query_resources_loader" alias="run_open_code.query_resources_loader" />
 
-        </service>
-
-        <service
-                id="run_open_code.query_resources_loader.manager.static"
-                class="%run_open_code.query_resources_loader.manager.static.class%"
-                public="false"
-        >
-            <argument type="service" id="run_open_code.query_resources_loader.loader" />
-        </service>
+        <service id="roc.query_loader" alias="run_open_code.query_resources_loader" />
 
     </services>
 

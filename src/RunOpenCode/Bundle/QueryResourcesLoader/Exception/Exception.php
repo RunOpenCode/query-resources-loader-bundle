@@ -9,7 +9,9 @@
  */
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Exception;
 
-class SourceNotFoundException extends Exception
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExceptionInterface;
+
+class Exception extends \Exception implements ExceptionInterface
 {
 
 }

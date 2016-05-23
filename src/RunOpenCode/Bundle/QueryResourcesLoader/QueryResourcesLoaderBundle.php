@@ -9,7 +9,11 @@
  */
 namespace RunOpenCode\Bundle\QueryResourcesLoader;
 
-use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass;
+use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\ExecutorBuilderCompilerPass;
+use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\RegisterExecutorsCompilerPass;
+use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\TwigEnvironmentCompilerPass;
+use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\TwigExtensionsCompilerPass;
+use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\TwigLoaderCompilerPass;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -29,6 +33,11 @@ class QueryResourcesLoaderBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         $container
-            ->addCompilerPass(new CompilerPass());
+            ->addCompilerPass(new TwigExtensionsCompilerPass())
+            ->addCompilerPass(new TwigEnvironmentCompilerPass())
+            ->addCompilerPass(new TwigLoaderCompilerPass())
+            ->addCompilerPass(new ExecutorBuilderCompilerPass())
+            ->addCompilerPass(new RegisterExecutorsCompilerPass())
+        ;
     }
 }

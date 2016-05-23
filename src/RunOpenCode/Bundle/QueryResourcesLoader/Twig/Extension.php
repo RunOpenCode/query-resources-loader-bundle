@@ -7,9 +7,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RunOpenCode\Bundle\QueryResourcesLoader\Exception;
+namespace RunOpenCode\Bundle\QueryResourcesLoader\Twig;
 
-class SourceNotFoundException extends Exception
+class Extension extends \Twig_Extension
 {
 
+    public function getName()
+    {
+        return 'run_open_code_query_resources_loader';
+    }
 }

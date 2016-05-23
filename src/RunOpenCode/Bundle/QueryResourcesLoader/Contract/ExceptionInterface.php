@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RunOpenCode\Bundle\QueryResourcesLoader\Exception;
+namespace RunOpenCode\Bundle\QueryResourcesLoader\Contract;
 
-class SourceNotFoundException extends Exception
+interface ExceptionInterface
 {
 
 }
