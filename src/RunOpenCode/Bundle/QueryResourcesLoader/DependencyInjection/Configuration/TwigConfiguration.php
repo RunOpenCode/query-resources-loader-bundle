@@ -17,7 +17,6 @@ class TwigConfiguration
     {
         $twigNode = new ArrayNodeDefinition('twig');
 
-
         $this
             ->configureTwigOptions($twigNode)
             ->configureTwigFormatOptions($twigNode)
@@ -28,6 +27,10 @@ class TwigConfiguration
         return $twigNode;
     }
 
+    /**
+     * @param ArrayNodeDefinition $node
+     * @return TwigConfiguration $this
+     */
     private function configureTwigOptions(ArrayNodeDefinition $node)
     {
         $node
@@ -77,6 +80,10 @@ class TwigConfiguration
         return $this;
     }
 
+    /**
+     * @param ArrayNodeDefinition $node
+     * @return TwigConfiguration $this
+     */
     private function configureTwigFormatOptions(ArrayNodeDefinition $node)
     {
         $node
@@ -108,6 +115,9 @@ class TwigConfiguration
         return $this;
     }
 
+    /**
+     * @return ArrayNodeDefinition $node
+     */
     public static function build()
     {
         $configuration = new static();

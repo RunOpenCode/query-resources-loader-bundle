@@ -10,7 +10,6 @@
 namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection;
 
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Configuration\TwigConfiguration;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
