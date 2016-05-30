@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the QueryResourcesLoader Bundle, an RunOpenCode project.
+ * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
  *
  * (c) 2016 RunOpenCode
  *
@@ -11,7 +11,6 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\Twig;
 
 class Extension extends \Twig_Extension
 {
-
     public function getName()
     {
         return 'run_open_code_query_resources_loader';

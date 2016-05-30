@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the QueryResourcesLoader Bundle, an RunOpenCode project.
+ * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
  *
  * (c) 2016 RunOpenCode
  *
@@ -17,9 +17,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     /**
-     * Generates the configuration tree builder.
-     *
-     * @return TreeBuilder The tree builder
+     * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {

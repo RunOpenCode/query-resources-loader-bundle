@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the QueryResourcesLoader Bundle, an RunOpenCode project.
+ * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
  *
  * (c) 2016 RunOpenCode
  *

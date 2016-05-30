@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the QueryResourcesLoader Bundle, an RunOpenCode project.
+ * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
  *
  * (c) 2016 RunOpenCode
  *
@@ -9,7 +9,6 @@
  */
 namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection;
 
-use Doctrine\Common\Cache\FilesystemCache;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
