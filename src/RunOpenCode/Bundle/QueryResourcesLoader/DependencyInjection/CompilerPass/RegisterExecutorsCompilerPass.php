@@ -14,6 +14,13 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 
+/**
+ * Class RegisterExecutorsCompilerPass
+ *
+ * Registers query executors.
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass
+ */
 class RegisterExecutorsCompilerPass implements CompilerPassInterface
 {
     /**

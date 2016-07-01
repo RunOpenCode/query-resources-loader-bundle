@@ -11,29 +11,34 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Configurat
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
-class TwigConfiguration
+/**
+ * Class TwigNodeDefinition
+ *
+ * Twig environment configuration.
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Configuration
+ */
+class TwigNodeDefinition extends ArrayNodeDefinition
 {
-    public function getTwigConfigurationNode()
+    public function __construct()
     {
-        $twigNode = new ArrayNodeDefinition('twig');
+        parent::__construct('twig');
 
         $this
-            ->configureTwigOptions($twigNode)
-            ->configureTwigFormatOptions($twigNode)
+            ->configureTwigOptions()
+            ->configureTwigFormatOptions()
+            ->addDefaultsIfNotSet();
         ;
-
-        $twigNode->addDefaultsIfNotSet();
-
-        return $twigNode;
     }
 
     /**
-     * @param ArrayNodeDefinition $node
-     * @return TwigConfiguration $this
+     * Configure Twig options.
+     *
+     * @return TwigNodeDefinition $this
      */
-    private function configureTwigOptions(ArrayNodeDefinition $node)
+    private function configureTwigOptions()
     {
-        $node
+        $this
             ->fixXmlConfig('path')
             ->children()
                 ->variableNode('autoescape')->defaultValue(false)->end()
@@ -81,12 +86,13 @@ class TwigConfiguration
     }
 
     /**
-     * @param ArrayNodeDefinition $node
-     * @return TwigConfiguration $this
+     * Configure Twig format options.
+     *
+     * @return TwigNodeDefinition $this
      */
-    private function configureTwigFormatOptions(ArrayNodeDefinition $node)
+    private function configureTwigFormatOptions()
     {
-        $node
+        $this
             ->children()
                 ->arrayNode('date')
                     ->info('The default format options used by the date filter')
@@ -113,14 +119,5 @@ class TwigConfiguration
         ;
 
         return $this;
-    }
-
-    /**
-     * @return ArrayNodeDefinition $node
-     */
-    public static function build()
-    {
-        $configuration = new static();
-        return $configuration->getTwigConfigurationNode();
     }
 }

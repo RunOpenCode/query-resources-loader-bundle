@@ -9,6 +9,7 @@
  */
 namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection;
 
+use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Configuration\Configuration;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension as BaseExtension;
@@ -16,6 +17,13 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * Class Extension
+ *
+ * Bundle extension.
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection
+ */
 class Extension extends BaseExtension
 {
     public function getAlias()
@@ -37,7 +45,7 @@ class Extension extends BaseExtension
         $this
             ->configureTwigGlobals($config, $container)
             ->configureTwigEnvironment($config, $container)
-            ->configureTwigWarmUpCommands($config, $container)
+            ->configureTwigWarmUpCommand($config, $container)
             ->configureTwigResourcePaths($config, $container)
             ->configureTwigBundlePaths($config, $container)
             ;
@@ -102,9 +110,9 @@ class Extension extends BaseExtension
      * @param ContainerBuilder $container
      * @return Extension $this
      */
-    protected function configureTwigWarmUpCommands(array $config, ContainerBuilder $container)
+    protected function configureTwigWarmUpCommand(array $config, ContainerBuilder $container)
     {
-        // @TODO Implement this functionality
+        $container->getDefinition('run_open_code.query_resources_loader.twig.query_sources_iterator')->replaceArgument(2, $config['twig']['paths']);
 
         return $this;
     }

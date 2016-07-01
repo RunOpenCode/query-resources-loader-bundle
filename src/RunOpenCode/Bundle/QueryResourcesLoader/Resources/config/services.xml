@@ -13,9 +13,13 @@
 
         <parameter key="run_open_code.query_resources_loader.twig.loader.filesystem.class">Symfony\Bundle\TwigBundle\Loader\FilesystemLoader</parameter>
 
-        <parameter key="run_open_code.query_resources_loader.manager.class">RunOpenCode\Bundle\QueryResourcesLoader\Manager\TwigSqlSourceManager</parameter>
+        <parameter key="run_open_code.query_resources_loader.manager.class">RunOpenCode\Bundle\QueryResourcesLoader\Manager\TwigQuerySourceManager</parameter>
 
         <parameter key="run_open_code.query_resources_loader.twig.class">Twig_Environment</parameter>
+
+        <parameter key="run_open_code.query_resources_loader.twig.query_sources_iterator.class">RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer\QuerySourcesIterator</parameter>
+
+        <parameter key="run_open_code.query_resources_loader.twig.query_sources_cache_warmer.class">RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer\QuerySourcesCacheWarmer</parameter>
 
     </parameters>
 
@@ -57,6 +61,18 @@
         <service id="roc.query_resources_loader" alias="run_open_code.query_resources_loader" />
 
         <service id="roc.query_loader" alias="run_open_code.query_resources_loader" />
+
+        <service id="run_open_code.query_resources_loader.twig.query_sources_iterator" class="%run_open_code.query_resources_loader.twig.query_sources_iterator.class%" public="false">
+            <argument type="service" id="kernel" />
+            <argument>%kernel.root_dir%</argument>
+            <argument type="collection" /> <!-- Twig query paths -->
+        </service>
+
+        <service id="run_open_code.query_resources_loader.twig.query_sources_cache_warmer" class="%run_open_code.query_resources_loader.twig.query_sources_cache_warmer.class%" public="false">
+            <tag name="kernel.cache_warmer" />
+            <argument type="service" id="run_open_code.query_resources_loader.twig" />
+            <argument type="service" id="run_open_code.query_resources_loader.twig.query_sources_iterator" />
+        </service>
 
     </services>
 

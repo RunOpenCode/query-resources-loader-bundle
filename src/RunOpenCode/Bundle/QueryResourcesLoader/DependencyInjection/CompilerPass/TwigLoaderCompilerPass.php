@@ -14,6 +14,13 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * Class TwigLoaderCompilerPass
+ *
+ * Process Twig loaders.
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass
+ */
 class TwigLoaderCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)

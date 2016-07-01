@@ -21,15 +21,23 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 /**
  * Class QueryResourcesLoaderBundle
  *
+ * A bundle.
+ *
  * @package RunOpenCode\Bundle\QueryResourcesLoader
  */
 class QueryResourcesLoaderBundle extends Bundle
 {
+    /**
+     * {@inheritdoc}
+     */
     public function getContainerExtension()
     {
         return new Extension();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function build(ContainerBuilder $container)
     {
         $container

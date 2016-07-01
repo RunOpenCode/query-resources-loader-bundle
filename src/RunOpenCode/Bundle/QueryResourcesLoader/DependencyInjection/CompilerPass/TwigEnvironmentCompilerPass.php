@@ -13,6 +13,13 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * Class TwigEnvironmentCompilerPass
+ *
+ * Builds Twig environment, registers its extensions.
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass
+ */
 class TwigEnvironmentCompilerPass implements CompilerPassInterface
 {
     /**

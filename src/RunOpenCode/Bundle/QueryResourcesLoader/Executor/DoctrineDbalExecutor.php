@@ -12,6 +12,13 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
 use Doctrine\DBAL\Connection;
 
+/**
+ * Class DoctrineDbalExecutor
+ *
+ * Doctrine Dbal query executor.
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\Executor
+ */
 class DoctrineDbalExecutor implements ExecutorInterface
 {
     /**

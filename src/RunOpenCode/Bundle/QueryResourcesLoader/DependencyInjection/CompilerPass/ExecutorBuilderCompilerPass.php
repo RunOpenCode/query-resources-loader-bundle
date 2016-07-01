@@ -15,6 +15,13 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * Class ExecutorBuilderCompilerPass
+ *
+ * Builds default query executor for Doctrine Dbal default connection (if possible).
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass
+ */
 class ExecutorBuilderCompilerPass implements CompilerPassInterface
 {
     /**

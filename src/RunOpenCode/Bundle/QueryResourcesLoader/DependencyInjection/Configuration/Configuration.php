@@ -7,12 +7,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection;
+namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Configuration;
 
-use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Configuration\TwigConfiguration;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * Class Configuration
+ *
+ * Bundle configuration tree.
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection
+ */
 class Configuration implements ConfigurationInterface
 {
     /**
@@ -31,7 +37,7 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue(null)
                     ->info('Default executor that will be used in "execute" calls. If not stated, first registered executor will be default one.')
                 ->end()
-                ->append(TwigConfiguration::build())
+                ->append(new TwigNodeDefinition())
             ->end()
             ;
 

@@ -12,6 +12,13 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPa
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+/**
+ * Class TwigExtensionsCompilerPass
+ *
+ * Prepares Twig extensions.
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass
+ */
 class TwigExtensionsCompilerPass implements CompilerPassInterface
 {
     /**

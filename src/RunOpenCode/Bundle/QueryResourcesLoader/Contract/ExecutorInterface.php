@@ -9,7 +9,21 @@
  */
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Contract;
 
+/**
+ * Interface ExecutorInterface
+ *
+ * Executor executes query in native environment.
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\Contract
+ */
 interface ExecutorInterface
 {
+    /**
+     * Execute query.
+     *
+     * @param string $query Query to execute.
+     * @param array $parameters Parameters required for query.
+     * @return mixed Result of execution.
+     */
     public function execute($query, array $parameters = array());
 }

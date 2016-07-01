@@ -18,11 +18,13 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Exception\SourceNotFoundException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\SyntaxException;
 
 /**
- * Class TwigSqlSourceManager
+ * Class TwigQuerySourceManager
+ *
+ * Twig powered query executor.
  *
  * @package RunOpenCode\Bundle\QueryResourcesLoader\Manager
  */
-class TwigSqlSourceManager implements ManagerInterface
+class TwigQuerySourceManager implements ManagerInterface
 {
     /**
      * @var \Twig_Environment
