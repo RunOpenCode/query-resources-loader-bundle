@@ -21,6 +21,8 @@
 
         <parameter key="run_open_code.query_resources_loader.twig.query_sources_cache_warmer.class">RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer\QuerySourcesCacheWarmer</parameter>
 
+        <parameter key="run_open_code.query_resources_loader.twig.extension.doctrine_orm.class">RunOpenCode\Bundle\QueryResourcesLoader\Twig\DoctrineOrmExtension</parameter>
+
     </parameters>
 
     <services>
@@ -72,6 +74,11 @@
             <tag name="kernel.cache_warmer" />
             <argument type="service" id="run_open_code.query_resources_loader.twig" />
             <argument type="service" id="run_open_code.query_resources_loader.twig.query_sources_iterator" />
+        </service>
+
+        <service id="run_open_code.query_resources_loader.twig.extension.doctrine_orm" class="%run_open_code.query_resources_loader.twig.extension.doctrine_orm.class%" public="false">
+            <argument type="service" id="doctrine"/>
+            <tag name="run_open_code.query_resources_loader.twig.extension"/>
         </service>
 
     </services>

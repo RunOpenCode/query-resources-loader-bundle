@@ -13,12 +13,12 @@ The purpose of query resources loader is to help you manage and organize
 your big, long, database queries, especially in application that deals
 with reporting.
 
-Read documentation [here](docs/index.md).
+Read the documentation [here](docs/index.md).
 
-# Learn by example
+# Quick example
 
-Typical reporting repository that has a query within repository can look
-like example below:
+Typical reporting repository that has a query within repository can be
+like as in example below:
 
     class MyReportingRepository 
     {
@@ -91,7 +91,7 @@ into your repository:
         }
     }
 
-# Cherry on top
+## Cherry on top
 
 `\RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface` defines
 `execute($name, array $args = array(), $executor = 'default')` method as well,
@@ -116,14 +116,14 @@ regarding this topic). Here is our improved repository:
         }
     }
 
-# Building complex queries 
+## Building complex queries 
 
 Sometimes, you will need a possibility to build up your queries depending
 on your application logic. For that purpose, query loader knows Twig and
 all your query resources are pre-parsed with Twig, allowing you to dynamically
 build your queries.
 
-Example, file `@MyBundle/query.sql`:
+Example, file `@MyBundle/query.twig.sql`:
 
     SELECT * FROM my_table T
     
@@ -138,7 +138,8 @@ Example, file `@MyBundle/query.sql`:
     ;
     
 
-    
+For other details about this bundle, as well as for tips on how to use it,
+read the documentation [here](docs/index.md).    
     
     
  

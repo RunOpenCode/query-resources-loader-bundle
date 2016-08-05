@@ -11,7 +11,7 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\Twig;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class Extension extends \Twig_Extension
+class DoctrineOrmExtension extends \Twig_Extension
 {
     /**
      * @var RegistryInterface
@@ -37,8 +37,11 @@ class Extension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_Function('table_name', \Closure::bind(function($entity) {
+            new \Twig_SimpleFunction('table_name', \Closure::bind(function($entity) {
                 return $this->getTableName($entity);
+            }, $this)),
+            new \Twig_SimpleFunction('column_name', \Closure::bind(function($field, $entity) {
+                return $this->getColumnName($field, $entity);
             }, $this))
         );
     }
@@ -46,8 +49,11 @@ class Extension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_Filter('table_name', \Closure::bind(function($entity) {
+            new \Twig_SimpleFilter('table_name', \Closure::bind(function($entity) {
                 return $this->getTableName($entity);
+            }, $this)),
+            new \Twig_SimpleFilter('column_name', \Closure::bind(function($field, $entity) {
+                return $this->getColumnName($field, $entity);
             }, $this))
         );
     }
@@ -59,5 +65,14 @@ class Extension extends \Twig_Extension
         }
 
         return $this->doctrine->getEntityManagerForClass($entity)->getClassMetadata($entity)->getTableName();
+    }
+
+    private function getColumnName($field, $entity)
+    {
+        if (is_object($entity)) {
+            $entity = get_class($entity);
+        }
+
+        return $this->doctrine->getEntityManagerForClass($entity)->getClassMetadata($entity)->getColumnName($field);
     }
 }
