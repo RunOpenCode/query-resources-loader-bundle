@@ -14,6 +14,7 @@ service method call, keeping your code clean and well organised.
 
 - [Introduction](introduction.md)
 - [Proposed solution](proposed-solution.md)
+- [Using manager](using-manager.md)
 - [Twig support](twig-support.md)
 
  

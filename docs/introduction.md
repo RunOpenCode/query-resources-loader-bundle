@@ -53,7 +53,7 @@ Typical example would look like in pseudocode given below:
 
 
 Having in mind example given above, here is a short list of identified 
-issues with these kind of approach:
+issues with this kind of approach:
 
 - Method size can easily go over 30 lines of code, which is against good
 coding practice.
