@@ -64,7 +64,7 @@ class DoctrineOrmExtension extends \Twig_Extension
             $entity = get_class($entity);
         }
 
-        return $this->doctrine->getEntityManagerForClass($entity)->getClassMetadata($entity)->getTableName();
+        return $this->doctrine->getManagerForClass($entity)->getClassMetadata($entity)->getTableName();
     }
 
     private function getColumnName($field, $entity)
@@ -73,6 +73,6 @@ class DoctrineOrmExtension extends \Twig_Extension
             $entity = get_class($entity);
         }
 
-        return $this->doctrine->getEntityManagerForClass($entity)->getClassMetadata($entity)->getColumnName($field);
+        return $this->doctrine->getManagerForClass($entity)->getClassMetadata($entity)->getColumnName($field);
     }
 }
