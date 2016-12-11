@@ -34,8 +34,8 @@ class DoctrineDbalExecutor implements ExecutorInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($query, array $parameters = array())
+    public function execute($query, array $parameters = array(), array $types = array())
     {
-        return $this->connection->executeQuery($query, $parameters);
+        return new DoctrineDbalExecutorResult($this->connection->executeQuery($query, $parameters, $types));
     }
 }

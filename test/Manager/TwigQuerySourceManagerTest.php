@@ -10,6 +10,7 @@
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\Manager;
 
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor;
+use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutorResult;
 use RunOpenCode\Bundle\QueryResourcesLoader\Manager\TwigQuerySourceManager;
 
 class TwigQuerySourceManagerTest extends \PHPUnit\Framework\TestCase
@@ -64,7 +65,7 @@ class TwigQuerySourceManagerTest extends \PHPUnit\Framework\TestCase
      */
     public function itCanExecute()
     {
-        $this->assertInstanceOf(\Doctrine\DBAL\Driver\Statement::class, $this->getManager()->execute('@test/query-1'));
+        $this->assertInstanceOf(DoctrineDbalExecutorResult::class, $this->getManager()->execute('@test/query-1'));
     }
 
     private function getManager()

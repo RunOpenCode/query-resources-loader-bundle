@@ -33,10 +33,11 @@ interface ManagerInterface
      *
      * @param string $name Name of Query source code.
      * @param array $args Arguments for modification/compilation of Query source code, as well as params for query statement.
+     * @param array $types Types of parameters for prepared statement.
      * @param null|string $executor Executor name.
      * @return mixed Execution results.
      */
-    public function execute($name, array $args = array(), $executor = 'default');
+    public function execute($name, array $args = array(), array $types = array(), $executor = 'default');
 
     /**
      * Check if manager have the Query source code by its given name.

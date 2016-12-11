@@ -69,7 +69,7 @@ class TwigQuerySourceManager implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($name, array $args = array(), $executor = 'default')
+    public function execute($name, array $args = array(), array $types = array(), $executor = 'default')
     {
         if (!array_key_exists($executor, $this->executors)) {
             throw  new RuntimeException(sprintf('Requested executor "%s" does not exists.', $executor));
@@ -81,7 +81,7 @@ class TwigQuerySourceManager implements ManagerInterface
             /**
              * @var ExecutorInterface $executor
              */
-            return $executor->execute($this->get($name, $args), $args);
+            return $executor->execute($this->get($name, $args), $args, $types);
         } catch (\Exception $e) {
 
             if ($e instanceof ExceptionInterface) {

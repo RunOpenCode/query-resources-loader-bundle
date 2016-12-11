@@ -23,7 +23,8 @@ interface ExecutorInterface
      *
      * @param string $query Query to execute.
      * @param array $parameters Parameters required for query.
+     * @param array $types Parameter types required for query.
      * @return mixed Result of execution.
      */
-    public function execute($query, array $parameters = array());
+    public function execute($query, array $parameters = array(), array $types = array());
 }
