@@ -6,7 +6,7 @@ use Doctrine\DBAL\Driver\Statement;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
 
-final class DoctrineDbalExecutorResult implements Statement
+final class DoctrineDbalExecutorResult implements Statement, \IteratorAggregate
 {
     private $statement;
 
@@ -226,5 +226,15 @@ final class DoctrineDbalExecutorResult implements Statement
     public function __call($name, $arguments)
     {
         return call_user_func_array(array($this->statement, $name), $arguments);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator()
+    {
+        while (false !== ($row = $this->statement->fetch(\PDO::FETCH_BOTH))) {
+            yield $row;
+        }
     }
 }
