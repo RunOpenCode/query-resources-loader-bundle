@@ -6,7 +6,7 @@ use Doctrine\DBAL\Driver\Statement;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
 
-final class DoctrineDbalExecutorResult implements Statement, \IteratorAggregate
+final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
 {
     private $statement;
 
