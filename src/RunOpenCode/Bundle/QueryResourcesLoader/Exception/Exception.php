@@ -11,6 +11,13 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\Exception;
 
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExceptionInterface;
 
+/**
+ * Class Exception
+ *
+ * Base exception class for library.
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\Exception
+ */
 class Exception extends \Exception implements ExceptionInterface
 {
 

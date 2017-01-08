@@ -8,7 +8,11 @@
  * file that was distributed with this source code.
  */
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Exception;
-
+/**
+ * Class SyntaxException
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\Exception
+ */
 class SyntaxException extends Exception
 {
 

@@ -9,6 +9,11 @@
  */
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Exception;
 
+/**
+ * Class SourceNotFoundException
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\Exception
+ */
 class SourceNotFoundException extends Exception
 {
 

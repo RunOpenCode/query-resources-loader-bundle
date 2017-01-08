@@ -1,20 +1,51 @@
 <?php
-
+/*
+ * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
+ *
+ * (c) 2016 RunOpenCode
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor;
 
 use Doctrine\DBAL\Driver\Statement;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
 
+/**
+ * Class DoctrineDbalExecutorResult
+ *
+ * Doctrine Dbal executor result statement wrapper that provides you with useful methods when fetching results from
+ * SELECT statement.
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\Executor
+ */
 final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
 {
+    /**
+     * @var Statement
+     */
     private $statement;
 
+    /**
+     * DoctrineDbalExecutorResult constructor.
+     *
+     * @param Statement $statement Wrapped statement.
+     */
     public function __construct(Statement $statement)
     {
         $this->statement = $statement;
     }
 
+    /**
+     * Get single scalar result.
+     *
+     * @return mixed A single scalar value.
+     *
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
     public function getSingleScalarResult()
     {
         $scalar = $this->statement->fetchColumn(0);
@@ -24,12 +55,19 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
         }
 
         if (false !== $this->statement->fetch()) {
-            throw new NonUniqueResultException('Expected only ine result for given query.');
+            throw new NonUniqueResultException('Expected only one result for given query.');
         }
 
         return $scalar;
     }
 
+    /**
+     * Get single scalar result or default value if there are no results of executed
+     * SELECT statement.
+     *
+     * @param mixed $default A default single scalar value.
+     * @return mixed A single scalar value.
+     */
     public function getSingleScalarResultOrDefault($default)
     {
         try {
@@ -39,11 +77,22 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
         }
     }
 
+    /**
+     * Get single scalar result or NULL value if there are no results of executed
+     * SELECT statement.
+     *
+     * @return mixed|null A single scalar value.
+     */
     public function getSingleScalarResultOrNull()
     {
         return $this->getSingleScalarResultOrDefault(null);
     }
 
+    /**
+     * Get collection of scalar values.
+     *
+     * @return array A collection of scalar values.
+     */
     public function getScalarResult()
     {
         $result = [];
@@ -55,6 +104,12 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
         return $result;
     }
 
+    /**
+     * Get collection of scalar vales, or default value if collection is empty.
+     *
+     * @param mixed $default A default value.
+     * @return array|mixed A collection of scalar values or default value.
+     */
     public function getScalarResultOrDefault($default)
     {
         $result = $this->getScalarResult();
@@ -66,11 +121,24 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
         return $result;
     }
 
+    /**
+     * Get collection of scalar vales, or NULL value if collection is empty.
+     *
+     * @return array|mixed A collection of NULL value.
+     */
     public function getScalarResultOrNull()
     {
         return $this->getScalarResultOrDefault(null);
     }
 
+    /**
+     * Get single (first) row result from result set.
+     *
+     * @return array A single (first) row of result set.
+     *
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
     public function getSingleRowResult()
     {
         $row = $this->statement->fetch(\PDO::FETCH_BOTH);
@@ -86,6 +154,15 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
         return $row;
     }
 
+    /**
+     * Get single (first) row result from result set or default value if result set is empty.
+     *
+     * @param mixed $default Default value if result set is empty.
+     * @return array A single (first) row of result set.
+     *
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
     public function getSingleRowOrDefault($default)
     {
         try {
@@ -95,6 +172,14 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
         }
     }
 
+    /**
+     * Get single (first) row result from result set or NULL value if result set is empty.
+     *
+     * @return array A single (first) row of result set.
+     *
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
     public function getSingleRowOrNull()
     {
         $this->getSingleRowOrDefault(null);

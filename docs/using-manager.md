@@ -18,10 +18,11 @@ Manager defines 3 public methods:
          *
          * @param string $name Name of Query source code.
          * @param array $args Arguments for modification/compilation of Query source code, as well as params for query statement.
+         * @param array $types Types of parameters for prepared statement.
          * @param null|string $executor Executor name.
          * @return mixed Execution results.
          */
-        public function execute($name, array $args = array(), $executor = 'default');
+        public function execute($name, array $args = array(), array $types = array(), $executor = 'default');
     
         /**
          * Check if manager have the Query source code by its given name.
@@ -38,6 +39,10 @@ which you are trying to load/execute, second parameter allows you to use
 parametrised query statements (prepared statements), as well as building
 complex queries depending of passed arguments (see [Twig support](twig-support.md)).
 
+Third, optional, parameter `$types` allows you to explicitly specify type
+of parameters for prepared statements, which is useful when using, per example,
+`WHERE IN` in your SQL statements.
+
 ## Query executor
 
 Method `get()` will just provide you with loaded and parsed query string,
@@ -49,6 +54,12 @@ is intended to be. Library provides you, for now, with
 `RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor` 
 which can be used for executing queries against relational databases
 supported by Doctrine Dbal.
+
+When executing SQL statements with `DoctrineDbalExecutor`, result set is
+returned as instance of
+`RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutorResult`
+class, which has several utility functions that can increase your productivity
+when working with your SQL result sets.
 
 You can, of course, implement your own query executor, by implementing
 `RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface` interface

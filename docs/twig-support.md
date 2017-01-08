@@ -121,5 +121,5 @@ Usage example:
     FROM {{ 'Full\\Qualified\\Entity\\Name'|table_name }} ET
         
 
-[Using manager](using-manager.md) | [Table of contents](index.md)    
+[Twig support](twig-support.md) | [Table of contents](index.md) | [DoctrineDbalExecutorResult](doctrine-dbal-executor-result.md)
  

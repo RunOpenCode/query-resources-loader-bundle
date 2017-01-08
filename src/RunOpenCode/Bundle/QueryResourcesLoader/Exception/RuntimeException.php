@@ -9,6 +9,11 @@
  */
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Exception;
 
+/**
+ * Class RuntimeException
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\Exception
+ */
 class RuntimeException extends Exception
 {
 
