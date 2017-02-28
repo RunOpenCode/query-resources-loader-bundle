@@ -30,15 +30,26 @@
         }
     },
     "require": {
-        "php": ">=5.5",
+        "php": ">=7.0",
         "symfony/framework-bundle": "~2.8|~3.0",
-        "twig/twig": "^1.24"
+        "twig/twig": "~1.2|~2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~5.0",
-        "symfony/phpunit-bridge": "~2.7",
-        "symfony/debug": "~2.7",
-        "matthiasnoback/symfony-dependency-injection-test": "^0.7.6",
-        "doctrine/dbal": "^2.5"
+        "phpunit/phpunit": "~6.0",
+        "symfony/phpunit-bridge": "~2.7|~3.0",
+        "symfony/debug": "~2.7|~3.0",
+        "matthiasnoback/symfony-dependency-injection-test": "~1.0",
+        "doctrine/dbal": "~2.5",
+        "squizlabs/php_codesniffer": "~2.0",
+        "phploc/phploc": "dev-master",
+        "pdepend/pdepend" : "~2.5",
+        "phpmd/phpmd" : "@stable",
+        "sebastian/phpcpd": "dev-master",
+        "theseer/phpdox": "dev-master",
+        "escapestudios/symfony2-coding-standard": "~2.0",
+        "symfony/console": "~3.0"
+    },
+    "suggest": {
+        "doctrine/dbal": "Use query resources loader for loading SQL queries."
     }
 }
