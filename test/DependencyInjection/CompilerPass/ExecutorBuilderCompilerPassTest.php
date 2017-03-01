@@ -17,7 +17,6 @@ use Symfony\Component\DependencyInjection\Definition;
 
 class ExecutorBuilderCompilerPassTest extends AbstractCompilerPassTestCase
 {
-
     /**
      * @test
      */

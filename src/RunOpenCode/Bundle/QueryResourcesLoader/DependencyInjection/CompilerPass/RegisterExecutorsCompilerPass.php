@@ -50,11 +50,7 @@ class RegisterExecutorsCompilerPass implements CompilerPassInterface
                 throw new LogicException('At least one query executor is required to be registered, none found.');
             }
 
-            if (
-                $container->hasParameter('run_open_code.query_resources_loader.default_executor')
-                &&
-                null !== $container->getParameter('run_open_code.query_resources_loader.default_executor')
-            ) {
+            if ($container->hasParameter('run_open_code.query_resources_loader.default_executor')) {
                 $defaultExecutor = $container->getParameter('run_open_code.query_resources_loader.default_executor');
             } else {
                 $executors = array_values($executors);

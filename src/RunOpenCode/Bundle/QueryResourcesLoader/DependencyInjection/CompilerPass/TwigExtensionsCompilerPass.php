@@ -26,8 +26,15 @@ class TwigExtensionsCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->getParameter('kernel.debug')) {
+        if (!$container->hasParameter('kernel.debug') || !$container->getParameter('kernel.debug')) {
+            return;
+        }
+
+        if ($container->hasDefinition('twig.extension.profiler')) {
             $container->getDefinition('twig.extension.profiler')->addTag('run_open_code.query_resources_loader.twig.extension');
+        }
+
+        if ($container->hasDefinition('twig.extension.debug')) {
             $container->getDefinition('twig.extension.debug')->addTag('run_open_code.query_resources_loader.twig.extension');
         }
     }
