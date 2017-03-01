@@ -9,11 +9,12 @@
  */
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\Manager;
 
+use PHPUnit\Framework\TestCase;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutorResult;
 use RunOpenCode\Bundle\QueryResourcesLoader\Manager\TwigQuerySourceManager;
 
-class TwigQuerySourceManagerTest extends \PHPUnit\Framework\TestCase
+class TwigQuerySourceManagerTest extends TestCase
 {
     /**
      * @test

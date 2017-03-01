@@ -28,7 +28,6 @@ class TwigNodeDefinition extends ArrayNodeDefinition
             ->configureTwigOptions()
             ->configureTwigFormatOptions()
             ->addDefaultsIfNotSet();
-        ;
     }
 
     /**

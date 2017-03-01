@@ -11,10 +11,11 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\Executor;
 
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\Schema;
+use PHPUnit\Framework\TestCase;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutorResult;
 
-class DoctrineDbalExecutorTest extends \PHPUnit\Framework\TestCase
+class DoctrineDbalExecutorTest extends TestCase
 {
     /**
      * @var DoctrineDbalExecutor
