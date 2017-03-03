@@ -46,6 +46,9 @@ class DoctrineOrmExtension extends \Twig_Extension
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFilters()
     {
         return array(
@@ -58,7 +61,13 @@ class DoctrineOrmExtension extends \Twig_Extension
         );
     }
 
-    private function getTableName($entity)
+    /**
+     * Get table name for entity
+     *
+     * @param string|object $entity Entity
+     * @return string
+     */
+    protected function getTableName($entity)
     {
         if (is_object($entity)) {
             $entity = get_class($entity);
@@ -67,7 +76,14 @@ class DoctrineOrmExtension extends \Twig_Extension
         return $this->doctrine->getManagerForClass($entity)->getClassMetadata($entity)->getTableName();
     }
 
-    private function getColumnName($field, $entity)
+    /**
+     * Get column name for property of the entity
+     *
+     * @param string $field Entity property
+     * @param string|object $entity
+     * @return string
+     */
+    protected function getColumnName($field, $entity)
     {
         if (is_object($entity)) {
             $entity = get_class($entity);

@@ -79,4 +79,4 @@ Note how your code gets cleaner by just omitting query statements from
 your PHP code.
             
             
-[Introduction](introduction.md) | [Table of contents](index.md) | [Twig support](twig-support.md)            
+[<< Introduction](introduction.md) | [Table of contents](index.md) | [Twig support >>](twig-support.md)

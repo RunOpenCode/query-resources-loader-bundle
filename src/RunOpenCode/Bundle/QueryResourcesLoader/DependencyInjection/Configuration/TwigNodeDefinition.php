@@ -17,6 +17,7 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
  * Twig environment configuration.
  *
  * @package RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Configuration
+ * @internal
  */
 class TwigNodeDefinition extends ArrayNodeDefinition
 {

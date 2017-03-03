@@ -23,4 +23,4 @@ if collection is empty.
 - `getSingleRowOrDefault()` - Get single (first) row result from result set
  or default value if result set is empty.
 
-[Using manager](using-manager.md) | [Table of contents](index.md)
+[<< Using manager](using-manager.md) | [Table of contents](index.md)

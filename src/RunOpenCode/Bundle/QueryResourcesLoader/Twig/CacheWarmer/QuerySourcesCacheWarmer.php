@@ -1,9 +1,23 @@
 <?php
-
+/*
+ * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
+ *
+ * (c) 2017 RunOpenCode.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
+/**
+ * Class QuerySourcesCacheWarmer
+ *
+ * Warms up queries cache.
+ *
+ * @package RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer
+ */
 class QuerySourcesCacheWarmer implements CacheWarmerInterface
 {
     private $twig;
@@ -22,10 +36,9 @@ class QuerySourcesCacheWarmer implements CacheWarmerInterface
     {
         foreach ($this->iterator as $template) {
             try {
-                $this->twig->loadTemplate($template);
+                $this->twig->load($template);
             } catch (\Twig_Error $e) {
-                // problem during compilation, give up
-                // might be a syntax error or a non-Twig template
+                // noop
             }
         }
     }

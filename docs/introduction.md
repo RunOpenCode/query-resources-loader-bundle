@@ -71,4 +71,4 @@ be able to work on query without your assistance.
 Naturally, query code should residue in separated files and included in
 project with some kind of inclusion statement or service call.
 
-[Table of contents](index.md) | [Proposed solution](proposed-solution.md)
+[Table of contents](index.md) | [Proposed solution >>](proposed-solution.md)

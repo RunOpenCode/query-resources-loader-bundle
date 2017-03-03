@@ -102,5 +102,5 @@ be a query that uses, per example, prepared statement:
 And by using Twig within this bundle, you can do a realy serious and complex
 query building as well.        
 
-[Proposed solution](proposed-solution.md) | [Table of contents](index.md) | [Twig support](twig-support.md)   
+[<< Proposed solution](proposed-solution.md) | [Table of contents](index.md) | [Twig support >>](twig-support.md)
  
