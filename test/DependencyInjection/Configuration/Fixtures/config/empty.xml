@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+
+<container
+        xmlns="http://symfony.com/schema/dic/services"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:run-open-code-query-resources-loader="http://www.runopencode.com/xsd-schema/query-resources-loader-bundle"
+        xsi:schemaLocation="http://symfony.com/schema/dic/services
+                            http://symfony.com/schema/dic/services/services-1.0.xsd
+                            http://www.runopencode.com/xsd-schema/query-resources-loader-bundle
+                            http://www.runopencode.com/xsd-schema/query-resources-loader-bundle/configuration-1.0.0.xsd
+                            "
+>
+
+    <run-open-code-query-resources-loader:config>
+
+    </run-open-code-query-resources-loader:config>
+
+</container>

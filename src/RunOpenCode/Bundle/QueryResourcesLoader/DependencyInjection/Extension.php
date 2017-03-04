@@ -31,6 +31,16 @@ class Extension extends BaseExtension
         return 'run_open_code_query_resources_loader';
     }
 
+    public function getNamespace()
+    {
+        return 'http://www.runopencode.com/xsd-schema/query-resources-loader-bundle';
+    }
+
+    public function getXsdValidationBasePath()
+    {
+        return __DIR__.'/../Resources/config/schema';
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -94,13 +104,13 @@ class Extension extends BaseExtension
      */
     protected function configureTwigEnvironment(array $config, ContainerBuilder $container)
     {
-        $envConfiguratorDefinition = $container->getDefinition('run_open_code.query_resources_loader.twig.configurator.environment');
-        $envConfiguratorDefinition->replaceArgument(0, $config['twig']['date']['format']);
-        $envConfiguratorDefinition->replaceArgument(1, $config['twig']['date']['interval_format']);
-        $envConfiguratorDefinition->replaceArgument(2, $config['twig']['date']['timezone']);
-        $envConfiguratorDefinition->replaceArgument(3, $config['twig']['number_format']['decimals']);
-        $envConfiguratorDefinition->replaceArgument(4, $config['twig']['number_format']['decimal_point']);
-        $envConfiguratorDefinition->replaceArgument(5, $config['twig']['number_format']['thousands_separator']);
+        $configurator = $container->getDefinition('run_open_code.query_resources_loader.twig.configurator.environment');
+        $configurator->replaceArgument(0, $config['twig']['date']['format']);
+        $configurator->replaceArgument(1, $config['twig']['date']['interval_format']);
+        $configurator->replaceArgument(2, $config['twig']['date']['timezone']);
+        $configurator->replaceArgument(3, $config['twig']['number_format']['decimals']);
+        $configurator->replaceArgument(4, $config['twig']['number_format']['decimal_point']);
+        $configurator->replaceArgument(5, $config['twig']['number_format']['thousands_separator']);
 
         return $this;
     }

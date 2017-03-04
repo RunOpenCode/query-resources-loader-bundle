@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+
+<container
+        xmlns="http://symfony.com/schema/dic/services"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:run-open-code-query-resources-loader="http://www.runopencode.com/xsd-schema/query-resources-loader-bundle"
+        xsi:schemaLocation="http://symfony.com/schema/dic/services
+                            http://symfony.com/schema/dic/services/services-1.0.xsd
+                            http://www.runopencode.com/xsd-schema/query-resources-loader-bundle
+                            http://www.runopencode.com/xsd-schema/query-resources-loader-bundle/configuration-1.0.0.xsd
+                            "
+>
+    <run-open-code-query-resources-loader:config>
+
+        <run-open-code-query-resources-loader:default-executor>some.default.executor</run-open-code-query-resources-loader:default-executor>
+
+        <run-open-code-query-resources-loader:twig
+                autoescape="autoescape"
+                autoescape-service="autoescape-service"
+                autoescape-service-method="autoescape-service-method"
+                base-template-class="base-template-class"
+                cache="cache"
+                charset="charset"
+                debug="true"
+                strict-variables="true"
+                optimizations="1"
+        >
+
+            <run-open-code-query-resources-loader:path namespace="first/namespace">/First/Path</run-open-code-query-resources-loader:path>
+            <run-open-code-query-resources-loader:path namespace="second/namespace">/Second/Path</run-open-code-query-resources-loader:path>
+
+            <run-open-code-query-resources-loader:date format="Y-m-d" interval-format="%d" timezone="UTC" />
+            <run-open-code-query-resources-loader:number-format decimals="2" decimal-point="," thousands-separator="." />
+
+        </run-open-code-query-resources-loader:twig>
+
+    </run-open-code-query-resources-loader:config>
+
+</container>
