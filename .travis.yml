@@ -17,6 +17,7 @@ cache:
 
 before_install:
   - composer self-update
+  - phpunit self-update
 
 install: composer update --prefer-source
 
