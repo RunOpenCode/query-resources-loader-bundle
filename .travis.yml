@@ -17,11 +17,10 @@ cache:
 
 before_install:
   - composer self-update
-  - phpunit self-update
 
 install: composer update --prefer-source
 
-script: phpunit --coverage-clover=coverage.clover
+script: vendor/bin/phpunit --coverage-clover=coverage.clover
 
 after_script:
   - |
