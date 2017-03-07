@@ -28,7 +28,9 @@ class TwigNodeDefinition extends ArrayNodeDefinition
         $this
             ->configureTwigOptions()
             ->configureTwigFormatOptions()
-            ->addDefaultsIfNotSet();
+            ->addDefaultsIfNotSet()
+            ->configureTwigGlobals()
+        ;
     }
 
     /**
@@ -117,6 +119,61 @@ class TwigNodeDefinition extends ArrayNodeDefinition
                 ->end()
             ->end()
         ;
+
+        return $this;
+    }
+
+    /**
+     * Configure Twig globals.
+     *
+     * @return TwigNodeDefinition $this
+     */
+    private function configureTwigGlobals()
+    {
+        $this
+            ->fixXmlConfig('global')
+            ->children()
+                ->arrayNode('globals')
+                    ->normalizeKeys(false)
+                    ->useAttributeAsKey('key')
+                    ->example(array('foo' => '"@bar"', 'pi' => 3.14))
+                    ->prototype('array')
+                        ->beforeNormalization()
+                            ->ifTrue(function ($v) { return is_string($v) && 0 === strpos($v, '@'); })
+                            ->then(function ($v) {
+                                if (0 === strpos($v, '@@')) {
+                                    return substr($v, 1);
+                                }
+
+                                return array('id' => substr($v, 1), 'type' => 'service');
+                            })
+                        ->end()
+                        ->beforeNormalization()
+                            ->ifTrue(function ($v) {
+                                if (is_array($v)) {
+                                    $keys = array_keys($v);
+                                    sort($keys);
+
+                                    return $keys !== array('id', 'type') && $keys !== array('value');
+                                }
+
+                                return true;
+                            })
+                            ->then(function ($v) { return array('value' => $v); })
+                        ->end()
+                        ->children()
+                            ->scalarNode('id')->end()
+                            ->scalarNode('type')
+                                ->validate()
+                                    ->ifNotInArray(array('service'))
+                                    ->thenInvalid('The %s type is not supported')
+                                ->end()
+                            ->end()
+                            ->variableNode('value')->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
 
         return $this;
     }

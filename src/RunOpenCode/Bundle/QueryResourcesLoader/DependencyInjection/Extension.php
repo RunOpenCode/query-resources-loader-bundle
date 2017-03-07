@@ -84,7 +84,7 @@ class Extension extends BaseExtension
 
             $definition = $container->getDefinition('run_open_code.query_resources_loader.twig');
 
-            foreach ($config['globals'] as $key => $global) {
+            foreach ($config['twig']['globals'] as $key => $global) {
 
                 if (isset($global['type']) && 'service' === $global['type']) {
                     $definition->addMethodCall('addGlobal', array($key, new Reference($global['id'])));

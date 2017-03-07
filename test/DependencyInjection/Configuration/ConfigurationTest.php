@@ -39,7 +39,8 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     'decimals' => 0,
                     'decimal_point' => '.',
                     'thousands_separator' => ','
-                ]
+                ],
+                'globals' => []
             ]
         ], [
             __DIR__.'/Fixtures/config/empty.xml'
@@ -77,6 +78,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 ],
                 'strict_variables' => true,
                 'optimizations' => 1,
+                'globals' => []
             ]
         ], [
             __DIR__.'/Fixtures/config/full.xml'
