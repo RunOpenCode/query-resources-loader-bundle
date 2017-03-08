@@ -20,6 +20,7 @@
 
         <xsd:sequence>
             <xsd:element name="path" type="path" minOccurs="0" maxOccurs="unbounded" />
+            <xsd:element name="global" type="global" minOccurs="0" maxOccurs="unbounded" />
             <xsd:element name="date" type="date" minOccurs="0" maxOccurs="1" />
             <xsd:element name="number-format" type="number-format" minOccurs="0" maxOccurs="1" />
         </xsd:sequence>
@@ -52,5 +53,17 @@
         <xsd:attribute name="decimal-point" type="xsd:string"/>
         <xsd:attribute name="thousands-separator" type="xsd:string"/>
     </xsd:complexType>
+
+    <xsd:complexType name="global" mixed="true">
+        <xsd:attribute name="key" type="xsd:string" use="required" />
+        <xsd:attribute name="type" type="global_type" />
+        <xsd:attribute name="id" type="xsd:string" />
+    </xsd:complexType>
+
+    <xsd:simpleType name="global_type">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="service" />
+        </xsd:restriction>
+    </xsd:simpleType>
 
 </xsd:schema>

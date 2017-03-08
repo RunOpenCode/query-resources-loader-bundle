@@ -28,6 +28,10 @@
 
             <run-open-code-query-resources-loader:path namespace="first/namespace">/First/Path</run-open-code-query-resources-loader:path>
             <run-open-code-query-resources-loader:path namespace="second/namespace">/Second/Path</run-open-code-query-resources-loader:path>
+            
+            <run-open-code-query-resources-loader:global key="some_key_1">Some value 1</run-open-code-query-resources-loader:global>
+            <run-open-code-query-resources-loader:global key="some_key_2">Some value 2</run-open-code-query-resources-loader:global>
+            <run-open-code-query-resources-loader:global key="some_key_3" type="service" id="service_id" />
 
             <run-open-code-query-resources-loader:date format="Y-m-d" interval-format="%d" timezone="UTC" />
             <run-open-code-query-resources-loader:number-format decimals="2" decimal-point="," thousands-separator="." />

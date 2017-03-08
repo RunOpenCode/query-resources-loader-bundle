@@ -78,7 +78,11 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 ],
                 'strict_variables' => true,
                 'optimizations' => 1,
-                'globals' => []
+                'globals' => [
+                    'some_key_1' => ['value' => 'Some value 1'],
+                    'some_key_2' => ['value' => 'Some value 2'],
+                    'some_key_3' => ['type' => 'service', 'id' => 'service_id']
+                ]
             ]
         ], [
             __DIR__.'/Fixtures/config/full.xml'

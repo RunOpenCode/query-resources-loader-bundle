@@ -11,6 +11,8 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\DependencyInjection;
 
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Extension;
+use RunOpenCode\Bundle\QueryResourcesLoader\Tests\DependencyInjection\Configuration\Fixtures\bundles\BarBundle\BarBundle;
+use RunOpenCode\Bundle\QueryResourcesLoader\Tests\DependencyInjection\Configuration\Fixtures\bundles\FooBundle\FooBundle;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -125,6 +127,38 @@ class ExtensionTest extends AbstractExtensionTestCase
             ['namespaced_path1', 'namespace1'],
             ['namespaced_path2', 'namespace2'],
             ['namespaced_path3', 'namespace3'],
+        ], $paths);
+    }
+
+    /**
+     * @test
+     */
+    public function itConfiguresTwigBundlePaths()
+    {
+        $this->setParameter('kernel.bundles', [
+            'FooBundle' => FooBundle::class,
+            'BarBundle' => BarBundle::class
+        ]);
+        
+        $this->setParameter('kernel.root_dir', __DIR__ . '/Configuration/Fixtures/app');
+        $this->setDefinition('run_open_code.query_resources_loader.twig.loader.filesystem', new Definition());
+
+        $this->load();
+
+        $calls = $this->container->getDefinition('run_open_code.query_resources_loader.twig.loader.filesystem')->getMethodCalls();
+
+        $paths = [];
+
+        foreach ($calls as $call) {
+            if ('addPath' === $call[0]) {
+                $paths[] = $call[1];
+            }
+        }
+
+        $this->assertEquals([
+            ['/Users/TheCelavi/Sites/RunOpenCode/BundleDevelopment/packages/query-resources-loader-bundle/test/DependencyInjection/Configuration/Fixtures/app/Resources/FooBundle/query', 'Foo'],
+            ['/Users/TheCelavi/Sites/RunOpenCode/BundleDevelopment/packages/query-resources-loader-bundle/test/DependencyInjection/Configuration/Fixtures/bundles/FooBundle/Resources/query', 'Foo'],
+            ['/Users/TheCelavi/Sites/RunOpenCode/BundleDevelopment/packages/query-resources-loader-bundle/test/DependencyInjection/Configuration/Fixtures/bundles/BarBundle/Resources/query', 'Bar'],
         ], $paths);
     }
 
