@@ -97,4 +97,3 @@ class TwigQuerySourceManagerTest extends TestCase
         return new DoctrineDbalExecutor($stub);
     }
 }
-

@@ -101,6 +101,27 @@ class DoctrineDbalExecutorTest extends TestCase
     /**
      * @test
      */
+    public function itGivesDefaultWhereThereIsNoSingleScalarResult()
+    {
+        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
+
+        $this->assertTrue($result->getSingleScalarResultOrDefault(true));
+    }
+
+
+    /**
+     * @test
+     */
+    public function itGivesNullWhereThereIsNoSingleScalarResult()
+    {
+        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
+
+        $this->assertNull($result->getSingleScalarResultOrNull());
+    }
+
+    /**
+     * @test
+     */
     public function itGivesScalarResult()
     {
         $result = $this->executor->execute('SELECT id FROM test ORDER BY id ASC;', array());
@@ -108,6 +129,25 @@ class DoctrineDbalExecutorTest extends TestCase
         $this->assertEquals([1, 2, 3, 4, 5], $result->getScalarResult());
     }
 
+    /**
+     * @test
+     */
+    public function itGivesDefaultWhereThereIsNoScalarResult()
+    {
+        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
+
+        $this->assertTrue($result->getScalarResultOrDefault(true));
+    }
+
+    /**
+     * @test
+     */
+    public function itGivesNullWhereThereIsNoScalarResult()
+    {
+        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
+
+        $this->assertNull($result->getScalarResultOrNull());
+    }
 
     /**
      * @test
@@ -121,5 +161,48 @@ class DoctrineDbalExecutorTest extends TestCase
             0 => 3, 1 => 'Some title 3', 2 => 'Some description 3'
         ], $result->getSingleRowResult());
     }
-}
 
+    /**
+     * @test
+     *
+     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException
+     */
+    public function itHaveMoreThanSingleRowResult()
+    {
+        $result = $this->executor->execute('SELECT * FROM test;', array());
+
+        $result->getSingleRowResult();
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException
+     */
+    public function itDoesNotHaveSingleRowResult()
+    {
+        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
+
+        $result->getSingleRowResult();
+    }
+
+    /**
+     * @test
+     */
+    public function itGivesDefaultWhereThereIsNoSingeRowResult()
+    {
+        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
+
+        $this->assertTrue($result->getSingleRowOrDefault(true));
+    }
+
+    /**
+     * @test
+     */
+    public function itGivesNullWhereThereIsNoSingeRowResult()
+    {
+        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
+
+        $this->assertNull($result->getSingleRowOrNull());
+    }
+}

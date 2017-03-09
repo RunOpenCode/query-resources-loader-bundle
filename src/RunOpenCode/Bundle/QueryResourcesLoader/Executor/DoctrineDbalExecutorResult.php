@@ -114,7 +114,7 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
     {
         $result = $this->getScalarResult();
 
-        if (count($result) < 0) {
+        if (0 === count($result)) {
             return $default;
         }
 
@@ -158,7 +158,7 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
      * Get single (first) row result from result set or default value if result set is empty.
      *
      * @param mixed $default Default value if result set is empty.
-     * @return array A single (first) row of result set.
+     * @return array|mixed A single (first) row of result set.
      *
      * @throws NoResultException
      * @throws NonUniqueResultException

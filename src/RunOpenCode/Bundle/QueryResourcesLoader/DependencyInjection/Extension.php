@@ -171,7 +171,7 @@ class Extension extends BaseExtension
         // register bundles as Twig namespaces
         foreach ($container->getParameter('kernel.bundles') as $bundle => $class) {
 
-            $dir = $container->getParameter('§').'/Resources/'.$bundle.'/query';
+            $dir = $container->getParameter('kernel.root_dir').'/Resources/'.$bundle.'/query';
 
             if (is_dir($dir)) {
                 $addTwigPath($dir, $bundle);
