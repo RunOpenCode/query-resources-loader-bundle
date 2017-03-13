@@ -156,9 +156,9 @@ class ExtensionTest extends AbstractExtensionTestCase
         }
 
         $this->assertEquals([
-            ['/Users/TheCelavi/Sites/RunOpenCode/BundleDevelopment/packages/query-resources-loader-bundle/test/DependencyInjection/Configuration/Fixtures/app/Resources/FooBundle/query', 'Foo'],
-            ['/Users/TheCelavi/Sites/RunOpenCode/BundleDevelopment/packages/query-resources-loader-bundle/test/DependencyInjection/Configuration/Fixtures/bundles/FooBundle/Resources/query', 'Foo'],
-            ['/Users/TheCelavi/Sites/RunOpenCode/BundleDevelopment/packages/query-resources-loader-bundle/test/DependencyInjection/Configuration/Fixtures/bundles/BarBundle/Resources/query', 'Bar'],
+            [ __DIR__ . '/Configuration/Fixtures/app/Resources/FooBundle/query', 'Foo'],
+            [ __DIR__ . '/Configuration/Fixtures/bundles/FooBundle/Resources/query', 'Foo'],
+            [ __DIR__ . '/Configuration/Fixtures/bundles/BarBundle/Resources/query', 'Bar'],
         ], $paths);
     }
 
