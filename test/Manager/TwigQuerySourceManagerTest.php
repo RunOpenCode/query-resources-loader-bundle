@@ -19,7 +19,7 @@ class TwigQuerySourceManagerTest extends TestCase
     /**
      * @test
      */
-    public function hasQuery()
+    public function itHasQuery()
     {
         $this->assertTrue($this->getManager()->has('@test/query-1'));
     }
@@ -27,7 +27,7 @@ class TwigQuerySourceManagerTest extends TestCase
     /**
      * @test
      */
-    public function hasNotQuery()
+    public function itDoesNotHaveQuery()
     {
         $this->assertFalse($this->getManager()->has('unknown'));
     }
@@ -35,7 +35,7 @@ class TwigQuerySourceManagerTest extends TestCase
     /**
      * @test
      */
-    public function get()
+    public function itGetsQuery()
     {
         $this->assertSame('THIS IS SIMPLE, PLAIN QUERY', $this->getManager()->get('@test/query-1'));
         $this->assertSame('THIS IS SIMPLE, PLAIN QUERY WITH VARIABLE X', $this->getManager()->get('@test/query-2', array('var' => 'X')));
@@ -46,7 +46,7 @@ class TwigQuerySourceManagerTest extends TestCase
      *
      * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\SyntaxException
      */
-    public function syntaxError()
+    public function itThrowsSyntaxError()
     {
         $this->getManager()->get('@test/syntax-error');
     }
@@ -56,9 +56,30 @@ class TwigQuerySourceManagerTest extends TestCase
      *
      * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\SourceNotFoundException
      */
-    public function notFoundException()
+    public function itThrowsNotFoundException()
     {
         $this->getManager()->get('not-existing');
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\RuntimeException
+     */
+    public function itThrowsUnknownException()
+    {
+        $twig = $this
+            ->getMockBuilder(\Twig_Environment::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $twig
+            ->method('render')
+            ->willThrowException(new \Exception());
+
+        $manager = new TwigQuerySourceManager($twig);
+
+        $manager->get('does_not_exists');
     }
 
     /**
