@@ -10,6 +10,8 @@
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\Manager;
 
 use PHPUnit\Framework\TestCase;
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
+use RunOpenCode\Bundle\QueryResourcesLoader\Exception\ExecutionException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutorResult;
 use RunOpenCode\Bundle\QueryResourcesLoader\Manager\TwigQuerySourceManager;
@@ -88,6 +90,63 @@ class TwigQuerySourceManagerTest extends TestCase
     public function itCanExecute()
     {
         $this->assertInstanceOf(DoctrineDbalExecutorResult::class, $this->getManager()->execute('@test/query-1'));
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\RuntimeException
+     * @expectedExceptionMessage Requested executor "dummy" does not exists.
+     */
+    public function itThrowsExceptionWhenExecutorDoesNotExists()
+    {
+        $this->getManager()->execute('@test/query-1', array(), array(), 'dummy');
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\ExecutionException
+     * @expectedExceptionMessage It throws library execution exception.
+     */
+    public function itThrowsLibraryExecutionException()
+    {
+        $manager = $this->getManager();
+
+        $executor = $this
+            ->getMockBuilder(ExecutorInterface::class)
+            ->getMock();
+
+        $executor
+            ->method('execute')
+            ->willThrowException(new ExecutionException('It throws library execution exception.'));
+
+        $manager->registerExecutor($executor, 'throwing');
+
+        $manager->execute('@test/query-1', array(), array(), 'throwing');
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\ExecutionException
+     * @expectedExceptionMessage Query "@test/query-1" could not be executed.
+     */
+    public function itWrapsUnknownExceptionAndThrowsLibraryExecutionException()
+    {
+        $manager = $this->getManager();
+
+        $executor = $this
+            ->getMockBuilder(ExecutorInterface::class)
+            ->getMock();
+
+        $executor
+            ->method('execute')
+            ->willThrowException(new \Exception('It throws library execution exception.'));
+
+        $manager->registerExecutor($executor, 'throwing');
+
+        $manager->execute('@test/query-1', array(), array(), 'throwing');
     }
 
     private function getManager()
