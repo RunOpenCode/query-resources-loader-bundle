@@ -122,4 +122,3 @@ Usage example:
         
 
 [<< Twig support](twig-support.md) | [Table of contents](index.md) | [DoctrineDbalExecutorResult >>](doctrine-dbal-executor-result.md)
- 
