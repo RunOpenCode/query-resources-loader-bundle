@@ -83,7 +83,13 @@ class QuerySourcesIterator implements \IteratorAggregate
         }
 
         $templates = array();
-        foreach (Finder::create()->files()->followLinks()->in($dir) as $file) {
+
+        /**
+         * @var \Symfony\Component\Finder\SplFileInfo[] $files
+         */
+        $files = Finder::create()->files()->followLinks()->in($dir);
+
+        foreach ($files as $file) {
             $templates[] = (null !== $namespace ? '@'.$namespace.'/' : '').str_replace('\\', '/', $file->getRelativePathname());
         }
 
