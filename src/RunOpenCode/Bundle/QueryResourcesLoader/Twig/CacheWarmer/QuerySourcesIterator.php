@@ -48,8 +48,11 @@ class QuerySourcesIterator implements \IteratorAggregate
         }
 
         $this->queries = $this->findQuerySourcesInDirectory($this->rootDir.'/Resources/query');
+
         foreach ($this->kernel->getBundles() as $bundle) {
+
             $name = $bundle->getName();
+
             if ('Bundle' === substr($name, -6)) {
                 $name = substr($name, 0, -6);
             }

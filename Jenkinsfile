@@ -15,7 +15,7 @@ node {
     stage('SonarQube') {
         def scannerHome = tool 'SonarQube Scanner 2.8';
         withSonarQubeEnv {
-            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=runopencode-query-resources-loader-bundle -Dsonar.projectName='Query resources loader - Symfony bundle' -Dsonar.projectVersion=1.0 -Dsonar.sources=src -Dsonar.language=php -Dsonar.sourceEncoding=UTF-8 -Dsonar.tests=test -Dsonar.php.tests.reportPath=build/logs/junit.xml -Dsonar.php.coverage.reportPath=build/logs/clover.xml -Dsonar.clover.reportPath=build/logs/clover.xml -Dsonar.coverage.exclusions=test"
+            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=runopencode-query-resources-loader-bundle -Dsonar.projectName='Query resources loader - Symfony bundle' -Dsonar.projectVersion=1.0 -Dsonar.sources=src -Dsonar.language=php -Dsonar.sourceEncoding=UTF-8 -Dsonar.tests=test -Dsonar.php.tests.reportPath=build/logs/junit.xml -Dsonar.php.coverage.reportPath=build/logs/clover.xml -Dsonar.clover.reportPath=build/logs/clover.xml -Dsonar.coverage.exclusions=test,src/RunOpenCode/Bundle/QueryResourcesLoader/Exception"
         }
     }
     stage('Reporting') {
