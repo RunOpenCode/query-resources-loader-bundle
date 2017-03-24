@@ -26,16 +26,25 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class Extension extends BaseExtension
 {
+    /**
+     * {@inheritdoc}
+     */
     public function getAlias()
     {
         return 'run_open_code_query_resources_loader';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getNamespace()
     {
         return 'http://www.runopencode.com/xsd-schema/query-resources-loader-bundle';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getXsdValidationBasePath()
     {
         return __DIR__.'/../Resources/config/schema';
