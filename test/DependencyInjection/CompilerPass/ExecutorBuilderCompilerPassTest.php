@@ -31,8 +31,13 @@ class ExecutorBuilderCompilerPassTest extends AbstractCompilerPassTestCase
         ]);
     }
 
+    /**
+     * @test
+     */
     public function itDoesNotRegistersDoctrineDbalExecutor()
     {
+        $this->setDefinition('some_dummy_definition', new Definition());
+
         $this->compile();
         $this->assertContainerBuilderNotHasService('run_open_code.query_resources_loader.executor.doctrine_dbal_default_connection_executor');
     }
