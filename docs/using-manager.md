@@ -64,14 +64,14 @@ when working with your SQL result sets.
 You can, of course, implement your own query executor, by implementing
 `RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface` interface
 and registering it in service container with tag name 
-`run_open_code.query_resources_loader.executor` with attribute `name` 
+`runopencode.query_resources_loader.executor` with attribute `name`
 which you can use when executing query in multi-executor environment.
  
 Default executor is the first registered executor, or, it can be
-configured under `run_open_code_query_resources_loader.default_executor`
+configured under `runopencode_query_resources_loader.default_executor`
 key where you should state the service name of your executor, example:
 
-    run_open_code_query_resources_loader:
+    runopencode_query_resources_loader:
         default_executor: my_executor_service_name
 
 ## How to use manager

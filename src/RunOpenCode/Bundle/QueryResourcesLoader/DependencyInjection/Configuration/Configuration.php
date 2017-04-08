@@ -28,7 +28,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
 
-        $rootNode = $treeBuilder->root('run_open_code_query_resources_loader');
+        $rootNode = $treeBuilder->root('runopencode_query_resources_loader');
 
         $rootNode
             ->addDefaultsIfNotSet()

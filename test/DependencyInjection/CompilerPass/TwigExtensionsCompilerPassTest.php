@@ -26,7 +26,7 @@ class TwigExtensionsCompilerPassTest extends AbstractCompilerPassTestCase
 
         $this->compile();
 
-        $this->assertContainerBuilderHasServiceDefinitionWithTag('twig.extension.profiler', 'run_open_code.query_resources_loader.twig.extension');
+        $this->assertContainerBuilderHasServiceDefinitionWithTag('twig.extension.profiler', 'runopencode.query_resources_loader.twig.extension');
     }
 
     /**
@@ -39,7 +39,7 @@ class TwigExtensionsCompilerPassTest extends AbstractCompilerPassTestCase
 
         $this->compile();
 
-        $this->assertContainerBuilderHasServiceDefinitionWithTag('twig.extension.debug', 'run_open_code.query_resources_loader.twig.extension');
+        $this->assertContainerBuilderHasServiceDefinitionWithTag('twig.extension.debug', 'runopencode.query_resources_loader.twig.extension');
     }
 
     /**

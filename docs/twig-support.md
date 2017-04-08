@@ -25,7 +25,7 @@ is used for rendering template, this environment is for building complex
 queries.
 - You can, of course, create/register your own extensions for query loader
 Twig environment, register it as a service and tag it with 
-`run_open_code.query_resources_loader.twig.extension` tag.
+`runopencode.query_resources_loader.twig.extension` tag.
 - You can not load Twig templates from `Resources/views` directories (at least
 not with default settings), this mixing is not something that is desirable
 nor wanted

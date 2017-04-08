@@ -22,11 +22,11 @@ class TwigEnvironmentCompilerPassTest extends AbstractCompilerPassTestCase
      */
     public function itReRegistersExtensions()
     {
-        $this->setDefinition('run_open_code.query_resources_loader.twig', $twig = new Definition());
+        $this->setDefinition('runopencode.query_resources_loader.twig', $twig = new Definition());
 
         $this->setDefinition('some_extension', $extension = new Definition());
         $extension
-            ->addTag('run_open_code.query_resources_loader.twig.extension');
+            ->addTag('runopencode.query_resources_loader.twig.extension');
 
         $twig
             ->addMethodCall('addExtension', [ new Reference('some_extension') ]);
@@ -34,7 +34,7 @@ class TwigEnvironmentCompilerPassTest extends AbstractCompilerPassTestCase
         $this->compile();
 
         $this
-            ->assertContainerBuilderHasServiceDefinitionWithMethodCall('run_open_code.query_resources_loader.twig', 'addExtension', [ new Reference('some_extension') ]);
+            ->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader.twig', 'addExtension', [ new Reference('some_extension') ]);
     }
 
     /**

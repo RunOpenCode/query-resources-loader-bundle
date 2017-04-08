@@ -43,7 +43,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'globals' => []
             ]
         ], [
-            __DIR__.'/Fixtures/config/empty.xml'
+            __DIR__ . '/../../Fixtures/config/empty.xml'
         ]);
     }
 
@@ -85,7 +85,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 ]
             ]
         ], [
-            __DIR__.'/Fixtures/config/full.xml'
+            __DIR__ . '/../../Fixtures/config/full.xml'
         ]);
     }
 

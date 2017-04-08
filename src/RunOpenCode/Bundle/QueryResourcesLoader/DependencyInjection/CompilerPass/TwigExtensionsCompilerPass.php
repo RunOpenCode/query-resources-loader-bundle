@@ -31,11 +31,11 @@ class TwigExtensionsCompilerPass implements CompilerPassInterface
         }
 
         if ($container->hasDefinition('twig.extension.profiler')) {
-            $container->getDefinition('twig.extension.profiler')->addTag('run_open_code.query_resources_loader.twig.extension');
+            $container->getDefinition('twig.extension.profiler')->addTag('runopencode.query_resources_loader.twig.extension');
         }
 
         if ($container->hasDefinition('twig.extension.debug')) {
-            $container->getDefinition('twig.extension.debug')->addTag('run_open_code.query_resources_loader.twig.extension');
+            $container->getDefinition('twig.extension.debug')->addTag('runopencode.query_resources_loader.twig.extension');
         }
     }
 }

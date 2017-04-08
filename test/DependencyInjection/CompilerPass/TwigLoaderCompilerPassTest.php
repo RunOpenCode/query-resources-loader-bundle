@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace DependencyInjection\CompilerPass;
+namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\DependencyInjection\CompilerPass;
 
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractCompilerPassTestCase;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\TwigLoaderCompilerPass;
@@ -23,7 +23,7 @@ class TwigLoaderCompilerPassTest extends AbstractCompilerPassTestCase
      */
     public function itHasNoLoader()
     {
-        $this->setDefinition('run_open_code.query_resources_loader.twig', new Definition());
+        $this->setDefinition('runopencode.query_resources_loader.twig', new Definition());
         $this->compile();
     }
 
@@ -32,15 +32,15 @@ class TwigLoaderCompilerPassTest extends AbstractCompilerPassTestCase
      */
     public function itHasOneLoader()
     {
-        $this->setDefinition('run_open_code.query_resources_loader.twig', new Definition());
+        $this->setDefinition('runopencode.query_resources_loader.twig', new Definition());
         $this->setDefinition('dummy_loader', $loader = new Definition());
         $loader
-            ->addTag('run_open_code.query_resources_loader.twig.loader');
+            ->addTag('runopencode.query_resources_loader.twig.loader');
 
         $this->compile();
 
         $this
-            ->assertContainerBuilderHasAlias('run_open_code.query_resources_loader.twig.loader', 'dummy_loader');
+            ->assertContainerBuilderHasAlias('runopencode.query_resources_loader.twig.loader', 'dummy_loader');
     }
 
     /**
@@ -48,29 +48,29 @@ class TwigLoaderCompilerPassTest extends AbstractCompilerPassTestCase
      */
     public function itHasPrioritizedLoaders()
     {
-        $this->setDefinition('run_open_code.query_resources_loader.twig', new Definition());
-        $this->setDefinition('run_open_code.query_resources_loader.twig.loader.chain', new Definition());
+        $this->setDefinition('runopencode.query_resources_loader.twig', new Definition());
+        $this->setDefinition('runopencode.query_resources_loader.twig.loader.chain', new Definition());
 
         $this->setDefinition('dummy_loader_1', $dummy_loader_1 = new Definition());
         $dummy_loader_1
-            ->addTag('run_open_code.query_resources_loader.twig.loader', ['priority' => 100]);
+            ->addTag('runopencode.query_resources_loader.twig.loader', ['priority' => 100]);
 
         $this->setDefinition('dummy_loader_2', $dummy_loader_2 = new Definition());
         $dummy_loader_2
-            ->addTag('run_open_code.query_resources_loader.twig.loader', ['priority' => 300]);
+            ->addTag('runopencode.query_resources_loader.twig.loader', ['priority' => 300]);
 
         $this->setDefinition('dummy_loader_3', $dummy_loader_3 = new Definition());
         $dummy_loader_3
-            ->addTag('run_open_code.query_resources_loader.twig.loader', ['priority' => 200]);
+            ->addTag('runopencode.query_resources_loader.twig.loader', ['priority' => 200]);
 
         $this->compile();
 
-        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('run_open_code.query_resources_loader.twig.loader.chain', 'addLoader', [ new Reference('dummy_loader_1') ]);
-        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('run_open_code.query_resources_loader.twig.loader.chain', 'addLoader', [ new Reference('dummy_loader_2') ]);
-        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('run_open_code.query_resources_loader.twig.loader.chain', 'addLoader', [ new Reference('dummy_loader_3')  ]);
+        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader.twig.loader.chain', 'addLoader', [ new Reference('dummy_loader_1') ]);
+        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader.twig.loader.chain', 'addLoader', [ new Reference('dummy_loader_2') ]);
+        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader.twig.loader.chain', 'addLoader', [ new Reference('dummy_loader_3')  ]);
 
         $this
-            ->assertContainerBuilderHasAlias('run_open_code.query_resources_loader.twig.loader', 'run_open_code.query_resources_loader.twig.loader.chain');
+            ->assertContainerBuilderHasAlias('runopencode.query_resources_loader.twig.loader', 'runopencode.query_resources_loader.twig.loader.chain');
     }
 
     /**

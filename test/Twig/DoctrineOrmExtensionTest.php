@@ -28,7 +28,7 @@ class DoctrineOrmExtensionTest extends TestCase
 
         $extension = new DoctrineOrmExtension($registry);
 
-        $this->assertEquals('run_open_code_query_resources_loader', $extension->getName());
+        $this->assertEquals('runopencode_query_resources_loader', $extension->getName());
     }
 
     /**

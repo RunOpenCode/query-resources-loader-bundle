@@ -28,12 +28,12 @@ class RegisterExecutorsCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->hasDefinition('run_open_code.query_resources_loader')) {
+        if ($container->hasDefinition('runopencode.query_resources_loader')) {
 
-            $definition = $container->getDefinition('run_open_code.query_resources_loader');
+            $definition = $container->getDefinition('runopencode.query_resources_loader');
             $executors = array();
 
-            foreach ($container->findTaggedServiceIds('run_open_code.query_resources_loader.executor') as $id => $tags) {
+            foreach ($container->findTaggedServiceIds('runopencode.query_resources_loader.executor') as $id => $tags) {
 
                 foreach ($tags as $attributes) {
 
@@ -50,8 +50,8 @@ class RegisterExecutorsCompilerPass implements CompilerPassInterface
                 throw new LogicException('At least one query executor is required to be registered, none found.');
             }
 
-            if ($container->hasParameter('run_open_code.query_resources_loader.default_executor')) {
-                $defaultExecutor = $container->getParameter('run_open_code.query_resources_loader.default_executor');
+            if ($container->hasParameter('runopencode.query_resources_loader.default_executor')) {
+                $defaultExecutor = $container->getParameter('runopencode.query_resources_loader.default_executor');
             } else {
                 $executors = array_values($executors);
                 $defaultExecutor = $executors[0];

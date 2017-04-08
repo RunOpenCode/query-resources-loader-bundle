@@ -23,22 +23,22 @@ class RegisterExecutorsCompilerPassTest extends AbstractCompilerPassTestCase
      */
     public function itRegisterDefaultExecutor()
     {
-        $this->setDefinition('run_open_code.query_resources_loader', new Definition());
+        $this->setDefinition('runopencode.query_resources_loader', new Definition());
 
         $executor = new Definition(DoctrineDbalExecutor::class, []);
         $executor
-            ->addTag('run_open_code.query_resources_loader.executor', ['name' => 'dummy_executor']);
+            ->addTag('runopencode.query_resources_loader.executor', ['name' => 'dummy_executor']);
 
         $this->setDefinition('executor', $executor);
 
         $this->compile();
 
-        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('run_open_code.query_resources_loader', 'registerExecutor', [
+        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader', 'registerExecutor', [
             new Reference('executor'),
             'dummy_executor'
         ]);
 
-        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('run_open_code.query_resources_loader', 'registerExecutor', [
+        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader', 'registerExecutor', [
             new Reference('executor'),
             'default'
         ]);
@@ -50,7 +50,7 @@ class RegisterExecutorsCompilerPassTest extends AbstractCompilerPassTestCase
      */
     public function itRequiresAtLeastOneExecutor()
     {
-        $this->setDefinition('run_open_code.query_resources_loader', new Definition());
+        $this->setDefinition('runopencode.query_resources_loader', new Definition());
         $this->compile();
     }
 
@@ -59,34 +59,34 @@ class RegisterExecutorsCompilerPassTest extends AbstractCompilerPassTestCase
      */
     public function itAllowsConfigurationOfDefaultExecutor()
     {
-        $this->setDefinition('run_open_code.query_resources_loader', new Definition());
+        $this->setDefinition('runopencode.query_resources_loader', new Definition());
 
         $executorOne = new Definition(DoctrineDbalExecutor::class, []);
         $executorOne
-            ->addTag('run_open_code.query_resources_loader.executor', ['name' => 'dummy_executor_one']);
+            ->addTag('runopencode.query_resources_loader.executor', ['name' => 'dummy_executor_one']);
 
         $this->setDefinition('executor_one', $executorOne);
 
         $executorTwo = new Definition(DoctrineDbalExecutor::class, []);
         $executorTwo
-            ->addTag('run_open_code.query_resources_loader.executor', ['name' => 'dummy_executor_two']);
+            ->addTag('runopencode.query_resources_loader.executor', ['name' => 'dummy_executor_two']);
 
         $this->setDefinition('executor_two', $executorTwo);
 
-        $this->setParameter('run_open_code.query_resources_loader.default_executor', 'executor_two');
+        $this->setParameter('runopencode.query_resources_loader.default_executor', 'executor_two');
 
         $this->compile();
 
-        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('run_open_code.query_resources_loader', 'registerExecutor', [
+        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader', 'registerExecutor', [
             new Reference('executor_one'),
             'dummy_executor_one'
         ]);
-        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('run_open_code.query_resources_loader', 'registerExecutor', [
+        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader', 'registerExecutor', [
             new Reference('executor_two'),
             'dummy_executor_two'
         ]);
 
-        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('run_open_code.query_resources_loader', 'registerExecutor', [
+        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader', 'registerExecutor', [
             new Reference('executor_two'),
             'default'
         ]);
@@ -98,21 +98,21 @@ class RegisterExecutorsCompilerPassTest extends AbstractCompilerPassTestCase
      */
     public function itContainsInvalidDefaultExecutorConfiguration()
     {
-        $this->setDefinition('run_open_code.query_resources_loader', new Definition());
+        $this->setDefinition('runopencode.query_resources_loader', new Definition());
 
         $executorOne = new Definition(DoctrineDbalExecutor::class, []);
         $executorOne
-            ->addTag('run_open_code.query_resources_loader.executor', ['name' => 'dummy_executor_one']);
+            ->addTag('runopencode.query_resources_loader.executor', ['name' => 'dummy_executor_one']);
 
         $this->setDefinition('executor_one', $executorOne);
 
         $executorTwo = new Definition(DoctrineDbalExecutor::class, []);
         $executorTwo
-            ->addTag('run_open_code.query_resources_loader.executor', ['name' => 'dummy_executor_two']);
+            ->addTag('runopencode.query_resources_loader.executor', ['name' => 'dummy_executor_two']);
 
         $this->setDefinition('executor_two', $executorTwo);
 
-        $this->setParameter('run_open_code.query_resources_loader.default_executor', 'non_existing');
+        $this->setParameter('runopencode.query_resources_loader.default_executor', 'non_existing');
 
         $this->compile();
     }

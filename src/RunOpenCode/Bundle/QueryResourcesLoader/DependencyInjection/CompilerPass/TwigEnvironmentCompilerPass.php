@@ -27,11 +27,11 @@ class TwigEnvironmentCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (false === $container->hasDefinition('run_open_code.query_resources_loader.twig')) {
+        if (false === $container->hasDefinition('runopencode.query_resources_loader.twig')) {
             return;
         }
 
-        $definition = $container->getDefinition('run_open_code.query_resources_loader.twig');
+        $definition = $container->getDefinition('runopencode.query_resources_loader.twig');
 
         // Extensions must always be registered before everything else.
         // For instance, global variable definitions must be registered
@@ -41,7 +41,7 @@ class TwigEnvironmentCompilerPass implements CompilerPassInterface
 
         $definition->setMethodCalls(array());
 
-        foreach ($container->findTaggedServiceIds('run_open_code.query_resources_loader.twig.extension') as $id => $attributes) {
+        foreach ($container->findTaggedServiceIds('runopencode.query_resources_loader.twig.extension') as $id => $attributes) {
             $definition->addMethodCall('addExtension', array(new Reference($id)));
         }
 

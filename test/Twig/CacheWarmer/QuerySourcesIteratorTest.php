@@ -10,8 +10,8 @@
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\Twig\CacheWarmer;
 
 use PHPUnit\Framework\TestCase;
-use RunOpenCode\Bundle\QueryResourcesLoader\Tests\DependencyInjection\Configuration\Fixtures\bundles\BarBundle\BarBundle;
-use RunOpenCode\Bundle\QueryResourcesLoader\Tests\DependencyInjection\Configuration\Fixtures\bundles\FooBundle\FooBundle;
+use RunOpenCode\Bundle\QueryResourcesLoader\Tests\Fixtures\Bundles\BarBundle\BarBundle;
+use RunOpenCode\Bundle\QueryResourcesLoader\Tests\Fixtures\Bundles\FooBundle\FooBundle;
 use RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer\QuerySourcesIterator;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -33,9 +33,9 @@ class QuerySourcesIteratorTest extends TestCase
                 new BarBundle()
             ]);
 
-        $iterator = new QuerySourcesIterator($kernel, __DIR__.'/../../DependencyInjection/Configuration/Fixtures/app', array(
-            __DIR__.'/../../DependencyInjection/Configuration/Fixtures/paths/path1' => 'custom-path-1',
-            __DIR__.'/../../DependencyInjection/Configuration/Fixtures/paths/path2' => 'custom-path-2',
+        $iterator = new QuerySourcesIterator($kernel, __DIR__ . '/../../Fixtures/app', array(
+            __DIR__ . '/../../Fixtures/paths/path1' => 'custom-path-1',
+            __DIR__ . '/../../Fixtures/paths/path2' => 'custom-path-2',
         ));
 
         $templates = array();

@@ -25,21 +25,21 @@ class TwigLoaderCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        if (false === $container->hasDefinition('run_open_code.query_resources_loader.twig')) {
+        if (false === $container->hasDefinition('runopencode.query_resources_loader.twig')) {
             return;
         }
 
         // register additional Query loaders
-        $loaderIds = $container->findTaggedServiceIds('run_open_code.query_resources_loader.twig.loader');
+        $loaderIds = $container->findTaggedServiceIds('runopencode.query_resources_loader.twig.loader');
 
         if (count($loaderIds) === 0) {
-            throw new LogicException('No twig loaders found. You need to tag at least one loader with "run_open_code.query_resources_loader.twig.loader"');
+            throw new LogicException('No twig loaders found. You need to tag at least one loader with "runopencode.query_resources_loader.twig.loader"');
         }
 
         if (count($loaderIds) === 1) {
-            $container->setAlias('run_open_code.query_resources_loader.twig.loader', key($loaderIds));
+            $container->setAlias('runopencode.query_resources_loader.twig.loader', key($loaderIds));
         } else {
-            $chainLoader = $container->getDefinition('run_open_code.query_resources_loader.twig.loader.chain');
+            $chainLoader = $container->getDefinition('runopencode.query_resources_loader.twig.loader.chain');
 
             $prioritizedLoaders = array();
 
@@ -58,7 +58,7 @@ class TwigLoaderCompilerPass implements CompilerPassInterface
                 }
             }
 
-            $container->setAlias('run_open_code.query_resources_loader.twig.loader', 'run_open_code.query_resources_loader.twig.loader.chain');
+            $container->setAlias('runopencode.query_resources_loader.twig.loader', 'runopencode.query_resources_loader.twig.loader.chain');
         }
     }
 }

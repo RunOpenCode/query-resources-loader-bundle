@@ -25,8 +25,8 @@ class ExecutorBuilderCompilerPassTest extends AbstractCompilerPassTestCase
         $this->setDefinition('doctrine.dbal.default_connection', new Definition());
         $this->compile();
 
-        $this->assertContainerBuilderHasService('run_open_code.query_resources_loader.executor.doctrine_dbal_default_connection_executor', DoctrineDbalExecutor::class);
-        $this->assertContainerBuilderHasServiceDefinitionWithTag('run_open_code.query_resources_loader.executor.doctrine_dbal_default_connection_executor', 'run_open_code.query_resources_loader.executor', [
+        $this->assertContainerBuilderHasService('runopencode.query_resources_loader.executor.doctrine_dbal_default_connection_executor', DoctrineDbalExecutor::class);
+        $this->assertContainerBuilderHasServiceDefinitionWithTag('runopencode.query_resources_loader.executor.doctrine_dbal_default_connection_executor', 'runopencode.query_resources_loader.executor', [
             'name' => 'doctrine_dbal_default_connection_executor'
         ]);
     }
@@ -39,7 +39,7 @@ class ExecutorBuilderCompilerPassTest extends AbstractCompilerPassTestCase
         $this->setDefinition('some_dummy_definition', new Definition());
 
         $this->compile();
-        $this->assertContainerBuilderNotHasService('run_open_code.query_resources_loader.executor.doctrine_dbal_default_connection_executor');
+        $this->assertContainerBuilderNotHasService('runopencode.query_resources_loader.executor.doctrine_dbal_default_connection_executor');
     }
     
     /**

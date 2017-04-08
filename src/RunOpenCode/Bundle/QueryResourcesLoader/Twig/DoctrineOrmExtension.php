@@ -28,7 +28,7 @@ class DoctrineOrmExtension extends \Twig_Extension
      */
     public function getName()
     {
-        return 'run_open_code_query_resources_loader';
+        return 'runopencode_query_resources_loader';
     }
 
     /**

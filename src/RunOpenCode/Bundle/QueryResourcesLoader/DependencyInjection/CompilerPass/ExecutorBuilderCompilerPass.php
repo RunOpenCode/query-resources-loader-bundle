@@ -39,11 +39,11 @@ class ExecutorBuilderCompilerPass implements CompilerPassInterface
                 ->setPublic(false)
             ;
 
-            $definition->addTag('run_open_code.query_resources_loader.executor', array(
+            $definition->addTag('runopencode.query_resources_loader.executor', array(
                 'name' => 'doctrine_dbal_default_connection_executor'
             ));
 
-            $container->setDefinition('run_open_code.query_resources_loader.executor.doctrine_dbal_default_connection_executor', $definition);
+            $container->setDefinition('runopencode.query_resources_loader.executor.doctrine_dbal_default_connection_executor', $definition);
         }
     }
 }

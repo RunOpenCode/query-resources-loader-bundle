@@ -31,7 +31,7 @@ class Extension extends BaseExtension
      */
     public function getAlias()
     {
-        return 'run_open_code_query_resources_loader';
+        return 'runopencode_query_resources_loader';
     }
 
     /**
@@ -70,7 +70,7 @@ class Extension extends BaseExtension
             ;
 
         if (null !== $config['default_executor']) {
-            $container->setParameter('run_open_code.query_resources_loader.default_executor', $config['default_executor']);
+            $container->setParameter('runopencode.query_resources_loader.default_executor', $config['default_executor']);
         }
 
         if (isset($config['twig']['autoescape_service'], $config['twig']['autoescape_service_method'])) {
@@ -79,7 +79,7 @@ class Extension extends BaseExtension
 
         unset($config['twig']['autoescape_service'], $config['twig']['autoescape_service_method'], $config['twig']['globals']);
 
-        $container->getDefinition('run_open_code.query_resources_loader.twig')->replaceArgument(1, $config['twig']);
+        $container->getDefinition('runopencode.query_resources_loader.twig')->replaceArgument(1, $config['twig']);
     }
 
     /**
@@ -89,9 +89,9 @@ class Extension extends BaseExtension
      */
     protected function configureTwigGlobals(array $config, ContainerBuilder $container)
     {
-        if (false !== $container->hasDefinition('run_open_code.query_resources_loader.twig') && !empty($config['twig']['globals'])) {
+        if (false !== $container->hasDefinition('runopencode.query_resources_loader.twig') && !empty($config['twig']['globals'])) {
 
-            $definition = $container->getDefinition('run_open_code.query_resources_loader.twig');
+            $definition = $container->getDefinition('runopencode.query_resources_loader.twig');
 
             foreach ($config['twig']['globals'] as $key => $global) {
 
@@ -113,7 +113,7 @@ class Extension extends BaseExtension
      */
     protected function configureTwigEnvironment(array $config, ContainerBuilder $container)
     {
-        $configurator = $container->getDefinition('run_open_code.query_resources_loader.twig.configurator.environment');
+        $configurator = $container->getDefinition('runopencode.query_resources_loader.twig.configurator.environment');
         $configurator->replaceArgument(0, $config['twig']['date']['format']);
         $configurator->replaceArgument(1, $config['twig']['date']['interval_format']);
         $configurator->replaceArgument(2, $config['twig']['date']['timezone']);
@@ -131,7 +131,7 @@ class Extension extends BaseExtension
      */
     protected function configureTwigWarmUpCommand(array $config, ContainerBuilder $container)
     {
-        $container->getDefinition('run_open_code.query_resources_loader.twig.query_sources_iterator')->replaceArgument(2, $config['twig']['paths']);
+        $container->getDefinition('runopencode.query_resources_loader.twig.query_sources_iterator')->replaceArgument(2, $config['twig']['paths']);
 
         return $this;
     }
@@ -143,7 +143,7 @@ class Extension extends BaseExtension
      */
     protected function configureTwigResourcePaths(array $config, ContainerBuilder $container)
     {
-        $twigFilesystemLoaderDefinition = $container->getDefinition('run_open_code.query_resources_loader.twig.loader.filesystem');
+        $twigFilesystemLoaderDefinition = $container->getDefinition('runopencode.query_resources_loader.twig.loader.filesystem');
 
         // register user-configured paths
         foreach ($config['twig']['paths'] as $path => $namespace) {
@@ -164,7 +164,7 @@ class Extension extends BaseExtension
      */
     protected function configureTwigBundlePaths(array $config, ContainerBuilder $container)
     {
-        $twigFilesystemLoaderDefinition = $container->getDefinition('run_open_code.query_resources_loader.twig.loader.filesystem');
+        $twigFilesystemLoaderDefinition = $container->getDefinition('runopencode.query_resources_loader.twig.loader.filesystem');
 
         $addTwigPath = function($dir, $bundle) use ($twigFilesystemLoaderDefinition) {
 
