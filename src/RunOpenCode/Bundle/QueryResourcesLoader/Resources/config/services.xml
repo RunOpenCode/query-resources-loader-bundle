@@ -55,7 +55,6 @@
         <service
                 id="runopencode.query_resources_loader"
                 class="%runopencode.query_resources_loader.manager.class%"
-                public="false"
         >
             <argument type="service" id="runopencode.query_resources_loader.twig" />
         </service>
