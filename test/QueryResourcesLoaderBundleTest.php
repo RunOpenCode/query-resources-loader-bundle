@@ -19,6 +19,8 @@ use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Extension;
 use RunOpenCode\Bundle\QueryResourcesLoader\QueryResourcesLoaderBundle;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
+use Symfony\Component\DependencyInjection\Compiler\ResolveClassPass;
+use Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class QueryResourcesLoaderBundleTest extends TestCase
@@ -50,6 +52,8 @@ class QueryResourcesLoaderBundleTest extends TestCase
         }, $passConfig->getBeforeOptimizationPasses());
 
         $this->assertEquals(array(
+            ResolveClassPass::class,
+            ResolveInstanceofConditionalsPass::class,
             TwigExtensionsCompilerPass::class,
             TwigEnvironmentCompilerPass::class,
             TwigLoaderCompilerPass::class,
