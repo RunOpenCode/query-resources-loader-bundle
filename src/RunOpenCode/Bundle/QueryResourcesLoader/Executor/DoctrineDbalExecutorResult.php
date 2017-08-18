@@ -212,17 +212,17 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
     /**
      * {@inheritdoc}
      */
-    public function fetch($fetchMode = null)
+    public function fetch($fetchMode = null, $cursorOrientation = \PDO::FETCH_ORI_NEXT, $cursorOffset = 0)
     {
-        return $this->statement->fetch($fetchMode);
+        return $this->statement->fetch($fetchMode, $cursorOrientation, $cursorOffset);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function fetchAll($fetchMode = null)
+    public function fetchAll($fetchMode = null, $fetchArgument = null, $ctorArgs = null)
     {
-        return $this->statement->fetchAll($fetchMode);
+        return $this->statement->fetchAll($fetchMode, $fetchArgument, $ctorArgs);
     }
 
     /**
