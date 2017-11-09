@@ -182,7 +182,7 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
      */
     public function getSingleRowOrNull()
     {
-        $this->getSingleRowOrDefault(null);
+        return $this->getSingleRowOrDefault(null);
     }
 
     /**
