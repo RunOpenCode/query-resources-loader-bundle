@@ -19,8 +19,6 @@ use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Extension;
 use RunOpenCode\Bundle\QueryResourcesLoader\QueryResourcesLoaderBundle;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
-use Symfony\Component\DependencyInjection\Compiler\ResolveClassPass;
-use Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class QueryResourcesLoaderBundleTest extends TestCase
@@ -47,19 +45,28 @@ class QueryResourcesLoaderBundleTest extends TestCase
          */
         $passConfig = $compiler->getCompiler()->getPassConfig();
 
-        $passes = array_map(function(CompilerPassInterface $compilerPass) {
-            return get_class($compilerPass);
-        }, $passConfig->getBeforeOptimizationPasses());
+        $passes = array_filter(array_map(function(CompilerPassInterface $compilerPass) {
+            $class = get_class($compilerPass);
 
-        $this->assertEquals(array(
-            ResolveClassPass::class,
-            ResolveInstanceofConditionalsPass::class,
+            if (0 === strpos($class, 'RunOpenCode')) {
+                return $class;
+            }
+
+            return null;
+        }, $passConfig->getBeforeOptimizationPasses()));
+
+        $expected = [
             TwigExtensionsCompilerPass::class,
             TwigEnvironmentCompilerPass::class,
             TwigLoaderCompilerPass::class,
             ExecutorBuilderCompilerPass::class,
             RegisterExecutorsCompilerPass::class,
-        ), $passes);
+        ];
+
+        sort($passes);
+        sort($expected);
+
+        $this->assertEquals($expected, $passes);
     }
 
     private function getBundle()
