@@ -1,20 +1,15 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Exception;
 
-/**
- * Class RuntimeException
- *
- * @package RunOpenCode\Bundle\QueryResourcesLoader\Exception
- */
-class RuntimeException extends Exception
-{
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExceptionInterface;
 
+class RuntimeException extends \RuntimeException implements ExceptionInterface
+{
+    public function __construct(string $message, \Throwable $previous = null)
+    {
+        parent::__construct($message, 0, $previous);
+    }
 }

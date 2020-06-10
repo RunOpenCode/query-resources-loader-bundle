@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="./vendor/autoload.php" colors="true">
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/8.5/phpunit.xsd"
+        backupGlobals="false"
+        colors="true"
+        bootstrap="vendor/autoload.php"
+        failOnRisky="true"
+        failOnWarning="true"
+>
+    <php>
+        <ini name="error_reporting" value="-1" />
+        <ini name="intl.error_level" value="0" />
+        <ini name="memory_limit" value="-1" />
+    </php>
 
     <testsuites>
 
         <testsuite name="QueryResourcesLoaderBundle test suite">
-            <directory suffix="Test.php">./test/</directory>
+            <directory>./tests/</directory>
         </testsuite>
 
     </testsuites>
@@ -23,7 +36,7 @@
         <log type="coverage-xml" target="./build/coverage/xml"/>
         <log type="coverage-clover" target="./build/logs/clover.xml"/>
         <log type="coverage-crap4j" target="./build/logs/crap4j.xml"/>
-        <log type="junit" target="./build/logs/junit.xml" logIncompleteSkipped="false"/>
+        <log type="junit" target="./build/logs/junit.xml"/>
     </logging>
 
 

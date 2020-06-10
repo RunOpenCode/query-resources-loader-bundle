@@ -20,11 +20,11 @@ Read the documentation [here](docs/index.md).
 Typical reporting repository that has a query within repository can be
 like as in example below:
 
-    class MyReportingRepository 
+    final class MyReportingRepository 
     {
-        protected $db;
+        private $db;
     
-        public function getInvocingReportData($year)
+        public function getInvocingReportData($year): iterable
         {
             $sql = 'SELECT 
                 
@@ -58,7 +58,7 @@ like as in example below:
                 [A lot of where statements and so on...]                                           
             ';
             
-            $this->db->execute($sql, array( 
+            return $this->db->execute($sql, array( 
                 'year' => $year 
             ));            
         }
@@ -66,11 +66,11 @@ like as in example below:
 
 With this bundle, you can store your queries in `Resources/query` directory
 as typical `.sql` file (or any other extension that your query language uses) 
-and load that query using `roc.query_loader` service, thus, decreasing amount
+and load that query using `runopencode.query_loader` service, thus, decreasing amount
 of code in your repository classes, or, even better, you can inject service
 into your repository:
 
-    class MyReportingRepository 
+    final class MyReportingRepository 
     {
         protected $manager;
         
@@ -99,20 +99,22 @@ so, if you are using Doctrine, you can use this *method out-of-the-box*.
 Otherwise, you may provide your own executor (see full documentation 
 regarding this topic). Here is our improved repository:
 
-    class MyReportingRepository 
+    use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface;
+
+    final class MyReportingRepository 
     {
-        protected $manager;
+        private ManagerInterface $manager;
     
-        public function __construct(\RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface $manager)
+        public function __construct(ManagerInterface $manager)
         {            
             $this->manager = $manager;           
         }
         
-        public function getInvocingReportData($year)
+        public function getInvocingReportData($year): iterable
         {
-            $sql = $this->manager->execute('@BundleName/name_of_file_with_sql_query.sql', array(
+            return $this->manager->execute('@BundleName/name_of_file_with_sql_query.sql', [
                 'year' => $year
-            ));
+            ]);
         }
     }
 

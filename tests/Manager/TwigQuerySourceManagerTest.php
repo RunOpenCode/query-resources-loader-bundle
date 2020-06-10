@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\ExecutionException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor;
-use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutorResult;
+use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutionResult;
 use RunOpenCode\Bundle\QueryResourcesLoader\Manager\TwigQuerySourceManager;
 
 class TwigQuerySourceManagerTest extends TestCase
@@ -89,7 +89,7 @@ class TwigQuerySourceManagerTest extends TestCase
      */
     public function itCanExecute()
     {
-        $this->assertInstanceOf(DoctrineDbalExecutorResult::class, $this->getManager()->execute('@test/query-1'));
+        $this->assertInstanceOf(DoctrineDbalExecutionResult::class, $this->getManager()->execute('@test/query-1'));
     }
 
     /**

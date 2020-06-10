@@ -1,12 +1,7 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -14,18 +9,14 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * Class TwigEnvironmentCompilerPass
- *
  * Builds Twig environment, registers its extensions.
- *
- * @package RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass
  */
-class TwigEnvironmentCompilerPass implements CompilerPassInterface
+final class TwigEnvironmentCompilerPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (false === $container->hasDefinition('runopencode.query_resources_loader.twig')) {
             return;
@@ -37,14 +28,15 @@ class TwigEnvironmentCompilerPass implements CompilerPassInterface
         // For instance, global variable definitions must be registered
         // afterward. If not, the globals from the extensions will never
         // be registered.
-        $calls = $definition->getMethodCalls();
+        $calls             = $definition->getMethodCalls();
+        $extensionServices = $container->findTaggedServiceIds('runopencode.query_resources_loader.twig.extension');
 
-        $definition->setMethodCalls(array());
+        $definition->setMethodCalls([]);
 
-        foreach ($container->findTaggedServiceIds('runopencode.query_resources_loader.twig.extension') as $id => $attributes) {
-            $definition->addMethodCall('addExtension', array(new Reference($id)));
+        foreach ($extensionServices as $id => $attributes) {
+            $definition->addMethodCall('addExtension', [new Reference($id)]);
         }
 
-        $definition->setMethodCalls(array_merge($definition->getMethodCalls(), $calls));
+        $definition->setMethodCalls(\array_merge($definition->getMethodCalls(), $calls));
     }
 }

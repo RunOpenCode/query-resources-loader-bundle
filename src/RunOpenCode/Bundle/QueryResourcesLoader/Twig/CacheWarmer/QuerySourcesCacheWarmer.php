@@ -1,43 +1,37 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
+use Twig\Environment;
+use Twig\Error\Error;
 
 /**
- * Class QuerySourcesCacheWarmer
- *
  * Warms up queries cache.
- *
- * @package RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer
  */
-class QuerySourcesCacheWarmer implements CacheWarmerInterface
+final class QuerySourcesCacheWarmer implements CacheWarmerInterface
 {
-    private $twig;
-    private $iterator;
+    private Environment $twig;
 
-    public function __construct(\Twig_Environment $twig, \Traversable $iterator)
+    private iterable $iterator;
+
+    public function __construct(Environment $twig, iterable $iterator)
     {
-        $this->twig = $twig;
+        $this->twig     = $twig;
         $this->iterator = $iterator;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function warmUp($cacheDir)
+    public function warmUp(string $cacheDir): void
     {
         foreach ($this->iterator as $template) {
             try {
                 $this->twig->load($template);
-            } catch (\Twig_Error $e) {
+            } catch (Error $error) {
                 // noop
             }
         }
@@ -46,7 +40,7 @@ class QuerySourcesCacheWarmer implements CacheWarmerInterface
     /**
      * {@inheritdoc}
      */
-    public function isOptional()
+    public function isOptional(): bool
     {
         return true;
     }

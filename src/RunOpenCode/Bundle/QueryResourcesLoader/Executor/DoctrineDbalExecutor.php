@@ -1,30 +1,24 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor;
 
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Statement;
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
 use Doctrine\DBAL\Connection;
 
 /**
- * Class DoctrineDbalExecutor
- *
  * Doctrine Dbal query executor.
- *
- * @package RunOpenCode\Bundle\QueryResourcesLoader\Executor
  */
-class DoctrineDbalExecutor implements ExecutorInterface
+final class DoctrineDbalExecutor implements ExecutorInterface
 {
     /**
      * @var Connection
      */
-    private $connection;
+    private Connection $connection;
 
     public function __construct(Connection $connection)
     {
@@ -33,9 +27,14 @@ class DoctrineDbalExecutor implements ExecutorInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @throws DBALException
      */
-    public function execute($query, array $parameters = array(), array $types = array())
+    public function execute(string $query, array $parameters = [], array $types = []): ExecutionResultInterface
     {
-        return new DoctrineDbalExecutorResult($this->connection->executeQuery($query, $parameters, $types));
+        /** @var Statement $statement */
+        $statement = $this->connection->executeQuery($query, $parameters, $types);
+
+        return new DoctrineDbalExecutionResult($statement);
     }
 }

@@ -1,12 +1,7 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -15,50 +10,46 @@ use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * Class TwigLoaderCompilerPass
- *
  * Process Twig loaders.
- *
- * @package RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass
  */
-class TwigLoaderCompilerPass implements CompilerPassInterface
+final class TwigLoaderCompilerPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
-        if (false === $container->hasDefinition('runopencode.query_resources_loader.twig')) {
+        if (!$container->hasDefinition('runopencode.query_resources_loader.twig')) {
             return;
         }
 
         // register additional Query loaders
         $loaderIds = $container->findTaggedServiceIds('runopencode.query_resources_loader.twig.loader');
 
-        if (count($loaderIds) === 0) {
+        if (0 === \count($loaderIds)) {
             throw new LogicException('No twig loaders found. You need to tag at least one loader with "runopencode.query_resources_loader.twig.loader"');
         }
 
-        if (count($loaderIds) === 1) {
-            $container->setAlias('runopencode.query_resources_loader.twig.loader', key($loaderIds));
-        } else {
-            $chainLoader = $container->getDefinition('runopencode.query_resources_loader.twig.loader.chain');
-
-            $prioritizedLoaders = array();
-
-            foreach ($loaderIds as $id => $tags) {
-                foreach ($tags as $tag) {
-                    $priority = isset($tag['priority']) ? $tag['priority'] : 0;
-                    $prioritizedLoaders[$priority][] = $id;
-                }
-            }
-
-            krsort($prioritizedLoaders);
-
-            foreach ($prioritizedLoaders as $loaders) {
-                foreach ($loaders as $loader) {
-                    $chainLoader->addMethodCall('addLoader', array(new Reference($loader)));
-                }
-            }
-
-            $container->setAlias('runopencode.query_resources_loader.twig.loader', 'runopencode.query_resources_loader.twig.loader.chain');
+        if (1 === \count($loaderIds)) {
+            $container->setAlias('runopencode.query_resources_loader.twig.loader', \key($loaderIds));
+            return;
         }
+
+        $chainLoader        = $container->getDefinition('runopencode.query_resources_loader.twig.loader.chain');
+        $prioritizedLoaders = [];
+
+        foreach ($loaderIds as $id => $tags) {
+            foreach ($tags as $tag) {
+                $priority                        = $tag['priority'] ?? 0;
+                $prioritizedLoaders[$priority][] = $id;
+            }
+        }
+
+        \krsort($prioritizedLoaders);
+
+        foreach ($prioritizedLoaders as $loaders) {
+            foreach ($loaders as $loader) {
+                $chainLoader->addMethodCall('addLoader', [new Reference($loader)]);
+            }
+        }
+
+        $container->setAlias('runopencode.query_resources_loader.twig.loader', 'runopencode.query_resources_loader.twig.loader.chain');
     }
 }

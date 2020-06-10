@@ -1,67 +1,78 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Manager;
 
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExceptionInterface;
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\ExecutionException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\RuntimeException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\SourceNotFoundException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\SyntaxException;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\SyntaxError;
 
 /**
- * Class TwigQuerySourceManager
- *
  * Twig powered query executor.
- *
- * @package RunOpenCode\Bundle\QueryResourcesLoader\Manager
  */
-class TwigQuerySourceManager implements ManagerInterface
+final class TwigQuerySourceManager implements ManagerInterface
 {
-    /**
-     * @var \Twig_Environment
-     */
-    protected $twig;
+    private Environment $twig;
 
     /**
-     * @var ExecutorInterface[]
+     * @var array<string, ExecutorInterface>
      */
-    protected $executors;
+    private array $executors;
 
-    public function __construct(\Twig_Environment $twig)
+    public function __construct(Environment $twig, iterable $executors = [])
     {
-        $this->twig = $twig;
-        $this->executors = array();
+        $this->twig      = $twig;
+        $this->executors = [];
+
+        foreach ($executors as $name => $executor) {
+            $this->registerExecutor($executor, $name);
+        }
+    }
+
+    /**
+     * Register query executor.
+     *
+     * @param ExecutorInterface $executor
+     * @param string            $name
+     */
+    public function registerExecutor(ExecutorInterface $executor, string $name): void
+    {
+        $this->executors[$name] = $executor;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @throws SourceNotFoundException
+     * @throws SyntaxException
+     * @throws RuntimeException
      */
-    public function get($name, array $args = array())
+    public function get(string $name, array $args = []): string
     {
         try {
             return $this->twig->render($name, $args);
-        } catch (\Twig_Error_Loader $e) {
+        } catch (LoaderError $e) {
             throw new SourceNotFoundException(sprintf('Could not find query source: "%s".', $name), 0, $e);
-        } catch (\Twig_Error_Syntax $e) {
+        } catch (SyntaxError $e) {
             throw new SyntaxException(sprintf('Query source "%s" contains Twig syntax error and could not be compiled.', $name), 0, $e);
         } catch (\Exception $e) {
-            throw new RuntimeException('Unknown exception occured', 0, $e);
+            throw new RuntimeException('Unknown exception occurred', 0, $e);
         }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function has($name)
+    public function has(string $name): bool
     {
         return $this->twig->getLoader()->exists($name);
     }
@@ -72,37 +83,32 @@ class TwigQuerySourceManager implements ManagerInterface
      * @throws RuntimeException
      * @throws ExecutionException
      */
-    public function execute($name, array $args = array(), array $types = array(), $executor = 'default')
+    public function execute(string $name, array $args = [], array $types = [], ?string $executor = null): ExecutionResultInterface
     {
-        if (!array_key_exists($executor, $this->executors)) {
+        if (null === $executor) {
+            $executor = (string)\array_key_first($this->executors);
+        }
+
+        if (!\array_key_exists($executor, $this->executors)) {
             throw new RuntimeException(sprintf('Requested executor "%s" does not exists.', $executor));
         }
 
-        $executor = $this->executors[$executor];
+        /** @var ExecutorInterface $executorInstance */
+        $executorInstance = $this->executors[$executor];
 
         try {
-            /**
-             * @var ExecutorInterface $executor
-             */
-            return $executor->execute($this->get($name, $args), $args, $types);
-        } catch (\Exception $e) {
+            return $executorInstance->execute($this->get($name, $args), $args, $types);
+        } catch (\Exception $exception) {
 
-            if ($e instanceof ExceptionInterface) {
-                throw $e;
+            if ($exception instanceof ExceptionInterface) {
+                throw $exception;
             }
 
-            throw new ExecutionException(sprintf('Query "%s" could not be executed.', $name), 0, $e);
+            throw new ExecutionException(\sprintf(
+                'Query "%s" could not be executed.',
+                $name
+            ), $exception);
         }
     }
 
-    /**
-     * Register query executor.
-     *
-     * @param ExecutorInterface $executor
-     * @param string $name
-     */
-    public function registerExecutor(ExecutorInterface $executor, $name)
-    {
-        $this->executors[$name] = $executor;
-    }
 }

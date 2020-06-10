@@ -1,74 +1,75 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer;
 
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
- * Class QuerySourcesIterator
- *
  * Iterator for all query resources in bundles and in the application Resources/query directory.
- *
- * @package RunOpenCode\Bundle\QueryResourcesLoader\Twig
  */
-class QuerySourcesIterator implements \IteratorAggregate
+final class QuerySourcesIterator implements \IteratorAggregate
 {
-    private $kernel;
-    private $rootDir;
-    private $queries;
-    private $paths;
+    private KernelInterface $kernel;
+
+    private string $projectDirectory;
 
     /**
-     * @param KernelInterface $kernel  A KernelInterface instance
-     * @param string          $rootDir The directory where global query sources can be stored
-     * @param array           $paths   Additional Twig paths to warm
+     * @var string[]
      */
-    public function __construct(KernelInterface $kernel, $rootDir, array $paths = array())
+    private array $paths;
+
+    /**
+     * @var string[]
+     */
+    private array $queries;
+
+    /**
+     * @param KernelInterface $kernel           A KernelInterface instance
+     * @param string          $projectDirectory The directory where global query sources can be stored
+     * @param array           $paths            Additional Twig paths to warm
+     */
+    public function __construct(KernelInterface $kernel, string $projectDirectory, array $paths = [])
     {
-        $this->kernel = $kernel;
-        $this->rootDir = $rootDir;
-        $this->paths = $paths;
+        $this->kernel           = $kernel;
+        $this->projectDirectory = $projectDirectory;
+        $this->paths            = $paths;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
-        if (null !== $this->queries) {
-            return $this->queries;
-        }
+        if (!isset($this->queries)) {
+            $this->queries = $this->findQuerySourcesInDirectory($this->projectDirectory . '/query');
+            $bundles       = $this->kernel->getBundles();
+            $bundleQueries = [];
+            $pathQueries   = [];
 
-        $this->queries = $this->findQuerySourcesInDirectory($this->rootDir.'/Resources/query');
+            foreach ($bundles as $bundle) {
 
-        foreach ($this->kernel->getBundles() as $bundle) {
+                $name = $bundle->getName();
 
-            $name = $bundle->getName();
+                if ('Bundle' === substr($name, -6)) {
+                    $name = substr($name, 0, -6);
+                }
 
-            if ('Bundle' === substr($name, -6)) {
-                $name = substr($name, 0, -6);
+                $bundleQueries[] = $this->findQuerySourcesInDirectory($bundle->getPath() . '/Resources/query', $name);
+                $bundleQueries[] = $this->findQuerySourcesInDirectory($this->projectDirectory . '/bundles/query/' . $bundle->getName());
             }
 
-            $this->queries = array_merge(
-                $this->queries,
-                $this->findQuerySourcesInDirectory($bundle->getPath().'/Resources/query', $name),
-                $this->findQuerySourcesInDirectory($this->rootDir.'/'.$bundle->getName().'/query', $name)
-            );
+            foreach ($this->paths as $path) {
+                $pathQueries[] = $this->findQuerySourcesInDirectory($path);
+            }
+
+            $this->queries = \array_merge($this->queries, ...$bundleQueries, ...$pathQueries);
         }
 
-        foreach ($this->paths as $dir => $namespace) {
-            $this->queries = array_merge($this->queries, $this->findQuerySourcesInDirectory($dir, $namespace));
-        }
-
-        return $this->queries = new \ArrayIterator(array_unique($this->queries));
+        return new \ArrayIterator($this->queries);
     }
 
     /**
@@ -77,23 +78,23 @@ class QuerySourcesIterator implements \IteratorAggregate
      * @param string      $dir       The directory where to look for query sources
      * @param string|null $namespace The query source namespace
      *
-     * @return array
+     * @return string[]
      */
-    private function findQuerySourcesInDirectory($dir, $namespace = null)
+    private function findQuerySourcesInDirectory(string $dir, ?string $namespace = null): array
     {
-        if (!is_dir($dir)) {
-            return array();
+        if (!\is_dir($dir)) {
+            return [];
         }
 
-        $templates = array();
+        $templates = [];
 
         /**
-         * @var \Symfony\Component\Finder\SplFileInfo[] $files
+         * @var SplFileInfo[] $files
          */
         $files = Finder::create()->files()->followLinks()->in($dir);
 
         foreach ($files as $file) {
-            $templates[] = (null !== $namespace ? '@'.$namespace.'/' : '').str_replace('\\', '/', $file->getRelativePathname());
+            $templates[] = (null !== $namespace ? '@' . $namespace . '/' : '') . str_replace('\\', '/', $file->getRelativePathname());
         }
 
         return $templates;

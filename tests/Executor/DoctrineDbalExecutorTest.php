@@ -13,7 +13,7 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\Schema;
 use PHPUnit\Framework\TestCase;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor;
-use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutorResult;
+use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutionResult;
 
 class DoctrineDbalExecutorTest extends TestCase
 {
@@ -61,7 +61,7 @@ class DoctrineDbalExecutorTest extends TestCase
     {
         $result = $this->executor->execute('SELECT * FROM test', array());
 
-        $this->assertInstanceOf(DoctrineDbalExecutorResult::class, $result);
+        $this->assertInstanceOf(DoctrineDbalExecutionResult::class, $result);
     }
 
     /**
@@ -159,7 +159,7 @@ class DoctrineDbalExecutorTest extends TestCase
         $this->assertEquals([
             'id' => 3, 'title' => 'Some title 3', 'description' => 'Some description 3',
             0 => 3, 1 => 'Some title 3', 2 => 'Some description 3'
-        ], $result->getSingleRowResult());
+        ], $result->getSingleResult());
     }
 
     /**
@@ -171,7 +171,7 @@ class DoctrineDbalExecutorTest extends TestCase
     {
         $result = $this->executor->execute('SELECT * FROM test;', array());
 
-        $result->getSingleRowResult();
+        $result->getSingleResult();
     }
 
     /**
@@ -183,7 +183,7 @@ class DoctrineDbalExecutorTest extends TestCase
     {
         $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
 
-        $result->getSingleRowResult();
+        $result->getSingleResult();
     }
 
     /**
@@ -193,7 +193,7 @@ class DoctrineDbalExecutorTest extends TestCase
     {
         $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
 
-        $this->assertTrue($result->getSingleRowOrDefault(true));
+        $this->assertTrue($result->getSingleResultOrDefault(true));
     }
 
     /**

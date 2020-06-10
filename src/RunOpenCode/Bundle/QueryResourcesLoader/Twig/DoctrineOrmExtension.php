@@ -1,24 +1,21 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Twig;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\MappingException;
+use Doctrine\Persistence\ManagerRegistry;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
-class DoctrineOrmExtension extends \Twig_Extension
+final class DoctrineOrmExtension extends AbstractExtension
 {
-    /**
-     * @var RegistryInterface
-     */
-    private $doctrine;
+    private ManagerRegistry $doctrine;
 
-    public function __construct(RegistryInterface $doctrine)
+    public function __construct(ManagerRegistry $doctrine)
     {
         $this->doctrine = $doctrine;
     }
@@ -26,69 +23,80 @@ class DoctrineOrmExtension extends \Twig_Extension
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getFunctions(): array
     {
-        return 'runopencode_query_resources_loader';
+        return [
+            new TwigFunction('table_name', \Closure::bind(function ($entity) {
+                return $this->getTableName($entity);
+            }, $this)),
+            new TwigFunction('join_table_name', \Closure::bind(function ($field, $entity) {
+                return $this->getJoinTableName($field, $entity);
+            }, $this)),
+            new TwigFunction('column_name', \Closure::bind(function ($field, $entity) {
+                return $this->getColumnName($field, $entity);
+            }, $this)),
+        ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getFunctions()
+    public function getFilters(): array
     {
-        return array(
-            new \Twig_SimpleFunction('table_name', \Closure::bind(function($entity) {
+        return [
+            new TwigFilter('table_name', \Closure::bind(function ($entity) {
                 return $this->getTableName($entity);
             }, $this)),
-            new \Twig_SimpleFunction('column_name', \Closure::bind(function($field, $entity) {
-                return $this->getColumnName($field, $entity);
-            }, $this))
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFilters()
-    {
-        return array(
-            new \Twig_SimpleFilter('table_name', \Closure::bind(function($entity) {
-                return $this->getTableName($entity);
+            new TwigFilter('join_table_name', \Closure::bind(function ($field, $entity) {
+                return $this->getJoinTableName($field, $entity);
             }, $this)),
-            new \Twig_SimpleFilter('column_name', \Closure::bind(function($field, $entity) {
+            new TwigFilter('column_name', \Closure::bind(function ($field, $entity) {
                 return $this->getColumnName($field, $entity);
-            }, $this))
-        );
+            }, $this)),
+        ];
     }
 
     /**
      * Get table name for entity
      *
-     * @param string|object $entity Entity
+     * @param string $entity Entity
+     *
      * @return string
      */
-    protected function getTableName($entity)
+    private function getTableName(string $entity): string
     {
-        if (is_object($entity)) {
-            $entity = get_class($entity);
-        }
-
         return $this->doctrine->getManagerForClass($entity)->getClassMetadata($entity)->getTableName();
     }
 
     /**
      * Get column name for property of the entity
      *
-     * @param string $field Entity property
-     * @param string|object $entity
+     * @param string $field  Entity property
+     * @param string $entity Entity
+     *
      * @return string
      */
-    protected function getColumnName($field, $entity)
+    private function getColumnName(string $field, string $entity): string
     {
-        if (is_object($entity)) {
-            $entity = get_class($entity);
-        }
-
         return $this->doctrine->getManagerForClass($entity)->getClassMetadata($entity)->getColumnName($field);
+    }
+
+    /**
+     * Get join table name name for property of the entity
+     *
+     * @param string $field  Entity property
+     * @param string $entity Entity
+     *
+     * @return string
+     *
+     * @throws MappingException
+     */
+    private function getJoinTableName(string $field, string $entity): string
+    {
+        /** @var ClassMetadataInfo $metadata */
+        $metadata = $this->doctrine->getManagerForClass($entity)->getClassMetadata($entity);
+        $mapping  = $metadata->getAssociationMapping($field);
+
+        return $mapping['joinTable']['name'];
     }
 }

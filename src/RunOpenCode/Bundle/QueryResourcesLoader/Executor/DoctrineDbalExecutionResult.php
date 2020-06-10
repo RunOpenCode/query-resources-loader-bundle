@@ -1,51 +1,27 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor;
 
 use Doctrine\DBAL\Driver\Statement;
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
 
 /**
- * Class DoctrineDbalExecutorResult
- *
  * Doctrine Dbal executor result statement wrapper that provides you with useful methods when fetching results from
  * SELECT statement.
- *
- * @package RunOpenCode\Bundle\QueryResourcesLoader\Executor
  */
-final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
+final class DoctrineDbalExecutionResult implements ExecutionResultInterface, Statement
 {
-    /**
-     * @var Statement
-     */
-    private $statement;
+    private Statement $statement;
 
-    /**
-     * DoctrineDbalExecutorResult constructor.
-     *
-     * @param Statement $statement Wrapped statement.
-     */
     public function __construct(Statement $statement)
     {
         $this->statement = $statement;
     }
 
-    /**
-     * Get single scalar result.
-     *
-     * @return mixed A single scalar value.
-     *
-     * @throws NoResultException
-     * @throws NonUniqueResultException
-     */
     public function getSingleScalarResult()
     {
         $scalar = $this->statement->fetchColumn(0);
@@ -61,13 +37,6 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
         return $scalar;
     }
 
-    /**
-     * Get single scalar result or default value if there are no results of executed
-     * SELECT statement.
-     *
-     * @param mixed $default A default single scalar value.
-     * @return mixed A single scalar value.
-     */
     public function getSingleScalarResultOrDefault($default)
     {
         try {
@@ -77,22 +46,11 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
         }
     }
 
-    /**
-     * Get single scalar result or NULL value if there are no results of executed
-     * SELECT statement.
-     *
-     * @return mixed|null A single scalar value.
-     */
     public function getSingleScalarResultOrNull()
     {
         return $this->getSingleScalarResultOrDefault(null);
     }
 
-    /**
-     * Get collection of scalar values.
-     *
-     * @return array A collection of scalar values.
-     */
     public function getScalarResult()
     {
         $result = [];
@@ -104,12 +62,6 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
         return $result;
     }
 
-    /**
-     * Get collection of scalar vales, or default value if collection is empty.
-     *
-     * @param mixed $default A default value.
-     * @return array|mixed A collection of scalar values or default value.
-     */
     public function getScalarResultOrDefault($default)
     {
         $result = $this->getScalarResult();
@@ -121,25 +73,12 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
         return $result;
     }
 
-    /**
-     * Get collection of scalar vales, or NULL value if collection is empty.
-     *
-     * @return array|mixed A collection of NULL value.
-     */
     public function getScalarResultOrNull()
     {
         return $this->getScalarResultOrDefault(null);
     }
 
-    /**
-     * Get single (first) row result from result set.
-     *
-     * @return array A single (first) row of result set.
-     *
-     * @throws NoResultException
-     * @throws NonUniqueResultException
-     */
-    public function getSingleRowResult()
+    public function getSingleResult()
     {
         $row = $this->statement->fetch(\PDO::FETCH_BOTH);
 
@@ -154,41 +93,24 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
         return $row;
     }
 
-    /**
-     * Get single (first) row result from result set or default value if result set is empty.
-     *
-     * @param mixed $default Default value if result set is empty.
-     * @return array|mixed A single (first) row of result set.
-     *
-     * @throws NoResultException
-     * @throws NonUniqueResultException
-     */
-    public function getSingleRowOrDefault($default)
+    public function getSingleResultOrDefault($default)
     {
         try {
-            return $this->getSingleRowResult();
+            return $this->getSingleResult();
         } catch (NoResultException $e) {
             return $default;
         }
     }
 
-    /**
-     * Get single (first) row result from result set or NULL value if result set is empty.
-     *
-     * @return array A single (first) row of result set.
-     *
-     * @throws NoResultException
-     * @throws NonUniqueResultException
-     */
-    public function getSingleRowOrNull()
+    public function getSingleResultOrNull()
     {
-        return $this->getSingleRowOrDefault(null);
+        return $this->getSingleResultOrDefault(null);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function closeCursor()
+    public function closeCursor(): bool
     {
         return $this->statement->closeCursor();
     }
@@ -196,7 +118,7 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
     /**
      * {@inheritdoc}
      */
-    public function columnCount()
+    public function columnCount(): int
     {
         return $this->statement->columnCount();
     }
@@ -204,7 +126,7 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
     /**
      * {@inheritdoc}
      */
-    public function setFetchMode($fetchMode, $arg2 = null, $arg3 = null)
+    public function setFetchMode($fetchMode, $arg2 = null, $arg3 = null): bool
     {
         return $this->statement->setFetchMode($fetchMode, $arg2, $arg3);
     }
@@ -265,9 +187,6 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
         return $this->statement->errorInfo();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute($params = null)
     {
         return $this->statement->execute($params);
@@ -284,13 +203,35 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
     /**
      * {@inheritdoc}
      */
+    public function getIterator(): \Traversable
+    {
+        while (false !== ($row = $this->statement->fetch(\PDO::FETCH_BOTH))) {
+            yield $row;
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function count(): int
+    {
+        if (0 === $this->statement->columnCount()) {
+            return $this->statement->rowCount();
+        }
+
+        return \count(\iterator_to_array($this->fetchAll()));
+    }
+
+    /**
+     * Proxy to public properties
+     */
     public function __get($name)
     {
         return $this->statement->{$name};
     }
 
     /**
-     * {@inheritdoc}
+     * Proxy to public properties
      */
     public function __set($name, $value)
     {
@@ -298,7 +239,7 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
     }
 
     /**
-     * {@inheritdoc}
+     * Proxy to public properties
      */
     public function __isset($name)
     {
@@ -306,20 +247,10 @@ final class DoctrineDbalExecutorResult implements \IteratorAggregate, Statement
     }
 
     /**
-     * {@inheritdoc}
+     * Proxy to public methods.
      */
     public function __call($name, $arguments)
     {
-        return call_user_func_array(array($this->statement, $name), $arguments);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIterator()
-    {
-        while (false !== ($row = $this->statement->fetch(\PDO::FETCH_BOTH))) {
-            yield $row;
-        }
+        return call_user_func_array([$this->statement, $name], $arguments);
     }
 }

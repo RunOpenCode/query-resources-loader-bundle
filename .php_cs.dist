@@ -1,0 +1,9 @@
+<?php
+
+$paths  = [
+    __DIR__ . '/src',
+    __DIR__ . '/tests',
+];
+$finder = PhpCsFixer\Finder::create()->in($paths);
+
+return PhpCsFixer\Config::create()->setFinder($finder);

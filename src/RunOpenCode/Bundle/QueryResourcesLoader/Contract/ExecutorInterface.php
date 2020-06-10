@@ -1,30 +1,22 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Contract;
 
 /**
- * Interface ExecutorInterface
- *
  * Executor executes query in native environment.
- *
- * @package RunOpenCode\Bundle\QueryResourcesLoader\Contract
  */
 interface ExecutorInterface
 {
     /**
      * Execute query.
      *
-     * @param string $query Query to execute.
-     * @param array $parameters Parameters required for query.
-     * @param array $types Parameter types required for query.
-     * @return mixed Result of execution.
+     * @param string                $query      Query to execute.
+     * @param array<string, mixed>  $parameters Parameters required for query.
+     * @param array<string, string> $types      Parameter types required for query.
+     *
+     * @return ExecutionResultInterface Result of execution.
      */
-    public function execute($query, array $parameters = array(), array $types = array());
+    public function execute(string $query, array $parameters = [], array $types = []): ExecutionResultInterface;
 }

@@ -1,12 +1,7 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -15,56 +10,54 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 
 /**
- * Class RegisterExecutorsCompilerPass
- *
  * Registers query executors.
- *
- * @package RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass
  */
-class RegisterExecutorsCompilerPass implements CompilerPassInterface
+final class RegisterExecutorsCompilerPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
-        if ($container->hasDefinition('runopencode.query_resources_loader')) {
+        if (!$container->hasDefinition('runopencode.query_resources_loader')) {
+            return;
+        }
 
-            $definition = $container->getDefinition('runopencode.query_resources_loader');
-            $executors = array();
+        $definition     = $container->getDefinition('runopencode.query_resources_loader');
+        $taggedServices = $container->findTaggedServiceIds('runopencode.query_resources_loader.executor');
+        $executors      = [];
 
-            foreach ($container->findTaggedServiceIds('runopencode.query_resources_loader.executor') as $id => $tags) {
+        foreach ($taggedServices as $id => $tags) {
 
-                foreach ($tags as $attributes) {
+            foreach ($tags as $attributes) {
 
-                    $definition->addMethodCall('registerExecutor', array(
-                            new Reference($id),
-                            $attributes['name']
-                    ));
+                $definition->addMethodCall('registerExecutor', [
+                    new Reference($id),
+                    $attributes['name'],
+                ]);
 
-                    $executors[$attributes['name']] = $id;
-                }
+                $executors[$attributes['name']] = $id;
             }
+        }
 
-            if (0 === count($executors)) {
-                throw new LogicException('At least one query executor is required to be registered, none found.');
-            }
+        if (0 === \count($executors)) {
+            throw new LogicException('At least one query executor is required to be registered, none found.');
+        }
 
-            if ($container->hasParameter('runopencode.query_resources_loader.default_executor')) {
-                $defaultExecutor = $container->getParameter('runopencode.query_resources_loader.default_executor');
-            } else {
-                $executors = array_values($executors);
-                $defaultExecutor = $executors[0];
-            }
+        $defaultExecutor = $container->hasParameter('runopencode.query_resources_loader.default_executor')
+            ? $container->getParameter('runopencode.query_resources_loader.default_executor')
+            : \array_values($executors)[0];
 
-            if (!$container->hasDefinition($defaultExecutor)) {
-                throw new LogicException(sprintf('Default query executor "%s" can not be found.', $defaultExecutor));
-            }
-
-            $definition->addMethodCall('registerExecutor', array(
-                new Reference($defaultExecutor),
-                'default'
+        if (!$container->hasDefinition($defaultExecutor)) {
+            throw new LogicException(\sprintf(
+                'Default query executor "%s" can not be found.',
+                $defaultExecutor
             ));
         }
+
+        $definition->addMethodCall('registerExecutor', [
+            new Reference($defaultExecutor),
+            'default',
+        ]);
     }
 }

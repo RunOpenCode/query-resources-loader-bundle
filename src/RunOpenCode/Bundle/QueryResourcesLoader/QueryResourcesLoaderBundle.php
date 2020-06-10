@@ -1,12 +1,7 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader;
 
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\ExecutorBuilderCompilerPass;
@@ -16,21 +11,15 @@ use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\Twi
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\TwigLoaderCompilerPass;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-/**
- * Class QueryResourcesLoaderBundle
- *
- * A bundle.
- *
- * @package RunOpenCode\Bundle\QueryResourcesLoader
- */
-class QueryResourcesLoaderBundle extends Bundle
+final class QueryResourcesLoaderBundle extends Bundle
 {
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension()
+    public function getContainerExtension(): ExtensionInterface
     {
         return new Extension();
     }
@@ -38,14 +27,12 @@ class QueryResourcesLoaderBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
-        $container
-            ->addCompilerPass(new TwigExtensionsCompilerPass())
-            ->addCompilerPass(new TwigEnvironmentCompilerPass())
-            ->addCompilerPass(new TwigLoaderCompilerPass())
-            ->addCompilerPass(new ExecutorBuilderCompilerPass())
-            ->addCompilerPass(new RegisterExecutorsCompilerPass())
-        ;
+        $container->addCompilerPass(new TwigExtensionsCompilerPass());
+        $container->addCompilerPass(new TwigEnvironmentCompilerPass());
+        $container->addCompilerPass(new TwigLoaderCompilerPass());
+        $container->addCompilerPass(new ExecutorBuilderCompilerPass());
+        $container->addCompilerPass(new RegisterExecutorsCompilerPass());
     }
 }

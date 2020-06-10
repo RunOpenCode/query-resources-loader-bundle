@@ -1,0 +1,11 @@
+version: '3.3'
+
+services:
+
+    php:
+        container_name: runopencode_query_resources_bundle_test
+        build:
+            context: './'
+        volumes:
+            -  './:/var/www/html'
+            - '${HOME}/.phive:${HOME}/.phive'

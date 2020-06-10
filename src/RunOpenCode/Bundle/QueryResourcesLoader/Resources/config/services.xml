@@ -6,76 +6,101 @@
 >
 
     <parameters>
-
-        <parameter key="runopencode.query_resources_loader.twig.loader.chain.class">Twig_Loader_Chain</parameter>
-
+        <parameter key="runopencode.query_resources_loader.twig.loader.chain.class">Twig\Loader\ChainLoader</parameter>
         <parameter key="runopencode.query_resources_loader.twig.configurator.environment.class">Symfony\Bundle\TwigBundle\DependencyInjection\Configurator\EnvironmentConfigurator</parameter>
-
         <parameter key="runopencode.query_resources_loader.twig.loader.filesystem.class">Symfony\Bundle\TwigBundle\Loader\FilesystemLoader</parameter>
-
         <parameter key="runopencode.query_resources_loader.manager.class">RunOpenCode\Bundle\QueryResourcesLoader\Manager\TwigQuerySourceManager</parameter>
-
-        <parameter key="runopencode.query_resources_loader.twig.class">Twig_Environment</parameter>
-
+        <parameter key="runopencode.query_resources_loader.twig.class">Twig\Environment</parameter>
         <parameter key="runopencode.query_resources_loader.twig.query_sources_iterator.class">RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer\QuerySourcesIterator</parameter>
-
         <parameter key="runopencode.query_resources_loader.twig.query_sources_cache_warmer.class">RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer\QuerySourcesCacheWarmer</parameter>
-
         <parameter key="runopencode.query_resources_loader.twig.extension.doctrine_orm.class">RunOpenCode\Bundle\QueryResourcesLoader\Twig\DoctrineOrmExtension</parameter>
-
     </parameters>
 
     <services>
 
-        <service id="runopencode.query_resources_loader.twig.loader.chain" class="%runopencode.query_resources_loader.twig.loader.chain.class%" public="false"/>
+        <service
+                id="runopencode.query_resources_loader.twig.loader.chain"
+                class="%runopencode.query_resources_loader.twig.loader.chain.class%"
+                public="false"
+        />
 
-        <service id="runopencode.query_resources_loader.twig.loader.filesystem" class="%runopencode.query_resources_loader.twig.loader.filesystem.class%" public="false">
-            <argument type="service" id="templating.locator" />
-            <argument type="service" id="templating.name_parser" />
+        <service
+                id="runopencode.query_resources_loader.twig.loader.filesystem"
+                class="%runopencode.query_resources_loader.twig.loader.filesystem.class%"
+                public="false"
+        >
+            <argument type="service" id="templating.locator"/>
+            <argument type="service" id="templating.name_parser"/>
             <tag name="runopencode.query_resources_loader.twig.loader"/>
         </service>
 
-        <service id="runopencode.query_resources_loader.twig.loader" alias="runopencode.query_resources_loader.twig.loader.filesystem" />
+        <service
+                id="runopencode.query_resources_loader.twig.loader"
+                alias="runopencode.query_resources_loader.twig.loader.filesystem"
+                public="false"
+        />
 
-        <service id="runopencode.query_resources_loader.twig" class="%runopencode.query_resources_loader.twig.class%">
-            <argument type="service" id="runopencode.query_resources_loader.twig.loader" />
-            <argument /> <!-- Twig options -->
-            <configurator service="runopencode.query_resources_loader.twig.configurator.environment" method="configure" />
+        <service
+                id="runopencode.query_resources_loader.twig"
+                class="%runopencode.query_resources_loader.twig.class%"
+                public="false"
+        >
+            <argument type="service" id="runopencode.query_resources_loader.twig.loader"/>
+            <argument/> <!-- Twig options -->
+            <configurator service="runopencode.query_resources_loader.twig.configurator.environment"
+                          method="configure"/>
         </service>
 
-        <service id="runopencode.query_resources_loader.twig.configurator.environment" class="%runopencode.query_resources_loader.twig.configurator.environment.class%" public="false">
-            <argument /> <!-- date format, set in TwigExtension -->
-            <argument /> <!-- interval format, set in TwigExtension -->
-            <argument /> <!-- timezone, set in TwigExtension -->
-            <argument /> <!-- decimals, set in TwigExtension -->
-            <argument /> <!-- decimal point, set in TwigExtension -->
-            <argument /> <!-- thousands separator, set in TwigExtension -->
+        <service
+                id="runopencode.query_resources_loader.twig.configurator.environment"
+                class="%runopencode.query_resources_loader.twig.configurator.environment.class%"
+                public="false"
+        >
+            <argument/> <!-- date format, set in TwigExtension -->
+            <argument/> <!-- interval format, set in TwigExtension -->
+            <argument/> <!-- timezone, set in TwigExtension -->
+            <argument/> <!-- decimals, set in TwigExtension -->
+            <argument/> <!-- decimal point, set in TwigExtension -->
+            <argument/> <!-- thousands separator, set in TwigExtension -->
         </service>
 
         <service
                 id="runopencode.query_resources_loader"
                 class="%runopencode.query_resources_loader.manager.class%"
+                public="true"
         >
-            <argument type="service" id="runopencode.query_resources_loader.twig" />
+            <argument type="service" id="runopencode.query_resources_loader.twig"/>
         </service>
 
-        <service id="roc.query_resources_loader" alias="runopencode.query_resources_loader" />
+        <service id="RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface"
+                 alias="runopencode.query_resources_loader"/>
+        <service id="roc.query_resources_loader" alias="runopencode.query_resources_loader"/>
+        <service id="roc.query_loader" alias="runopencode.query_resources_loader"/>
 
-        <service id="roc.query_loader" alias="runopencode.query_resources_loader" />
-
-        <service id="runopencode.query_resources_loader.twig.query_sources_iterator" class="%runopencode.query_resources_loader.twig.query_sources_iterator.class%" public="false">
-            <argument type="service" id="kernel" />
+        <service
+                id="runopencode.query_resources_loader.twig.query_sources_iterator"
+                class="%runopencode.query_resources_loader.twig.query_sources_iterator.class%"
+                public="false"
+        >
+            <argument type="service" id="kernel"/>
             <argument>%kernel.root_dir%</argument>
-            <argument type="collection" /> <!-- Twig query paths -->
+            <argument type="collection"/> <!-- Twig query paths -->
         </service>
 
-        <service id="runopencode.query_resources_loader.twig.query_sources_cache_warmer" class="%runopencode.query_resources_loader.twig.query_sources_cache_warmer.class%" public="false">
-            <tag name="kernel.cache_warmer" />
-            <argument type="service" id="runopencode.query_resources_loader.twig" />
-            <argument type="service" id="runopencode.query_resources_loader.twig.query_sources_iterator" />
+        <service
+                id="runopencode.query_resources_loader.twig.query_sources_cache_warmer"
+                class="%runopencode.query_resources_loader.twig.query_sources_cache_warmer.class%"
+                public="false"
+        >
+            <tag name="kernel.cache_warmer"/>
+            <argument type="service" id="runopencode.query_resources_loader.twig"/>
+            <argument type="service" id="runopencode.query_resources_loader.twig.query_sources_iterator"/>
         </service>
 
-        <service id="runopencode.query_resources_loader.twig.extension.doctrine_orm" class="%runopencode.query_resources_loader.twig.extension.doctrine_orm.class%" public="false">
+        <service
+                id="runopencode.query_resources_loader.twig.extension.doctrine_orm"
+                class="%runopencode.query_resources_loader.twig.extension.doctrine_orm.class%"
+                public="false">
             <argument type="service" id="doctrine"/>
             <tag name="runopencode.query_resources_loader.twig.extension"/>
         </service>
