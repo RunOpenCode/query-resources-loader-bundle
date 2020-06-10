@@ -10,6 +10,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Iterator for all query resources in bundles and in the application Resources/query directory.
+ *
+ * @implements \IteratorAggregate<string>
  */
 final class QuerySourcesIterator implements \IteratorAggregate
 {
@@ -30,7 +32,7 @@ final class QuerySourcesIterator implements \IteratorAggregate
     /**
      * @param KernelInterface $kernel           A KernelInterface instance
      * @param string          $projectDirectory The directory where global query sources can be stored
-     * @param array           $paths            Additional Twig paths to warm
+     * @param array<string>   $paths            Additional Twig paths to warm
      */
     public function __construct(KernelInterface $kernel, string $projectDirectory, array $paths = [])
     {
@@ -51,7 +53,6 @@ final class QuerySourcesIterator implements \IteratorAggregate
             $pathQueries   = [];
 
             foreach ($bundles as $bundle) {
-
                 $name = $bundle->getName();
 
                 if ('Bundle' === substr($name, -6)) {

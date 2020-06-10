@@ -13,8 +13,8 @@ interface ManagerInterface
     /**
      * Get Query source by its name.
      *
-     * @param string $name Name of Query source code.
-     * @param array  $args Arguments for modification/compilation of Query source code.
+     * @param string               $name Name of Query source code.
+     * @param array<string, mixed> $args Arguments for modification/compilation of Query source code.
      *
      * @return string SQL statement.
      */
@@ -28,7 +28,7 @@ interface ManagerInterface
      * @param array<string, string> $types    Types of parameters for prepared statement.
      * @param null|string           $executor Executor name.
      *
-     * @return ExecutionResultInterface Execution results.
+     * @return ExecutionResultInterface<mixed, mixed> Execution results.
      */
     public function execute(string $name, array $args = [], array $types = [], ?string $executor = null): ExecutionResultInterface;
 

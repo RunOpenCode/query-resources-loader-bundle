@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor;
 
 use Doctrine\DBAL\Driver\Statement;
+use Doctrine\DBAL\ParameterType;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
@@ -12,11 +13,19 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
 /**
  * Doctrine Dbal executor result statement wrapper that provides you with useful methods when fetching results from
  * SELECT statement.
+ *
+ * @implements \IteratorAggregate<mixed, mixed>
  */
-final class DoctrineDbalExecutionResult implements ExecutionResultInterface, Statement
+final class DoctrineDbalExecutionResult implements \IteratorAggregate, ExecutionResultInterface, Statement
 {
+    /**
+     * @var Statement<mixed>
+     */
     private Statement $statement;
 
+    /**
+     * @param Statement<mixed> $statement
+     */
     public function __construct(Statement $statement)
     {
         $this->statement = $statement;
@@ -160,7 +169,7 @@ final class DoctrineDbalExecutionResult implements ExecutionResultInterface, Sta
      */
     public function bindValue($param, $value, $type = null)
     {
-        return $this->statement->bindValue($param, $value, $type);
+        return $this->statement->bindValue($param, $value, $type ?? ParameterType::STRING);
     }
 
     /**
@@ -168,7 +177,7 @@ final class DoctrineDbalExecutionResult implements ExecutionResultInterface, Sta
      */
     public function bindParam($column, &$variable, $type = null, $length = null)
     {
-        return $this->statement->bindParam($column, $variable, $type, $length);
+        return $this->statement->bindParam($column, $variable, $type ?? ParameterType::STRING, $length);
     }
 
     /**
@@ -219,11 +228,18 @@ final class DoctrineDbalExecutionResult implements ExecutionResultInterface, Sta
             return $this->statement->rowCount();
         }
 
-        return \count(\iterator_to_array($this->fetchAll()));
+        /** @var iterable<mixed>|array $data */
+        $data = $this->fetchAll();
+
+        return \count(\is_array($data) ? $data : \iterator_to_array($data));
     }
 
     /**
      * Proxy to public properties
+     *
+     * @param string $name
+     *
+     * @return mixed
      */
     public function __get($name)
     {
@@ -232,6 +248,11 @@ final class DoctrineDbalExecutionResult implements ExecutionResultInterface, Sta
 
     /**
      * Proxy to public properties
+     *
+     * @param string $name
+     * @param mixed  $value
+     *
+     * @return void
      */
     public function __set($name, $value)
     {
@@ -240,17 +261,33 @@ final class DoctrineDbalExecutionResult implements ExecutionResultInterface, Sta
 
     /**
      * Proxy to public properties
+     *
+     * @param string $name
+     *
+     * @throws \BadMethodCallException
      */
     public function __isset($name)
     {
-        return isset($this->statement[$name]);
+        throw new \BadMethodCallException(\sprintf(
+            'Method %s on class %s should not be invoked',
+            __METHOD__,
+            __CLASS__
+        ));
     }
 
     /**
      * Proxy to public methods.
+     *
+     * @param string       $name
+     * @param array<mixed> $arguments
+     *
+     * @return mixed
      */
     public function __call($name, $arguments)
     {
-        return call_user_func_array([$this->statement, $name], $arguments);
+        /** @var callable $callable */
+        $callable = [$this->statement, $name];
+
+        return call_user_func_array($callable, $arguments);
     }
 }

@@ -45,7 +45,7 @@ class QueryResourcesLoaderBundleTest extends TestCase
          */
         $passConfig = $compiler->getCompiler()->getPassConfig();
 
-        $passes = array_filter(array_map(function(CompilerPassInterface $compilerPass) {
+        $passes = array_filter(array_map(function (CompilerPassInterface $compilerPass) {
             $class = get_class($compilerPass);
 
             if (0 === strpos($class, 'RunOpenCode')) {

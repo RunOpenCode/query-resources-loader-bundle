@@ -1,14 +1,17 @@
 parameters:
     paths:
         - src
-        - tests
+
     level: 8
-    autoload_files:
-        - phar://%rootDir%/phpunit.phar
+    scanDirectories:
+        - tools
     ignoreErrors:
         -
            message: '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\[a-zA-Z0-9\\_]+::[a-zA-Z0-9_]+\(\).#'
-           path: src/RunOpenCode/Bundle/DoctrineNamingStrategy/DependencyInjection/Configuration.php
+           path: src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/Configuration.php
         -
-           message: '# Cannot call method booleanNode() on Symfony\\Component\\Config\\Definition\\Builder\\NodeParentInterface|null.#'
-           path: src/RunOpenCode/Bundle/DoctrineNamingStrategy/DependencyInjection/Configuration.php
+           message: '#Cannot call method scalarNode\(\) on Symfony\\Component\\Config\\Definition\\Builder\\NodeParentInterface\|null.#'
+           path: src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/TwigNodeDefinition.php
+        -
+           message: '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\[a-zA-Z0-9\\_]+::[a-zA-Z0-9_]+\(\).#'
+           path: src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/TwigNodeDefinition.php

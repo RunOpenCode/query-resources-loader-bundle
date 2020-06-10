@@ -12,11 +12,8 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Configurat
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 /**
- * Class TwigNodeDefinition
- *
  * Twig environment configuration.
  *
- * @package RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Configuration
  * @internal
  */
 class TwigNodeDefinition extends ArrayNodeDefinition
@@ -25,20 +22,16 @@ class TwigNodeDefinition extends ArrayNodeDefinition
     {
         parent::__construct('twig');
 
-        $this
-            ->configureTwigOptions()
-            ->configureTwigFormatOptions()
-            ->addDefaultsIfNotSet()
-            ->configureTwigGlobals()
-        ;
+        $this->configureTwigOptions();
+        $this->configureTwigFormatOptions();
+        $this->addDefaultsIfNotSet();
+        $this->configureTwigGlobals();
     }
 
     /**
      * Configure Twig options.
-     *
-     * @return TwigNodeDefinition $this
      */
-    private function configureTwigOptions()
+    private function configureTwigOptions(): void
     {
         $this
             ->fixXmlConfig('path')
@@ -58,17 +51,17 @@ class TwigNodeDefinition extends ArrayNodeDefinition
                     ->useAttributeAsKey('paths')
                     ->beforeNormalization()
                     ->always()
-                    ->then(function ($paths) {
+                    ->then(static function ($paths) {
                         $normalized = array();
                         foreach ($paths as $path => $namespace) {
-                            if (is_array($namespace)) {
+                            if (\is_array($namespace)) {
                                 // xml
                                 $path = $namespace['value'];
                                 $namespace = $namespace['namespace'];
                             }
 
                             // path within the default namespace
-                            if (ctype_digit((string) $path)) {
+                            if (\ctype_digit((string) $path)) {
                                 $path = $namespace;
                                 $namespace = null;
                             }
@@ -81,18 +74,13 @@ class TwigNodeDefinition extends ArrayNodeDefinition
                     ->end()
                     ->prototype('variable')->end()
                 ->end()
-            ->end()
-        ;
-
-        return $this;
+            ->end();
     }
 
     /**
      * Configure Twig format options.
-     *
-     * @return TwigNodeDefinition $this
      */
-    private function configureTwigFormatOptions()
+    private function configureTwigFormatOptions(): void
     {
         $this
             ->children()
@@ -117,18 +105,13 @@ class TwigNodeDefinition extends ArrayNodeDefinition
                         ->scalarNode('thousands_separator')->defaultValue(',')->end()
                     ->end()
                 ->end()
-            ->end()
-        ;
-
-        return $this;
+            ->end();
     }
 
     /**
      * Configure Twig globals.
-     *
-     * @return TwigNodeDefinition $this
      */
-    private function configureTwigGlobals()
+    private function configureTwigGlobals(): void
     {
         $this
             ->fixXmlConfig('global')
@@ -136,36 +119,40 @@ class TwigNodeDefinition extends ArrayNodeDefinition
                 ->arrayNode('globals')
                     ->normalizeKeys(false)
                     ->useAttributeAsKey('key')
-                    ->example(array('foo' => '"@bar"', 'pi' => 3.14))
+                    ->example(['foo' => '"@bar"', 'pi' => 3.14])
                     ->prototype('array')
                         ->beforeNormalization()
-                            ->ifTrue(function ($v) { return is_string($v) && 0 === strpos($v, '@'); })
-                            ->then(function ($v) {
-                                if (0 === strpos($v, '@@')) {
-                                    return substr($v, 1);
+                            ->ifTrue(static function ($v) {
+                                return is_string($v) && 0 === strpos($v, '@');
+                            })
+                            ->then(static function ($v) {
+                                if (0 === \strpos($v, '@@')) {
+                                    return \substr($v, 1);
                                 }
 
-                                return array('id' => substr($v, 1), 'type' => 'service');
+                                return ['id' => \substr($v, 1), 'type' => 'service'];
                             })
                         ->end()
                         ->beforeNormalization()
-                            ->ifTrue(function ($v) {
-                                if (is_array($v)) {
-                                    $keys = array_keys($v);
-                                    sort($keys);
+                            ->ifTrue(static function ($v) {
+                                if (\is_array($v)) {
+                                    $keys = \array_keys($v);
+                                    \sort($keys);
 
-                                    return $keys !== array('id', 'type') && $keys !== array('value');
+                                    return $keys !== ['id', 'type'] && $keys !== ['value'];
                                 }
 
                                 return true;
                             })
-                            ->then(function ($v) { return array('value' => $v); })
+                            ->then(static function ($v) {
+                                return array('value' => $v);
+                            })
                         ->end()
                         ->children()
                             ->scalarNode('id')->end()
                             ->scalarNode('type')
                                 ->validate()
-                                    ->ifNotInArray(array('service'))
+                                    ->ifNotInArray(['service'])
                                     ->thenInvalid('The %s type is not supported')
                                 ->end()
                             ->end()
@@ -174,7 +161,5 @@ class TwigNodeDefinition extends ArrayNodeDefinition
                     ->end()
                 ->end()
             ->end();
-
-        return $this;
     }
 }

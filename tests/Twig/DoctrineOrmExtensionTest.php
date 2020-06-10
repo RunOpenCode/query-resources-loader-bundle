@@ -42,7 +42,7 @@ class DoctrineOrmExtensionTest extends TestCase
 
         $extension = new DoctrineOrmExtension($registry);
 
-        $functions = array_map(function(\Twig_Function $function) {
+        $functions = array_map(function (\Twig_Function $function) {
             return $function->getName();
         }, $extension->getFunctions());
 
@@ -60,7 +60,7 @@ class DoctrineOrmExtensionTest extends TestCase
 
         $extension = new DoctrineOrmExtension($registry);
 
-        $filters = array_map(function(\Twig_Filter $filter) {
+        $filters = array_map(function (\Twig_Filter $filter) {
             return $filter->getName();
         }, $extension->getFilters());
 
@@ -104,7 +104,7 @@ class DoctrineOrmExtensionTest extends TestCase
         /**
          * @var \Twig_Function $function
          */
-        $function = array_values(array_filter($extension->getFunctions(), function(\Twig_Function $function) {
+        $function = array_values(array_filter($extension->getFunctions(), function (\Twig_Function $function) {
             return 'table_name' === $function->getName();
         }))[0];
 
@@ -148,7 +148,7 @@ class DoctrineOrmExtensionTest extends TestCase
         /**
          * @var \Twig_Function $function
          */
-        $function = array_values(array_filter($extension->getFunctions(), function(\Twig_Function $function) {
+        $function = array_values(array_filter($extension->getFunctions(), function (\Twig_Function $function) {
             return 'column_name' === $function->getName();
         }))[0];
 

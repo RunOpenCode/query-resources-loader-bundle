@@ -2,14 +2,15 @@
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Contract;
 
-
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
 
 /**
  * Execution result.
+ *
+ * @extends \Traversable<mixed, mixed>
  */
-interface ExecutionResultInterface extends \IteratorAggregate, \Countable
+interface ExecutionResultInterface extends \Traversable, \Countable
 {
     /**
      * Get single scalar result.
@@ -44,7 +45,7 @@ interface ExecutionResultInterface extends \IteratorAggregate, \Countable
     /**
      * Get collection of scalar values.
      *
-     * @return array A collection of scalar values.
+     * @return array<mixed> A collection of scalar values.
      */
     public function getScalarResult();
 
@@ -53,21 +54,21 @@ interface ExecutionResultInterface extends \IteratorAggregate, \Countable
      *
      * @param mixed $default A default value.
      *
-     * @return array|mixed A collection of scalar values or default value.
+     * @return array<mixed>|mixed A collection of scalar values or default value.
      */
     public function getScalarResultOrDefault($default);
 
     /**
      * Get collection of scalar vales, or NULL value if collection is empty.
      *
-     * @return array|mixed|null A collection of NULL value.
+     * @return array<mixed>|mixed|null A collection of NULL value.
      */
     public function getScalarResultOrNull();
 
     /**
      * Get single (first) row result from result set.
      *
-     * @return array|mixed A single (first) row of result set.
+     * @return array<mixed>|mixed A single (first) row of result set.
      *
      * @throws NoResultException
      * @throws NonUniqueResultException
@@ -79,7 +80,7 @@ interface ExecutionResultInterface extends \IteratorAggregate, \Countable
      *
      * @param mixed $default Default value if result set is empty.
      *
-     * @return array|mixed A single (first) row of result set.
+     * @return array<mixed>|mixed A single (first) row of result set.
      *
      * @throws NonUniqueResultException
      */
@@ -88,7 +89,7 @@ interface ExecutionResultInterface extends \IteratorAggregate, \Countable
     /**
      * Get single (first) row result from result set or NULL value if result set is empty.
      *
-     * @return array|mixed|null A single (first) row of result set.
+     * @return array<mixed>|mixed|null A single (first) row of result set.
      *
      * @throws NonUniqueResultException
      */

@@ -28,7 +28,7 @@ final class TwigLoaderCompilerPass implements CompilerPassInterface
         }
 
         if (1 === \count($loaderIds)) {
-            $container->setAlias('runopencode.query_resources_loader.twig.loader', \key($loaderIds));
+            $container->setAlias('runopencode.query_resources_loader.twig.loader', (string)\key($loaderIds));
             return;
         }
 
@@ -45,6 +45,7 @@ final class TwigLoaderCompilerPass implements CompilerPassInterface
         \krsort($prioritizedLoaders);
 
         foreach ($prioritizedLoaders as $loaders) {
+            /** @var string $loader */
             foreach ($loaders as $loader) {
                 $chainLoader->addMethodCall('addLoader', [new Reference($loader)]);
             }

@@ -39,7 +39,7 @@ final class Extension extends BaseExtension
     }
 
     /**
-     * {@inheritdoc}
+     * @param array<string, mixed> $configs
      *
      * @throws \Exception
      */
@@ -70,6 +70,9 @@ final class Extension extends BaseExtension
         $container->getDefinition('runopencode.query_resources_loader.twig')->replaceArgument(1, $config['twig']);
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     private function configureTwigGlobals(array $config, ContainerBuilder $container): void
     {
         if (!$container->hasDefinition('runopencode.query_resources_loader.twig')) {
@@ -83,7 +86,6 @@ final class Extension extends BaseExtension
         $definition = $container->getDefinition('runopencode.query_resources_loader.twig');
 
         foreach ($config['twig']['globals'] as $key => $global) {
-
             if (isset($global['type']) && 'service' === $global['type']) {
                 $definition->addMethodCall('addGlobal', [$key, new Reference($global['id'])]);
                 continue;
@@ -93,6 +95,9 @@ final class Extension extends BaseExtension
         }
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     private function configureTwigEnvironment(array $config, ContainerBuilder $container): void
     {
         $configurator = $container->getDefinition('runopencode.query_resources_loader.twig.configurator.environment');
@@ -104,14 +109,19 @@ final class Extension extends BaseExtension
         $configurator->replaceArgument(5, $config['twig']['number_format']['thousands_separator']);
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     private function configureTwigWarmUpCommand(array $config, ContainerBuilder $container): void
     {
         $container
             ->getDefinition('runopencode.query_resources_loader.twig.query_sources_iterator')
             ->replaceArgument(2, $config['twig']['paths']);
-
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     private function configureTwigResourcePaths(array $config, ContainerBuilder $container): void
     {
         $loader = $container->getDefinition('runopencode.query_resources_loader.twig.loader.filesystem');
@@ -127,11 +137,13 @@ final class Extension extends BaseExtension
         }
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     private function configureTwigBundlePaths(array $config, ContainerBuilder $container): void
     {
         $loader      = $container->getDefinition('runopencode.query_resources_loader.twig.loader.filesystem');
         $addTwigPath = static function ($dir, $bundle) use ($loader) {
-
             $name = $bundle;
 
             if ('Bundle' === \substr($name, -6)) {
@@ -143,7 +155,6 @@ final class Extension extends BaseExtension
 
         // register bundles as Twig namespaces
         foreach ($container->getParameter('kernel.bundles') as $bundle => $class) {
-
             $dir = $container->getParameter('kernel.root_dir') . '/Resources/' . $bundle . '/query';
 
             if (\is_dir($dir)) {
@@ -153,7 +164,9 @@ final class Extension extends BaseExtension
             $container->addResource(new FileExistenceResource($dir));
 
             $reflection = new \ReflectionClass($class);
-            $dir        = \dirname($reflection->getFileName()) . '/Resources/query';
+            /** @var string $filename */
+            $filename = $reflection->getFileName();
+            $dir      = \dirname($filename) . '/Resources/query';
 
             if (\is_dir($dir)) {
                 $addTwigPath($dir, $bundle);

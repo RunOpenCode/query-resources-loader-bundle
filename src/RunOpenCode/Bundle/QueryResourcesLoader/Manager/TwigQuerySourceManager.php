@@ -28,6 +28,9 @@ final class TwigQuerySourceManager implements ManagerInterface
      */
     private array $executors;
 
+    /**
+     * @param array<string, ExecutorInterface> $executors
+     */
     public function __construct(Environment $twig, iterable $executors = [])
     {
         $this->twig      = $twig;
@@ -61,11 +64,17 @@ final class TwigQuerySourceManager implements ManagerInterface
         try {
             return $this->twig->render($name, $args);
         } catch (LoaderError $e) {
-            throw new SourceNotFoundException(sprintf('Could not find query source: "%s".', $name), 0, $e);
+            throw new SourceNotFoundException(\sprintf(
+                'Could not find query source: "%s".',
+                $name
+            ), $e);
         } catch (SyntaxError $e) {
-            throw new SyntaxException(sprintf('Query source "%s" contains Twig syntax error and could not be compiled.', $name), 0, $e);
+            throw new SyntaxException(\sprintf(
+                'Query source "%s" contains Twig syntax error and could not be compiled.',
+                $name
+            ), $e);
         } catch (\Exception $e) {
-            throw new RuntimeException('Unknown exception occurred', 0, $e);
+            throw new RuntimeException('Unknown exception occurred', $e);
         }
     }
 
@@ -99,7 +108,6 @@ final class TwigQuerySourceManager implements ManagerInterface
         try {
             return $executorInstance->execute($this->get($name, $args), $args, $types);
         } catch (\Exception $exception) {
-
             if ($exception instanceof ExceptionInterface) {
                 throw $exception;
             }
@@ -110,5 +118,4 @@ final class TwigQuerySourceManager implements ManagerInterface
             ), $exception);
         }
     }
-
 }

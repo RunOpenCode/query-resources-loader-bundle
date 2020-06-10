@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Twig;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\ORM\Mapping\MappingException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -65,7 +66,10 @@ final class DoctrineOrmExtension extends AbstractExtension
      */
     private function getTableName(string $entity): string
     {
-        return $this->doctrine->getManagerForClass($entity)->getClassMetadata($entity)->getTableName();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $this->doctrine->getManagerForClass($entity);
+
+        return $entityManager->getClassMetadata($entity)->getTableName();
     }
 
     /**
@@ -78,7 +82,10 @@ final class DoctrineOrmExtension extends AbstractExtension
      */
     private function getColumnName(string $field, string $entity): string
     {
-        return $this->doctrine->getManagerForClass($entity)->getClassMetadata($entity)->getColumnName($field);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $this->doctrine->getManagerForClass($entity);
+
+        return $entityManager->getClassMetadata($entity)->getColumnName($field);
     }
 
     /**
@@ -93,8 +100,10 @@ final class DoctrineOrmExtension extends AbstractExtension
      */
     private function getJoinTableName(string $field, string $entity): string
     {
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $this->doctrine->getManagerForClass($entity);
         /** @var ClassMetadataInfo $metadata */
-        $metadata = $this->doctrine->getManagerForClass($entity)->getClassMetadata($entity);
+        $metadata = $entityManager->getClassMetadata($entity);
         $mapping  = $metadata->getAssociationMapping($field);
 
         return $mapping['joinTable']['name'];

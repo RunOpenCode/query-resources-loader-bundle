@@ -4,6 +4,6 @@
   <phar name="composer-require-checker" version="^2.1.0" installed="2.1.0" location="./tools/composer-require-checker" copy="true"/>
   <phar name="composer-unused" version="^0.7.3" installed="0.7.3" location="./tools/composer-unused" copy="true"/>
   <phar name="php-cs-fixer" version="^2.16.1" installed="2.16.1" location="./tools/php-cs-fixer" copy="true"/>
-  <phar name="phpstan" version="^0.12.14" installed="0.12.14" location="./tools/phpstan" copy="true"/>
+  <phar name="phpstan" version="^0.12.28" installed="0.12.28" location="./tools/phpstan" copy="true"/>
   <phar name="psalm" version="^3.9.3" installed="3.9.3" location="./tools/psalm" copy="true"/>
 </phive>

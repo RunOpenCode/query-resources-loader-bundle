@@ -6,5 +6,4 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\Contract;
 
 interface ExceptionInterface
 {
-
 }

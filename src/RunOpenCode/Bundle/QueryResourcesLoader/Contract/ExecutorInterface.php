@@ -16,7 +16,7 @@ interface ExecutorInterface
      * @param array<string, mixed>  $parameters Parameters required for query.
      * @param array<string, string> $types      Parameter types required for query.
      *
-     * @return ExecutionResultInterface Result of execution.
+     * @return ExecutionResultInterface<mixed, mixed> Result of execution.
      */
     public function execute(string $query, array $parameters = [], array $types = []): ExecutionResultInterface;
 }

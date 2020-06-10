@@ -32,7 +32,7 @@ final class DoctrineDbalExecutor implements ExecutorInterface
      */
     public function execute(string $query, array $parameters = [], array $types = []): ExecutionResultInterface
     {
-        /** @var Statement $statement */
+        /** @var Statement<mixed> $statement */
         $statement = $this->connection->executeQuery($query, $parameters, $types);
 
         return new DoctrineDbalExecutionResult($statement);

@@ -28,9 +28,7 @@ final class RegisterExecutorsCompilerPass implements CompilerPassInterface
         $executors      = [];
 
         foreach ($taggedServices as $id => $tags) {
-
             foreach ($tags as $attributes) {
-
                 $definition->addMethodCall('registerExecutor', [
                     new Reference($id),
                     $attributes['name'],

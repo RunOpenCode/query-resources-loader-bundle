@@ -15,8 +15,14 @@ final class QuerySourcesCacheWarmer implements CacheWarmerInterface
 {
     private Environment $twig;
 
+    /**
+     * @var iterable<string>
+     */
     private iterable $iterator;
 
+    /**
+     * @param iterable<string> $iterator
+     */
     public function __construct(Environment $twig, iterable $iterator)
     {
         $this->twig     = $twig;
@@ -26,7 +32,7 @@ final class QuerySourcesCacheWarmer implements CacheWarmerInterface
     /**
      * {@inheritdoc}
      */
-    public function warmUp(string $cacheDir): void
+    public function warmUp(string $cacheDir): array
     {
         foreach ($this->iterator as $template) {
             try {
@@ -35,6 +41,8 @@ final class QuerySourcesCacheWarmer implements CacheWarmerInterface
                 // noop
             }
         }
+
+        return [];
     }
 
     /**
