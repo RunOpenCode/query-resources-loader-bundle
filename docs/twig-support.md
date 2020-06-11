@@ -10,7 +10,7 @@ query building logic.
 That is possible to do with string manipulation as well, however, code
 do tend to be quite complex and hard to interpret and maintain.
 
-However, query building is desirable feature, and Twig can help you
+Query building is a desirable feature, and Twig can help you
 in doing such thing.
 
 ## This is Twig, but new environment, new instance
@@ -26,27 +26,26 @@ queries.
 - You can, of course, create/register your own extensions for query loader
 Twig environment, register it as a service and tag it with 
 `runopencode.query_resources_loader.twig.extension` tag.
-- You can not load Twig templates from `Resources/views` directories (at least
+- You cannot load Twig templates from `Resources/views` directories (at least
 not with default settings), this mixing is not something that is desirable
 nor wanted
-- Same principle applies if you want to override queries from other bundle as
+- Same principle applies if you want to override queries from other bundles as
 if you want to override bundle's templates
 
-In general - bundle uses new instance of Twig environment, it checks 
-files in `Resources/query` directory.
+In general - bundle uses a new instance of Twig environment, it checks 
+files in `query` and `Resources/query` directory.
 
 ## Some examples
 
 How you are going to use power of Twig is up to you, but here is general 
 idea with simple example:
 
-
-    $this->get('roc.query_loader')->execute('@MyAppReporting/common.ledger.sql', array(
+    $this->get('runopencode.query_loader')->execute('@MyAppReporting/common.ledger.sql', array(
         'year' => (!empty($year)) ? $year : null,
         'limit' => (!empty($limit)) ? $limit : null
     ));
     
-So, as you can see, year and budget limit can depend of, per example, user
+So, as you can see, year and budget limit can depend on, per example, user
 input. However, we can use same query with little help of Twig:    
     
     SELECT * FROM expenses_table ET
@@ -72,7 +71,6 @@ input. However, we can use same query with little help of Twig:
     {% endif %}
         
     ;
-            
             
 **Note that you can pass extra parameters when executing statement**, Doctrine
 will not complain if you have passed parameter that is not used in prepared 
@@ -105,6 +103,8 @@ is delivered with this bundle, it has two Twig functions/filters that can be of 
     
 - `table_name`: will provide you with table name for given full qualified class
 name of your entity
+- `join_table_name`: will provide you with table name for given full qualified 
+class name of your entity and its property name which holds relation 
 - `column_name`: will provide you with column name for given full qualified class
 name of your entity and its property name
  

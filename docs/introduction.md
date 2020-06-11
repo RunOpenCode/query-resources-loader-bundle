@@ -7,11 +7,11 @@ services.
 
 Typical example would look like in pseudocode given below:
 
-    class MyReportingRepository 
+    final class MyReportingRepository 
     {
-        protected $db;
+        private $db;
     
-        public function getInvocingReportData($year)
+        public function getInvocingReportData($year): iterable
         {
             $sql = 'SELECT 
                 
@@ -61,12 +61,12 @@ coding practice.
 also against good coding practice.
 - Using RAD tools with some kind of SQL builder which have syntax checker,
 autocomplete and testing and executing playground is impossible to use while
-building an query statement.
+building a query statement.
 - Mixing of query statements with application code seams wrong, almost like
 mixing HTML and PHP together. 
-- You can not just send your code to DB expert to help you optimise/write
+- You cannot just send your code to DB expert to help you optimise/write
 some complex query if he is not familiar with PHP and Symfony, he will not
-be able to work on query without your assistance. 
+be able to work on a query without your assistance. 
 
 Naturally, query code should residue in separated files and included in
 project with some kind of inclusion statement or service call.
