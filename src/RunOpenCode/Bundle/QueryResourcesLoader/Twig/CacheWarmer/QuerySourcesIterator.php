@@ -63,8 +63,8 @@ final class QuerySourcesIterator implements \IteratorAggregate
                 $bundleQueries[] = $this->findQuerySourcesInDirectory($this->projectDirectory . '/bundles/query/' . $bundle->getName());
             }
 
-            foreach ($this->paths as $path) {
-                $pathQueries[] = $this->findQuerySourcesInDirectory($path);
+            foreach ($this->paths as $path => $namespace) {
+                $pathQueries[] = $this->findQuerySourcesInDirectory($path, $namespace);
             }
 
             $this->queries = \array_merge($this->queries, ...$bundleQueries, ...$pathQueries);

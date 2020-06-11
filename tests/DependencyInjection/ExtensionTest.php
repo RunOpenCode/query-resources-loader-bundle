@@ -1,12 +1,7 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\DependencyInjection;
 
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
@@ -16,12 +11,12 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Tests\Fixtures\Bundles\FooBundle\Foo
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class ExtensionTest extends AbstractExtensionTestCase
+final class ExtensionTest extends AbstractExtensionTestCase
 {
     /**
      * @test
      */
-    public function itSetsDefaultExecutor()
+    public function itSetsDefaultExecutor(): void
     {
         $this->setParameter('kernel.bundles', []);
 
@@ -33,7 +28,7 @@ class ExtensionTest extends AbstractExtensionTestCase
     /**
      * @test
      */
-    public function itConfiguresTwigAutoescape()
+    public function itConfiguresTwigAutoescape(): void
     {
         $this->setParameter('kernel.bundles', []);
         $this->setDefinition('runopencode.query_resources_loader.twig', new Definition());
@@ -43,25 +38,25 @@ class ExtensionTest extends AbstractExtensionTestCase
         $arguments = $this->container->getDefinition('runopencode.query_resources_loader.twig')->getArgument(1);
 
         $this->assertInstanceOf(Reference::class, $arguments['autoescape'][0]);
-        $this->assertEquals('autoescape_service', (string) $arguments['autoescape'][0]);
+        $this->assertEquals('autoescape_service', (string)$arguments['autoescape'][0]);
         $this->assertEquals('autoescape_service_method', $arguments['autoescape'][1]);
     }
 
     /**
      * @test
      */
-    public function itConfiguresTwigGlobals()
+    public function itConfiguresTwigGlobals(): void
     {
-        $globals = array(
-            'array' => array(),
-            'false' => false,
-            'float' => 2.0,
+        $globals = [
+            'array'   => [],
+            'false'   => false,
+            'float'   => 2.0,
             'integer' => 3,
-            'null' => null,
-            'object' => new \stdClass(),
-            'string' => 'foo',
-            'true' => true,
-        );
+            'null'    => null,
+            'object'  => new \stdClass(),
+            'string'  => 'foo',
+            'true'    => true,
+        ];
 
         $this->setParameter('kernel.bundles', []);
         $this->setDefinition('runopencode.query_resources_loader.twig', new Definition());
@@ -79,33 +74,33 @@ class ExtensionTest extends AbstractExtensionTestCase
     /**
      * @test
      */
-    public function itConfiguresServicesAsTwigGlobals()
+    public function itConfiguresServicesAsTwigGlobals(): void
     {
         $this->setParameter('kernel.bundles', []);
         $this->setDefinition('runopencode.query_resources_loader.twig', new Definition());
 
-        $this->load(['twig' => [ 'globals' => [ 'some_service' => [ 'type' => 'service', 'id' => 'service_id' ] ] ] ]);
+        $this->load(['twig' => ['globals' => ['some_service' => ['type' => 'service', 'id' => 'service_id']]]]);
 
         $call = $this->container->getDefinition('runopencode.query_resources_loader.twig')->getMethodCalls()[0];
 
         $this->assertEquals('addGlobal', $call[0]);
         $this->assertEquals('some_service', $call[1][0]);
         $this->assertInstanceOf(Reference::class, $call[1][1]);
-        $this->assertEquals('service_id', (string) $call[1][1]);
+        $this->assertEquals('service_id', (string)$call[1][1]);
     }
 
     /**
      * @test
      */
-    public function itConfiguresTwigResourcePaths()
+    public function itConfiguresTwigResourcePaths(): void
     {
         $this->setParameter('kernel.bundles', []);
         $this->setDefinition('runopencode.query_resources_loader.twig', new Definition());
         $this->setDefinition('runopencode.query_resources_loader.twig.loader.filesystem', new Definition());
 
-        $this->load(['twig' => [ 'paths' => [
-            'path1' => '',
-            'path2' => '',
+        $this->load(['twig' => ['paths' => [
+            'path1'            => '',
+            'path2'            => '',
             'namespaced_path1' => 'namespace1',
             'namespaced_path2' => 'namespace2',
             'namespaced_path3' => 'namespace3',
@@ -133,21 +128,20 @@ class ExtensionTest extends AbstractExtensionTestCase
     /**
      * @test
      */
-    public function itConfiguresTwigBundlePaths()
+    public function itConfiguresTwigBundlePaths(): void
     {
         $this->setParameter('kernel.bundles', [
             'FooBundle' => FooBundle::class,
-            'BarBundle' => BarBundle::class
+            'BarBundle' => BarBundle::class,
         ]);
-        
-        $this->setParameter('kernel.root_dir', realpath(__DIR__ . '/../Fixtures/app'));
+
+        $this->setParameter('kernel.root_dir', \realpath(__DIR__ . '/../Fixtures/app'));
         $this->setDefinition('runopencode.query_resources_loader.twig.loader.filesystem', new Definition());
 
         $this->load();
 
-        $calls = $this->container->getDefinition('runopencode.query_resources_loader.twig.loader.filesystem')->getMethodCalls();
-
         $paths = [];
+        $calls = $this->container->getDefinition('runopencode.query_resources_loader.twig.loader.filesystem')->getMethodCalls();
 
         foreach ($calls as $call) {
             if ('addPath' === $call[0]) {
@@ -156,24 +150,24 @@ class ExtensionTest extends AbstractExtensionTestCase
         }
 
         $this->assertEquals([
-            [ realpath(__DIR__ . '/../Fixtures/app/Resources/FooBundle/query'), 'Foo' ],
-            [ realpath(__DIR__ . '/../Fixtures/Bundles/FooBundle/Resources/query'), 'Foo' ],
-            [ realpath(__DIR__ . '/../Fixtures/Bundles/BarBundle/Resources/query'), 'Bar' ],
+            [\realpath(__DIR__ . '/../Fixtures/app/Resources/FooBundle/query'), 'Foo'],
+            [\realpath(__DIR__ . '/../Fixtures/Bundles/FooBundle/Resources/query'), 'Foo'],
+            [\realpath(__DIR__ . '/../Fixtures/Bundles/BarBundle/Resources/query'), 'Bar'],
         ], $paths);
     }
 
     /**
      * @test
      */
-    public function itConfiguresTwigWarmUpCommand()
+    public function itConfiguresTwigWarmUpCommand(): void
     {
         $this->setParameter('kernel.bundles', []);
         $this->setDefinition('runopencode.query_resources_loader.twig', new Definition());
         $this->setDefinition('runopencode.query_resources_loader.twig.loader.filesystem', new Definition());
 
-        $this->load(['twig' => [ 'paths' => [
-            'path1' => '',
-            'namespaced_path1' => 'namespace1'
+        $this->load(['twig' => ['paths' => [
+            'path1'            => '',
+            'namespaced_path1' => 'namespace1',
         ]]]);
 
         $calls = $this->container->getDefinition('runopencode.query_resources_loader.twig.loader.filesystem')->getMethodCalls();
@@ -187,7 +181,7 @@ class ExtensionTest extends AbstractExtensionTestCase
         }
 
         $this->container->getDefinition('runopencode.query_resources_loader.twig.query_sources_iterator')->getArgument(2);
-        
+
         $this->assertEquals([
             ['path1'],
             ['namespaced_path1', 'namespace1'],
@@ -197,8 +191,8 @@ class ExtensionTest extends AbstractExtensionTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getContainerExtensions()
+    protected function getContainerExtensions(): array
     {
-        return [ new Extension() ];
+        return [new Extension()];
     }
 }

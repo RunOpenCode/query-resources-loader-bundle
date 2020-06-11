@@ -1,12 +1,7 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\DependencyInjection\CompilerPass;
 
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractCompilerPassTestCase;
@@ -15,34 +10,28 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class TwigEnvironmentCompilerPassTest extends AbstractCompilerPassTestCase
+final class TwigEnvironmentCompilerPassTest extends AbstractCompilerPassTestCase
 {
     /**
      * @test
      */
-    public function itReRegistersExtensions()
+    public function itReRegistersExtensions(): void
     {
         $this->setDefinition('runopencode.query_resources_loader.twig', $twig = new Definition());
-
         $this->setDefinition('some_extension', $extension = new Definition());
-        $extension
-            ->addTag('runopencode.query_resources_loader.twig.extension');
-
-        $twig
-            ->addMethodCall('addExtension', [ new Reference('some_extension') ]);
+        $extension->addTag('runopencode.query_resources_loader.twig.extension');
+        $twig->addMethodCall('addExtension', [new Reference('some_extension')]);
 
         $this->compile();
 
-        $this
-            ->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader.twig', 'addExtension', [ new Reference('some_extension') ]);
+        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader.twig', 'addExtension', [new Reference('some_extension')]);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function registerCompilerPass(ContainerBuilder $container)
+    protected function registerCompilerPass(ContainerBuilder $container): void
     {
-        $container
-            ->addCompilerPass(new TwigEnvironmentCompilerPass());
+        $container->addCompilerPass(new TwigEnvironmentCompilerPass());
     }
 }

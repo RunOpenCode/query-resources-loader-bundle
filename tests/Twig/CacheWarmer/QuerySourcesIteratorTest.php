@@ -1,12 +1,7 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\Twig\CacheWarmer;
 
 use PHPUnit\Framework\TestCase;
@@ -15,12 +10,12 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Tests\Fixtures\Bundles\FooBundle\Foo
 use RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer\QuerySourcesIterator;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class QuerySourcesIteratorTest extends TestCase
+final class QuerySourcesIteratorTest extends TestCase
 {
     /**
      * @test
      */
-    public function itIterates()
+    public function itIterates(): void
     {
         $kernel = $this
             ->getMockBuilder(KernelInterface::class)
@@ -30,15 +25,15 @@ class QuerySourcesIteratorTest extends TestCase
             ->method('getBundles')
             ->willReturn([
                 new FooBundle(),
-                new BarBundle()
+                new BarBundle(),
             ]);
 
-        $iterator = new QuerySourcesIterator($kernel, __DIR__ . '/../../Fixtures/app', array(
+        $iterator = new QuerySourcesIterator($kernel, __DIR__ . '/../../Fixtures/app', [
             __DIR__ . '/../../Fixtures/paths/path1' => 'custom-path-1',
             __DIR__ . '/../../Fixtures/paths/path2' => 'custom-path-2',
-        ));
+        ]);
 
-        $templates = array();
+        $templates = [];
 
         $iterator->getIterator(); // Force loading from internal array cache...
 
@@ -46,11 +41,11 @@ class QuerySourcesIteratorTest extends TestCase
             $templates[] = $template;
         }
 
-        $this->assertEquals(array(
+        $this->assertEquals([
             '@Foo/foo.sql',
             '@Bar/bar.sql',
             '@custom-path-1/query-in-path1.sql',
-            '@custom-path-2/query-in-path2.sql'
-        ), $templates);
+            '@custom-path-2/query-in-path2.sql',
+        ], $templates);
     }
 }

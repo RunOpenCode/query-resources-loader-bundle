@@ -1,41 +1,38 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\Executor;
 
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\Schema;
 use PHPUnit\Framework\TestCase;
+use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException;
+use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutionResult;
 
-class DoctrineDbalExecutorTest extends TestCase
+final class DoctrineDbalExecutorTest extends TestCase
 {
     /**
      * @var DoctrineDbalExecutor
      */
-    protected $executor;
+    protected DoctrineDbalExecutor $executor;
 
-    public function setUp()
+    public function setUp(): void
     {
-        $connection = DriverManager::getConnection(array(
+        $connection = DriverManager::getConnection([
             'memory' => true,
-            'driver' => 'pdo_sqlite'
-        ));
+            'driver' => 'pdo_sqlite',
+        ]);
 
         $schema = new Schema();
 
         $myTable = $schema->createTable('test');
-        $myTable->addColumn('id', 'integer', array('unsigned' => true));
-        $myTable->addColumn('title', 'string', array('length' => 32));
-        $myTable->addColumn('description', 'string', array('length' => 255));
-        $myTable->setPrimaryKey(array('id'));
+        $myTable->addColumn('id', 'integer', ['unsigned' => true]);
+        $myTable->addColumn('title', 'string', ['length' => 32]);
+        $myTable->addColumn('description', 'string', ['length' => 255]);
+        $myTable->setPrimaryKey(['id']);
 
         $connection->executeQuery($schema->toSql($connection->getDatabasePlatform())[0]);
 
@@ -44,7 +41,7 @@ class DoctrineDbalExecutorTest extends TestCase
             ['id' => 2, 'title' => 'Some title 2', 'description' => 'Some description 2'],
             ['id' => 3, 'title' => 'Some title 3', 'description' => 'Some description 3'],
             ['id' => 4, 'title' => 'Some title 4', 'description' => 'Some description 4'],
-            ['id' => 5, 'title' => 'Some title 5', 'description' => 'Some description 5']
+            ['id' => 5, 'title' => 'Some title 5', 'description' => 'Some description 5'],
         ];
 
         foreach ($records as $record) {
@@ -57,9 +54,9 @@ class DoctrineDbalExecutorTest extends TestCase
     /**
      * @test
      */
-    public function itExecutesQueries()
+    public function itExecutesQueries(): void
     {
-        $result = $this->executor->execute('SELECT * FROM test', array());
+        $result = $this->executor->execute('SELECT * FROM test', []);
 
         $this->assertInstanceOf(DoctrineDbalExecutionResult::class, $result);
     }
@@ -67,33 +64,21 @@ class DoctrineDbalExecutorTest extends TestCase
     /**
      * @test
      */
-    public function itGivesSingleScalarResult()
+    public function itGivesSingleScalarResult(): void
     {
-        $result = $this->executor->execute('SELECT COUNT(*) as cnt FROM test;', array());
+        $result = $this->executor->execute('SELECT COUNT(*) as cnt FROM test;', []);
 
         $this->assertEquals(5, $result->getSingleScalarResult());
     }
 
     /**
      * @test
-     *
-     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException
      */
-    public function itDoesNotHaveSingleScalarResult()
+    public function itDoesNotHaveSingleScalarResult(): void
     {
-        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
+        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', []);
 
-        $result->getSingleScalarResult();
-    }
-
-    /**
-     * @test
-     *
-     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException
-     */
-    public function itHaveMoreThanSingleScalarResult()
-    {
-        $result = $this->executor->execute('SELECT * FROM test;', array());
+        $this->expectException(NoResultException::class);
 
         $result->getSingleScalarResult();
     }
@@ -101,9 +86,21 @@ class DoctrineDbalExecutorTest extends TestCase
     /**
      * @test
      */
-    public function itGivesDefaultWhereThereIsNoSingleScalarResult()
+    public function itHaveMoreThanSingleScalarResult(): void
     {
-        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
+        $result = $this->executor->execute('SELECT * FROM test;', []);
+
+        $this->expectException(NonUniqueResultException::class);
+
+        $result->getSingleScalarResult();
+    }
+
+    /**
+     * @test
+     */
+    public function itGivesDefaultWhereThereIsNoSingleScalarResult(): void
+    {
+        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', []);
 
         $this->assertTrue($result->getSingleScalarResultOrDefault(true));
     }
@@ -112,9 +109,9 @@ class DoctrineDbalExecutorTest extends TestCase
     /**
      * @test
      */
-    public function itGivesNullWhereThereIsNoSingleScalarResult()
+    public function itGivesNullWhereThereIsNoSingleScalarResult(): void
     {
-        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
+        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', []);
 
         $this->assertNull($result->getSingleScalarResultOrNull());
     }
@@ -122,9 +119,9 @@ class DoctrineDbalExecutorTest extends TestCase
     /**
      * @test
      */
-    public function itGivesScalarResult()
+    public function itGivesScalarResult(): void
     {
-        $result = $this->executor->execute('SELECT id FROM test ORDER BY id ASC;', array());
+        $result = $this->executor->execute('SELECT id FROM test ORDER BY id ASC;', []);
 
         $this->assertEquals([1, 2, 3, 4, 5], $result->getScalarResult());
     }
@@ -132,9 +129,9 @@ class DoctrineDbalExecutorTest extends TestCase
     /**
      * @test
      */
-    public function itGivesDefaultWhereThereIsNoScalarResult()
+    public function itGivesDefaultWhereThereIsNoScalarResult(): void
     {
-        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
+        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', []);
 
         $this->assertTrue($result->getScalarResultOrDefault(true));
     }
@@ -142,9 +139,9 @@ class DoctrineDbalExecutorTest extends TestCase
     /**
      * @test
      */
-    public function itGivesNullWhereThereIsNoScalarResult()
+    public function itGivesNullWhereThereIsNoScalarResult(): void
     {
-        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
+        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', []);
 
         $this->assertNull($result->getScalarResultOrNull());
     }
@@ -152,36 +149,24 @@ class DoctrineDbalExecutorTest extends TestCase
     /**
      * @test
      */
-    public function itGivesSingleRowResult()
+    public function itGivesSingleRowResult(): void
     {
-        $result = $this->executor->execute('SELECT id, title, description FROM test WHERE id = 3;', array());
+        $result = $this->executor->execute('SELECT id, title, description FROM test WHERE id = 3;', []);
 
         $this->assertEquals([
             'id' => 3, 'title' => 'Some title 3', 'description' => 'Some description 3',
-            0 => 3, 1 => 'Some title 3', 2 => 'Some description 3'
+            0    => 3, 1 => 'Some title 3', 2 => 'Some description 3',
         ], $result->getSingleResult());
     }
 
     /**
      * @test
-     *
-     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException
      */
-    public function itHaveMoreThanSingleRowResult()
+    public function itHaveMoreThanSingleRowResult(): void
     {
-        $result = $this->executor->execute('SELECT * FROM test;', array());
+        $result = $this->executor->execute('SELECT * FROM test;', []);
 
-        $result->getSingleResult();
-    }
-
-    /**
-     * @test
-     *
-     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException
-     */
-    public function itDoesNotHaveSingleRowResult()
-    {
-        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
+        $this->expectException(NonUniqueResultException::class);
 
         $result->getSingleResult();
     }
@@ -189,9 +174,21 @@ class DoctrineDbalExecutorTest extends TestCase
     /**
      * @test
      */
-    public function itGivesDefaultWhereThereIsNoSingeRowResult()
+    public function itDoesNotHaveSingleRowResult(): void
     {
-        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
+        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', []);
+
+        $this->expectException(NoResultException::class);
+
+        $result->getSingleResult();
+    }
+
+    /**
+     * @test
+     */
+    public function itGivesDefaultWhereThereIsNoSingeRowResult(): void
+    {
+        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', []);
 
         $this->assertTrue($result->getSingleResultOrDefault(true));
     }
@@ -199,10 +196,10 @@ class DoctrineDbalExecutorTest extends TestCase
     /**
      * @test
      */
-    public function itGivesNullWhereThereIsNoSingeRowResult()
+    public function itGivesNullWhereThereIsNoSingeRowResult(): void
     {
-        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', array());
+        $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', []);
 
-        $this->assertNull($result->getSingleRowOrNull());
+        $this->assertNull($result->getSingleResultOrNull());
     }
 }

@@ -1,27 +1,30 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\Manager;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\Statement;
 use PHPUnit\Framework\TestCase;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\ExecutionException;
+use RunOpenCode\Bundle\QueryResourcesLoader\Exception\RuntimeException;
+use RunOpenCode\Bundle\QueryResourcesLoader\Exception\SourceNotFoundException;
+use RunOpenCode\Bundle\QueryResourcesLoader\Exception\SyntaxException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutionResult;
 use RunOpenCode\Bundle\QueryResourcesLoader\Manager\TwigQuerySourceManager;
+use Twig\Environment;
+use Twig\Loader\ArrayLoader;
 
-class TwigQuerySourceManagerTest extends TestCase
+final class TwigQuerySourceManagerTest extends TestCase
 {
     /**
      * @test
      */
-    public function itHasQuery()
+    public function itHasQuery(): void
     {
         $this->assertTrue($this->getManager()->has('@test/query-1'));
     }
@@ -29,7 +32,7 @@ class TwigQuerySourceManagerTest extends TestCase
     /**
      * @test
      */
-    public function itDoesNotHaveQuery()
+    public function itDoesNotHaveQuery(): void
     {
         $this->assertFalse($this->getManager()->has('unknown'));
     }
@@ -37,41 +40,37 @@ class TwigQuerySourceManagerTest extends TestCase
     /**
      * @test
      */
-    public function itGetsQuery()
+    public function itGetsQuery(): void
     {
         $this->assertSame('THIS IS SIMPLE, PLAIN QUERY', $this->getManager()->get('@test/query-1'));
-        $this->assertSame('THIS IS SIMPLE, PLAIN QUERY WITH VARIABLE X', $this->getManager()->get('@test/query-2', array('var' => 'X')));
+        $this->assertSame('THIS IS SIMPLE, PLAIN QUERY WITH VARIABLE X', $this->getManager()->get('@test/query-2', ['var' => 'X']));
     }
 
     /**
      * @test
-     *
-     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\SyntaxException
      */
-    public function itThrowsSyntaxError()
+    public function itThrowsSyntaxError(): void
     {
+        $this->expectException(SyntaxException::class);
         $this->getManager()->get('@test/syntax-error');
     }
 
     /**
      * @test
-     *
-     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\SourceNotFoundException
      */
-    public function itThrowsNotFoundException()
+    public function itThrowsNotFoundException(): void
     {
+        $this->expectException(SourceNotFoundException::class);
         $this->getManager()->get('not-existing');
     }
 
     /**
      * @test
-     *
-     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\RuntimeException
      */
-    public function itThrowsUnknownException()
+    public function itThrowsUnknownException(): void
     {
         $twig = $this
-            ->getMockBuilder(\Twig_Environment::class)
+            ->getMockBuilder(Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -81,35 +80,32 @@ class TwigQuerySourceManagerTest extends TestCase
 
         $manager = new TwigQuerySourceManager($twig);
 
+        $this->expectException(RuntimeException::class);
+
         $manager->get('does_not_exists');
     }
 
     /**
      * @test
      */
-    public function itCanExecute()
+    public function itCanExecute(): void
     {
         $this->assertInstanceOf(DoctrineDbalExecutionResult::class, $this->getManager()->execute('@test/query-1'));
     }
 
     /**
      * @test
-     *
-     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\RuntimeException
-     * @expectedExceptionMessage Requested executor "dummy" does not exists.
      */
-    public function itThrowsExceptionWhenExecutorDoesNotExists()
+    public function itThrowsExceptionWhenExecutorDoesNotExists(): void
     {
-        $this->getManager()->execute('@test/query-1', array(), array(), 'dummy');
+        $this->expectException(RuntimeException::class);
+        $this->getManager()->execute('@test/query-1', [], [], 'dummy');
     }
 
     /**
      * @test
-     *
-     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\ExecutionException
-     * @expectedExceptionMessage It throws library execution exception.
      */
-    public function itThrowsLibraryExecutionException()
+    public function itThrowsLibraryExecutionException(): void
     {
         $manager = $this->getManager();
 
@@ -123,16 +119,15 @@ class TwigQuerySourceManagerTest extends TestCase
 
         $manager->registerExecutor($executor, 'throwing');
 
-        $manager->execute('@test/query-1', array(), array(), 'throwing');
+        $this->expectException(ExecutionException::class);
+
+        $manager->execute('@test/query-1', [], [], 'throwing');
     }
 
     /**
      * @test
-     *
-     * @expectedException \RunOpenCode\Bundle\QueryResourcesLoader\Exception\ExecutionException
-     * @expectedExceptionMessage Query "@test/query-1" could not be executed.
      */
-    public function itWrapsUnknownExceptionAndThrowsLibraryExecutionException()
+    public function itWrapsUnknownExceptionAndThrowsLibraryExecutionException(): void
     {
         $manager = $this->getManager();
 
@@ -146,10 +141,12 @@ class TwigQuerySourceManagerTest extends TestCase
 
         $manager->registerExecutor($executor, 'throwing');
 
-        $manager->execute('@test/query-1', array(), array(), 'throwing');
+        $this->expectException(ExecutionException::class);
+
+        $manager->execute('@test/query-1', [], [], 'throwing');
     }
 
-    private function getManager()
+    private function getManager(): ManagerInterface
     {
         $manager = new TwigQuerySourceManager($this->getTwig());
         $manager->registerExecutor($this->getExecutor(), 'default');
@@ -157,22 +154,22 @@ class TwigQuerySourceManagerTest extends TestCase
         return $manager;
     }
 
-    private function getTwig()
+    private function getTwig(): Environment
     {
-        return new \Twig_Environment(new \Twig_Loader_Array(array(
-            '@test/query-1' => 'THIS IS SIMPLE, PLAIN QUERY',
-            '@test/query-2' => 'THIS IS SIMPLE, PLAIN QUERY WITH VARIABLE {{var}}',
+        return new Environment(new ArrayLoader([
+            '@test/query-1'      => 'THIS IS SIMPLE, PLAIN QUERY',
+            '@test/query-2'      => 'THIS IS SIMPLE, PLAIN QUERY WITH VARIABLE {{var}}',
             '@test/syntax-error' => 'THIS IS SIMPLE, PLAIN QUERY WITH TWIG SYNTAX ERROR {% if x',
-        )));
+        ]));
     }
 
-    private function getExecutor()
+    private function getExecutor(): ExecutorInterface
     {
-        $stub = $this->createMock(\Doctrine\DBAL\Connection::class);
+        $stub = $this->createMock(Connection::class);
 
         $stub
             ->method('executeQuery')
-            ->willReturn($this->createMock(\Doctrine\DBAL\Driver\Statement::class));
+            ->willReturn($this->createMock(Statement::class));
 
         return new DoctrineDbalExecutor($stub);
     }

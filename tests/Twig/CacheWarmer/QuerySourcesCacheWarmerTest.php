@@ -1,26 +1,25 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\Twig\CacheWarmer;
 
 use PHPUnit\Framework\TestCase;
 use RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer\QuerySourcesCacheWarmer;
+use Twig\Environment;
+use Twig\Error\Error;
+use Twig\Template;
+use Twig\TemplateWrapper;
 
-class QuerySourcesCacheWarmerTest extends TestCase
+final class QuerySourcesCacheWarmerTest extends TestCase
 {
     /**
      * @test
      */
-    public function itIsAlwaysOptional()
+    public function itIsAlwaysOptional(): void
     {
         $twig = $this
-            ->getMockBuilder(\Twig_Environment::class)
+            ->getMockBuilder(Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -35,22 +34,26 @@ class QuerySourcesCacheWarmerTest extends TestCase
     /**
      * @test
      */
-    public function itWarmsUp()
+    public function itWarmsUp(): void
     {
         $twig = $this
-            ->getMockBuilder(\Twig_Environment::class)
+            ->getMockBuilder(Environment::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $template = $this
+            ->getMockBuilder(Template::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $twig
             ->method('load')
-            ->willReturn(null);
+            ->willReturn(new TemplateWrapper($twig, $template));
 
         $traversable = new \ArrayIterator(['template1', 'template2']);
+        $warmer      = new QuerySourcesCacheWarmer($twig, $traversable);
 
-        $warmer = new QuerySourcesCacheWarmer($twig, $traversable);
-
-        $warmer->warmUp(sys_get_temp_dir());
+        $warmer->warmUp(\sys_get_temp_dir());
 
         $this->assertTrue(true);
     }
@@ -58,22 +61,21 @@ class QuerySourcesCacheWarmerTest extends TestCase
     /**
      * @test
      */
-    public function itSilentlySkipsTwigErrorWhenWarmup()
+    public function itSilentlySkipsTwigErrorWhenWarmup(): void
     {
         $twig = $this
-            ->getMockBuilder(\Twig_Environment::class)
+            ->getMockBuilder(Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $twig
             ->method('load')
-            ->willThrowException(new \Twig_Error('Template could not be loaded.'));
+            ->willThrowException(new Error('Template could not be loaded.'));
 
         $traversable = new \ArrayIterator(['template1', 'template2']);
+        $warmer      = new QuerySourcesCacheWarmer($twig, $traversable);
 
-        $warmer = new QuerySourcesCacheWarmer($twig, $traversable);
-
-        $warmer->warmUp(sys_get_temp_dir());
+        $warmer->warmUp(\sys_get_temp_dir());
 
         $this->assertTrue(true);
     }
