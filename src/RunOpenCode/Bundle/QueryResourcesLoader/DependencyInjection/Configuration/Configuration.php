@@ -9,6 +9,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * Bundle configuration tree.
+ *
+ * @psalm-suppress all
  */
 final class Configuration implements ConfigurationInterface
 {

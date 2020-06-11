@@ -13,7 +13,9 @@
                 <antcall target="phpunit"/>
                 <antcall target="php-cs-fixer"/>
                 <antcall target="phpstan"/>
-                <antcall target="psalm"/>
+                <!--
+                    <antcall target="psalm"/>
+                -->
             </parallel>
 
             <antcall target="docker-compose-down"/>

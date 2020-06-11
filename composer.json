@@ -56,7 +56,7 @@
         "composer-require-checker": "tools/composer-require-checker check composer.json --config-file=`pwd`/composer-require-checker.config.dist.json",
         "composer-unused": "tools/composer-unused --excludeDir=build --excludeDir=tools",
         "php-cs-fixer": "tools/php-cs-fixer fix --dry-run --diff --verbose --show-progress=estimating",
-        "phpstan": "tools/phpstan analyse",
+        "phpstan": "php tools/phpstan analyse --autoload-file=tools/phpunit.phar --memory-limit=1G",
         "psalm": "tools/psalm --threads=8 --diff --diff-methods"
     }
 }

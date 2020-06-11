@@ -107,6 +107,7 @@ final class TwigQuerySourceManagerTest extends TestCase
      */
     public function itThrowsLibraryExecutionException(): void
     {
+        /** @var TwigQuerySourceManager $manager */
         $manager = $this->getManager();
 
         $executor = $this
@@ -129,6 +130,7 @@ final class TwigQuerySourceManagerTest extends TestCase
      */
     public function itWrapsUnknownExceptionAndThrowsLibraryExecutionException(): void
     {
+        /** @var TwigQuerySourceManager $manager */
         $manager = $this->getManager();
 
         $executor = $this

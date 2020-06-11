@@ -56,5 +56,32 @@
 
         <InvalidStringClass errorLevel="info"/>
 
+        <PossiblyUnusedMethod>
+            <errorLevel type="suppress">
+                <file name="src/RunOpenCode/Bundle/QueryResourcesLoader/Contract/ExecutionResultInterface.php" />
+            </errorLevel>
+        </PossiblyUnusedMethod>
+
+        <MixedMethodCall>
+            <errorLevel type="suppress">
+                <file name="src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/TwigNodeDefinition.php" />
+                <file name="src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/Configuration.php"/>
+            </errorLevel>
+        </MixedMethodCall>
+
+        <PossiblyNullReference>
+            <errorLevel type="suppress">
+                <file name="src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/TwigNodeDefinition.php" />
+                <file name="src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/Configuration.php"/>
+            </errorLevel>
+        </PossiblyNullReference>
+
+        <PossiblyUndefinedMethod>
+            <errorLevel type="suppress">
+                <file name="src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/TwigNodeDefinition.php" />
+                <file name="src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/Configuration.php"/>
+            </errorLevel>
+        </PossiblyUndefinedMethod>
+
     </issueHandlers>
 </psalm>

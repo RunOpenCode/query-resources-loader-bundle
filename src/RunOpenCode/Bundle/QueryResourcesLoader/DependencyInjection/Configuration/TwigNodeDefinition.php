@@ -1,12 +1,7 @@
 <?php
-/*
- * This file is part of the QueryResourcesLoaderBundle, an RunOpenCode project.
- *
- * (c) 2017 RunOpenCode.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
+
 namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Configuration;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -15,8 +10,10 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
  * Twig environment configuration.
  *
  * @internal
+ *
+ * @psalm-suppress all
  */
-class TwigNodeDefinition extends ArrayNodeDefinition
+final class TwigNodeDefinition extends ArrayNodeDefinition
 {
     public function __construct()
     {

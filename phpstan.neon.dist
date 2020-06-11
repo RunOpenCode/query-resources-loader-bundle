@@ -1,10 +1,7 @@
 parameters:
     paths:
         - src
-
     level: 8
-    scanDirectories:
-        - tools
     ignoreErrors:
         -
            message: '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\[a-zA-Z0-9\\_]+::[a-zA-Z0-9_]+\(\).#'
