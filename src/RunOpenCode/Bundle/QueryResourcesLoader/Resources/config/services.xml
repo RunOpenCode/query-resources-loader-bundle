@@ -8,7 +8,7 @@
     <parameters>
         <parameter key="runopencode.query_resources_loader.twig.loader.chain.class">Twig\Loader\ChainLoader</parameter>
         <parameter key="runopencode.query_resources_loader.twig.configurator.environment.class">Symfony\Bundle\TwigBundle\DependencyInjection\Configurator\EnvironmentConfigurator</parameter>
-        <parameter key="runopencode.query_resources_loader.twig.loader.filesystem.class">Symfony\Bundle\TwigBundle\Loader\FilesystemLoader</parameter>
+        <parameter key="runopencode.query_resources_loader.twig.loader.filesystem.class">Twig\Loader\FilesystemLoader</parameter>
         <parameter key="runopencode.query_resources_loader.manager.class">RunOpenCode\Bundle\QueryResourcesLoader\Manager\TwigQuerySourceManager</parameter>
         <parameter key="runopencode.query_resources_loader.twig.class">Twig\Environment</parameter>
         <parameter key="runopencode.query_resources_loader.twig.query_sources_iterator.class">RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer\QuerySourcesIterator</parameter>
@@ -29,8 +29,8 @@
                 class="%runopencode.query_resources_loader.twig.loader.filesystem.class%"
                 public="false"
         >
-            <argument type="service" id="templating.locator"/>
-            <argument type="service" id="templating.name_parser"/>
+            <argument/>
+            <argument>%kernel.project_dir%</argument>
             <tag name="runopencode.query_resources_loader.twig.loader"/>
         </service>
 
@@ -83,7 +83,7 @@
                 public="false"
         >
             <argument type="service" id="kernel"/>
-            <argument>%kernel.root_dir%</argument>
+            <argument>%kernel.project_dir%</argument>
             <argument type="collection"/> <!-- Twig query paths -->
         </service>
 

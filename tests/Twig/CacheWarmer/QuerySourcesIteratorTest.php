@@ -42,6 +42,7 @@ final class QuerySourcesIteratorTest extends TestCase
         }
 
         $this->assertEquals([
+            'bundles/FooBundle/foo.sql',
             '@Foo/foo.sql',
             '@Bar/bar.sql',
             '@custom-path-1/query-in-path1.sql',

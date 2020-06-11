@@ -117,6 +117,7 @@ final class ExtensionTest extends AbstractExtensionTestCase
         }
 
         $this->assertEquals([
+            [$this->container->getParameter('kernel.project_dir')],
             ['path1'],
             ['path2'],
             ['namespaced_path1', 'namespace1'],
@@ -135,7 +136,6 @@ final class ExtensionTest extends AbstractExtensionTestCase
             'BarBundle' => BarBundle::class,
         ]);
 
-        $this->setParameter('kernel.root_dir', \realpath(__DIR__ . '/../Fixtures/app'));
         $this->setDefinition('runopencode.query_resources_loader.twig.loader.filesystem', new Definition());
 
         $this->load();
@@ -150,7 +150,8 @@ final class ExtensionTest extends AbstractExtensionTestCase
         }
 
         $this->assertEquals([
-            [\realpath(__DIR__ . '/../Fixtures/app/Resources/FooBundle/query'), 'Foo'],
+            [$this->container->getParameter('kernel.project_dir')],
+            [\realpath(__DIR__ . '/../Fixtures/app/query/bundles/FooBundle'), 'Foo'],
             [\realpath(__DIR__ . '/../Fixtures/Bundles/FooBundle/Resources/query'), 'Foo'],
             [\realpath(__DIR__ . '/../Fixtures/Bundles/BarBundle/Resources/query'), 'Bar'],
         ], $paths);
@@ -183,6 +184,7 @@ final class ExtensionTest extends AbstractExtensionTestCase
         $this->container->getDefinition('runopencode.query_resources_loader.twig.query_sources_iterator')->getArgument(2);
 
         $this->assertEquals([
+            [$this->container->getParameter('kernel.project_dir')],
             ['path1'],
             ['namespaced_path1', 'namespace1'],
         ], $paths);
@@ -193,6 +195,10 @@ final class ExtensionTest extends AbstractExtensionTestCase
      */
     protected function getContainerExtensions(): array
     {
-        return [new Extension()];
+        $this->setParameter('kernel.project_dir', \realpath(__DIR__ . '/../Fixtures/app'));
+
+        return [
+            new Extension(),
+        ];
     }
 }

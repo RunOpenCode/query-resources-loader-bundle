@@ -124,7 +124,12 @@ final class Extension extends BaseExtension
      */
     private function configureTwigResourcePaths(array $config, ContainerBuilder $container): void
     {
-        $loader = $container->getDefinition('runopencode.query_resources_loader.twig.loader.filesystem');
+        $loader     = $container->getDefinition('runopencode.query_resources_loader.twig.loader.filesystem');
+        $projectDir = $container->getParameter('kernel.project_dir');
+
+        // add project directory as default path
+        $loader->addMethodCall('addPath', [$projectDir]);
+        $container->addResource(new FileExistenceResource($projectDir));
 
         // register user-configured paths
         foreach ($config['twig']['paths'] as $path => $namespace) {
@@ -155,7 +160,7 @@ final class Extension extends BaseExtension
 
         // register bundles as Twig namespaces
         foreach ($container->getParameter('kernel.bundles') as $bundle => $class) {
-            $dir = $container->getParameter('kernel.root_dir') . '/Resources/' . $bundle . '/query';
+            $dir = $container->getParameter('kernel.project_dir') . '/query/bundles/' . $bundle;
 
             if (\is_dir($dir)) {
                 $addTwigPath($dir, $bundle);
