@@ -117,7 +117,7 @@ final class ExtensionTest extends AbstractExtensionTestCase
         }
 
         $this->assertEquals([
-            [$this->container->getParameter('kernel.project_dir')],
+            [$this->container->getParameter('runopencode.query_resources_loader.default_path')],
             ['path1'],
             ['path2'],
             ['namespaced_path1', 'namespace1'],
@@ -150,7 +150,7 @@ final class ExtensionTest extends AbstractExtensionTestCase
         }
 
         $this->assertEquals([
-            [$this->container->getParameter('kernel.project_dir')],
+            [$this->container->getParameter('runopencode.query_resources_loader.default_path')],
             [\realpath(__DIR__ . '/../Fixtures/app/query/bundles/FooBundle'), 'Foo'],
             [\realpath(__DIR__ . '/../Fixtures/Bundles/FooBundle/Resources/query'), 'Foo'],
             [\realpath(__DIR__ . '/../Fixtures/Bundles/BarBundle/Resources/query'), 'Bar'],
@@ -184,7 +184,7 @@ final class ExtensionTest extends AbstractExtensionTestCase
         $this->container->getDefinition('runopencode.query_resources_loader.twig.query_sources_iterator')->getArgument(2);
 
         $this->assertEquals([
-            [$this->container->getParameter('kernel.project_dir')],
+            [$this->container->getParameter('runopencode.query_resources_loader.default_path')],
             ['path1'],
             ['namespaced_path1', 'namespace1'],
         ], $paths);

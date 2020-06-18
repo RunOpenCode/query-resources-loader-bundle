@@ -127,9 +127,14 @@ final class Extension extends BaseExtension
         $loader     = $container->getDefinition('runopencode.query_resources_loader.twig.loader.filesystem');
         $projectDir = $container->getParameter('kernel.project_dir');
 
-        // add project directory as default path
-        $loader->addMethodCall('addPath', [$projectDir]);
-        $container->addResource(new FileExistenceResource($projectDir));
+        // add "query" directory within project directory as default path, if exists
+        $defaultPath = \sprintf('%s/query', $projectDir);
+
+        if (\is_dir($defaultPath)) {
+            $loader->addMethodCall('addPath', [$defaultPath]);
+            $container->addResource(new FileExistenceResource($defaultPath));
+            $container->setParameter('runopencode.query_resources_loader.default_path', $defaultPath);
+        }
 
         // register user-configured paths
         foreach ($config['twig']['paths'] as $path => $namespace) {
