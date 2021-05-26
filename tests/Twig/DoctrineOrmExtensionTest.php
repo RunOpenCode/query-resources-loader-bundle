@@ -30,7 +30,15 @@ final class DoctrineOrmExtensionTest extends TestCase
             return $function->getName();
         }, $extension->getFunctions());
 
-        $this->assertEquals(['table_name', 'join_table_name', 'column_name'], $functions);
+        $this->assertEquals([
+            'table_name',
+            'join_table_name',
+            'column_name',
+            'join_table_join_columns',
+            'join_table_inverse_join_columns',
+            'join_table_join_column',
+            'join_table_inverse_join_column',
+        ], $functions);
     }
 
     /**
@@ -49,7 +57,15 @@ final class DoctrineOrmExtensionTest extends TestCase
             return $filter->getName();
         }, $extension->getFilters());
 
-        $this->assertEquals(['table_name', 'join_table_name', 'column_name'], $filters);
+        $this->assertEquals([
+            'table_name',
+            'join_table_name',
+            'column_name',
+            'join_table_join_columns',
+            'join_table_inverse_join_columns',
+            'join_table_join_column',
+            'join_table_inverse_join_column',
+        ], $filters);
     }
 
     /**
@@ -138,5 +154,45 @@ final class DoctrineOrmExtensionTest extends TestCase
         }))[0];
 
         $this->assertEquals('some_column_name', \call_user_func($function->getCallable(), '', ''));
+    }
+
+    /**
+     * @test
+     */
+    public function itGetsJoinTableName(): void
+    {
+        $this->markTestIncomplete('Missing implementation');
+    }
+
+    /**
+     * @test
+     */
+    public function itGetsJoinTableJoinColumns(): void
+    {
+        $this->markTestIncomplete('Missing implementation');
+    }
+
+    /**
+     * @test
+     */
+    public function itGetsJoinTableInverseJoinColumns(): void
+    {
+        $this->markTestIncomplete('Missing implementation');
+    }
+
+    /**
+     * @test
+     */
+    public function itGetsJoinTableJoinColumn(): void
+    {
+        $this->markTestIncomplete('Missing implementation');
+    }
+
+    /**
+     * @test
+     */
+    public function itGetsJoinTableInverseJoinColumn(): void
+    {
+        $this->markTestIncomplete('Missing implementation');
     }
 }
