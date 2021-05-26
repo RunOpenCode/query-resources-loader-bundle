@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\Executor;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Logging\EchoSQLLogger;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\TransactionIsolationLevel;
 use PHPUnit\Framework\TestCase;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
@@ -17,11 +20,13 @@ final class DoctrineDbalExecutorTest extends TestCase
     /**
      * @var DoctrineDbalExecutor
      */
-    protected DoctrineDbalExecutor $executor;
+    private DoctrineDbalExecutor $executor;
+
+    private Connection $connection;
 
     public function setUp(): void
     {
-        $connection = DriverManager::getConnection([
+        $this->connection = DriverManager::getConnection([
             'memory' => true,
             'driver' => 'pdo_sqlite',
         ]);
@@ -34,7 +39,7 @@ final class DoctrineDbalExecutorTest extends TestCase
         $myTable->addColumn('description', 'string', ['length' => 255]);
         $myTable->setPrimaryKey(['id']);
 
-        $connection->executeQuery($schema->toSql($connection->getDatabasePlatform())[0]);
+        $this->connection->executeQuery($schema->toSql($this->connection->getDatabasePlatform())[0]);
 
         $records = [
             ['id' => 1, 'title' => 'Some title 1', 'description' => 'Some description 1'],
@@ -45,10 +50,10 @@ final class DoctrineDbalExecutorTest extends TestCase
         ];
 
         foreach ($records as $record) {
-            $connection->executeQuery('INSERT INTO test (id, title, description) VALUES (:id, :title, :description);', $record);
+            $this->connection->executeQuery('INSERT INTO test (id, title, description) VALUES (:id, :title, :description);', $record);
         }
 
-        $this->executor = new DoctrineDbalExecutor($connection);
+        $this->executor = new DoctrineDbalExecutor($this->connection);
     }
 
     /**
@@ -201,5 +206,28 @@ final class DoctrineDbalExecutorTest extends TestCase
         $result = $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', []);
 
         $this->assertNull($result->getSingleResultOrNull());
+    }
+
+    /**
+     * @test
+     */
+    public function itSetsIsolationLevel(): void
+    {
+        $this->connection->getConfiguration()->setSQLLogger(new EchoSQLLogger());
+        $isolation = $this->connection->getTransactionIsolation();
+
+        $this->assertNotSame($isolation, TransactionIsolationLevel::READ_UNCOMMITTED);
+
+        \ob_start();
+        $this->executor->execute('SELECT * FROM test WHERE 1 = 0;');
+        $this->assertSame('SELECT * FROM test WHERE 1 = 0;', \trim(\ob_get_clean()));
+
+        \ob_start();
+        $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', [], [], ['isolation' => TransactionIsolationLevel::READ_UNCOMMITTED]);
+        $logged = \ob_get_clean();
+        $this->assertStringContainsString('PRAGMA read_uncommitted = 1', $logged);
+        $this->assertStringContainsString('SELECT * FROM test WHERE 1 = 0;', $logged);
+
+        $this->assertSame($this->connection->getTransactionIsolation(), $isolation);
     }
 }

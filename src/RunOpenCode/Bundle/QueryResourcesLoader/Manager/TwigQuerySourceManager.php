@@ -92,7 +92,7 @@ final class TwigQuerySourceManager implements ManagerInterface
      * @throws RuntimeException
      * @throws ExecutionException
      */
-    public function execute(string $name, array $args = [], array $types = [], ?string $executor = null): ExecutionResultInterface
+    public function execute(string $name, array $args = [], array $types = [], array $options = [], ?string $executor = null): ExecutionResultInterface
     {
         if (null === $executor) {
             $executor = (string)\array_key_first($this->executors);
@@ -106,7 +106,7 @@ final class TwigQuerySourceManager implements ManagerInterface
         $executorInstance = $this->executors[$executor];
 
         try {
-            return $executorInstance->execute($this->get($name, $args), $args, $types);
+            return $executorInstance->execute($this->get($name, $args), $args, $types, $options);
         } catch (\Exception $exception) {
             if ($exception instanceof ExceptionInterface) {
                 throw $exception;

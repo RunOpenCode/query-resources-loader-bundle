@@ -23,7 +23,7 @@ final class RegisterExecutorsCompilerPassTest extends AbstractCompilerPassTestCa
 
         $executor = new Definition(DoctrineDbalExecutor::class, []);
 
-        $executor->addTag('runopencode.query_resources_loader.executor', ['name' => 'dummy_executor']);
+        $executor->addTag('runopencode.query_resources_loader.executor', ['alias' => 'dummy_executor']);
         $this->setDefinition('executor', $executor);
 
         $this->compile();
@@ -60,12 +60,12 @@ final class RegisterExecutorsCompilerPassTest extends AbstractCompilerPassTestCa
 
         $executorOne = new Definition(DoctrineDbalExecutor::class, []);
 
-        $executorOne->addTag('runopencode.query_resources_loader.executor', ['name' => 'dummy_executor_one']);
+        $executorOne->addTag('runopencode.query_resources_loader.executor', ['alias' => 'dummy_executor_one']);
         $this->setDefinition('executor_one', $executorOne);
 
         $executorTwo = new Definition(DoctrineDbalExecutor::class, []);
 
-        $executorTwo->addTag('runopencode.query_resources_loader.executor', ['name' => 'dummy_executor_two']);
+        $executorTwo->addTag('runopencode.query_resources_loader.executor', ['alias' => 'dummy_executor_two']);
         $this->setDefinition('executor_two', $executorTwo);
 
         $this->setParameter('runopencode.query_resources_loader.default_executor', 'executor_two');

@@ -24,11 +24,12 @@ Manager defines 3 public methods:
          * @param string                $name     Name of Query source code.
          * @param array<string, mixed>  $args     Arguments for modification/compilation of Query source code, as well as params for query statement.
          * @param array<string, string> $types    Types of parameters for prepared statement.
+         * @param array<string, mixed>  $options  Any executor specific options (depending on concrete driver).
          * @param null|string           $executor Executor name.
          *
          * @return ExecutionResultInterface<mixed, mixed> Execution results.
          */
-        public function execute(string $name, array $args = [], array $types = [], ?string $executor = null): ExecutionResultInterface;
+        public function execute(string $name, array $args = [], array $types = [], array $options = [], ?string $executor = null): ExecutionResultInterface;
     
         /**
          * Check if manager have the Query source code by its given name.

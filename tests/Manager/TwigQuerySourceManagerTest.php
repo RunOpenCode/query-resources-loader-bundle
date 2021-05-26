@@ -99,7 +99,7 @@ final class TwigQuerySourceManagerTest extends TestCase
     public function itThrowsExceptionWhenExecutorDoesNotExists(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->getManager()->execute('@test/query-1', [], [], 'dummy');
+        $this->getManager()->execute('@test/query-1', [], [], [], 'dummy');
     }
 
     /**
@@ -122,7 +122,7 @@ final class TwigQuerySourceManagerTest extends TestCase
 
         $this->expectException(ExecutionException::class);
 
-        $manager->execute('@test/query-1', [], [], 'throwing');
+        $manager->execute('@test/query-1', [], [], [], 'throwing');
     }
 
     /**
@@ -145,7 +145,7 @@ final class TwigQuerySourceManagerTest extends TestCase
 
         $this->expectException(ExecutionException::class);
 
-        $manager->execute('@test/query-1', [], [], 'throwing');
+        $manager->execute('@test/query-1', [], [], [], 'throwing');
     }
 
     private function getManager(): ManagerInterface

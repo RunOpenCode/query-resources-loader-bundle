@@ -31,10 +31,19 @@ final class RegisterExecutorsCompilerPass implements CompilerPassInterface
             foreach ($tags as $attributes) {
                 $definition->addMethodCall('registerExecutor', [
                     new Reference($id),
-                    $attributes['name'],
+                    $id,
                 ]);
 
-                $executors[$attributes['name']] = $id;
+                $executors[$id] = $id;
+
+                if (isset($attributes['alias'])) {
+                    $definition->addMethodCall('registerExecutor', [
+                        new Reference($id),
+                        $attributes['alias'],
+                    ]);
+
+                    $executors[$attributes['alias']] = $id;
+                }
             }
         }
 
