@@ -27,7 +27,10 @@ final class ExecutorBuilderCompilerPass implements CompilerPassInterface
         $definition = new Definition();
 
         $definition->setClass(DoctrineDbalExecutor::class);
-        $definition->setArguments([new Reference('doctrine.dbal.default_connection')]);
+        $definition->setArguments([
+            new Reference('doctrine.dbal.default_connection'),
+            $container->hasParameter('kernel.debug') ? $container->getParameter('kernel.debug') : false,
+        ]);
         $definition->setPublic(false);
 
         $definition->addTag('runopencode.query_resources_loader.executor', [

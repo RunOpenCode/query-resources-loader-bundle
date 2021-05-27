@@ -23,12 +23,15 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
      */
     private Statement $statement;
 
+    private bool $debug;
+
     /**
      * @param Statement<mixed> $statement
      */
-    public function __construct(Statement $statement)
+    public function __construct(Statement $statement, bool $debug = true)
     {
         $this->statement = $statement;
+        $this->debug     = $debug;
     }
 
     public function getSingleScalarResult()
@@ -224,6 +227,13 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
      */
     public function count(): int
     {
+        if ($this->debug) {
+            \trigger_error(
+                'It is not advisable to rely on \Countable interface of DoctrineDbalExecutionResult because results depends on underlying DBMS implementation.',
+                E_USER_NOTICE
+            );
+        }
+
         if (0 === $this->statement->columnCount()) {
             return $this->statement->rowCount();
         }

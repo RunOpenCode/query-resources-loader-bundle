@@ -230,4 +230,26 @@ final class DoctrineDbalExecutorTest extends TestCase
 
         $this->assertSame($this->connection->getTransactionIsolation(), $isolation);
     }
+
+    /**
+     * @test
+     */
+    public function itCountsResults(): void
+    {
+        $result = $this->executor->execute('SELECT * FROM test;');
+        \Closure::bind(function () {
+            $this->debug = false;
+        }, $result, DoctrineDbalExecutionResult::class)();
+        $this->assertSame(5, \count($result));
+    }
+
+    /**
+     * @test
+     */
+    public function itWarnsWhenUsingCountable(): void
+    {
+        $this->expectNotice();
+        $result = $this->executor->execute('SELECT * FROM test;');
+        \count($result);
+    }
 }
