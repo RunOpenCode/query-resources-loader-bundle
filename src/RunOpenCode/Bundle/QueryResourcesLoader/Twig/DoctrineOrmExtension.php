@@ -199,7 +199,7 @@ final class DoctrineOrmExtension extends AbstractExtension
         $metadata              = $entityManager->getClassMetadata($entity);
         $identifierColumnNames = $metadata->getIdentifierColumnNames();
 
-        if (0 === \count($identifierColumnNames)) {
+        if (1 !== \count($identifierColumnNames)) {
             throw new RuntimeException(\sprintf(
                 'Expected only one primary column for entity "%s", got "%s".',
                 $entity,

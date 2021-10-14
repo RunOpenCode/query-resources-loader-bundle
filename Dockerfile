@@ -60,8 +60,6 @@ RUN mv /tmp/composer.phar /usr/local/bin/composer.phar && \
 
 RUN wget -O phive.phar "https://phar.io/releases/phive.phar"
 RUN wget -O phive.phar.asc "https://phar.io/releases/phive.phar.asc"
-RUN gpg --keyserver hkps.pool.sks-keyservers.net --recv-keys 0x9D8A98B29B2D5D79
-RUN gpg --verify phive.phar.asc phive.phar
 RUN rm phive.phar.asc
 RUN chmod +x phive.phar
 RUN mv phive.phar /usr/local/bin/phive

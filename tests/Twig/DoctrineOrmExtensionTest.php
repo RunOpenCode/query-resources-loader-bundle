@@ -38,6 +38,7 @@ final class DoctrineOrmExtensionTest extends TestCase
             'join_table_inverse_join_columns',
             'join_table_join_column',
             'join_table_inverse_join_column',
+            'primary_key_column_name',
         ], $functions);
     }
 
@@ -65,6 +66,7 @@ final class DoctrineOrmExtensionTest extends TestCase
             'join_table_inverse_join_columns',
             'join_table_join_column',
             'join_table_inverse_join_column',
+            'primary_key_column_name',
         ], $filters);
     }
 
@@ -192,6 +194,14 @@ final class DoctrineOrmExtensionTest extends TestCase
      * @test
      */
     public function itGetsJoinTableInverseJoinColumn(): void
+    {
+        $this->markTestIncomplete('Missing implementation');
+    }
+
+    /**
+     * @test
+     */
+    public function itGetsPrimaryKeyColumnName(): void
     {
         $this->markTestIncomplete('Missing implementation');
     }
