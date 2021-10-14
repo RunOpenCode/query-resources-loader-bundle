@@ -23,13 +23,13 @@ interface ManagerInterface
     /**
      * Execute Query source.
      *
-     * @param string                $name     Name of Query source code.
-     * @param array<string, mixed>  $args     Arguments for modification/compilation of Query source code, as well as params for query statement.
-     * @param array<string, string> $types    Types of parameters for prepared statement.
-     * @param array<string, mixed>  $options  Any executor specific options (depending on concrete driver).
-     * @param null|string           $executor Executor name.
+     * @param string                    $name     Name of Query source code.
+     * @param array<string, mixed>      $args     Arguments for modification/compilation of Query source code, as well as params for query statement.
+     * @param array<string, string|int> $types    Types of parameters for prepared statement.
+     * @param array<string, mixed>      $options  Any executor specific options (depending on concrete driver).
+     * @param null|string               $executor Executor name.
      *
-     * @return ExecutionResultInterface<mixed, mixed> Execution results.
+     * @return ExecutionResultInterface Execution results.
      */
     public function execute(string $name, array $args = [], array $types = [], array $options = [], ?string $executor = null): ExecutionResultInterface;
 
