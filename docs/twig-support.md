@@ -107,6 +107,8 @@ name of your entity
 class name of your entity and its property name which holds relation 
 - `column_name`: will provide you with column name for given full qualified class
 name of your entity and its property name
+- `primary_key_column_name`: will provide you with primary key column name for given 
+full qualified class  
  
 These functions are useful if you expect changes in naming strategies of 
 generated tables/column, or you expect changes in general (early stage

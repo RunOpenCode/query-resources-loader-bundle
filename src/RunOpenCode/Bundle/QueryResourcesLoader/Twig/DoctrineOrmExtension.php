@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\ORM\Mapping\MappingException;
 use Doctrine\Persistence\ManagerRegistry;
+use RunOpenCode\Bundle\QueryResourcesLoader\Exception\RuntimeException;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -48,6 +49,9 @@ final class DoctrineOrmExtension extends AbstractExtension
             new TwigFunction('join_table_inverse_join_column', \Closure::bind(function ($field, $entity) {
                 return $this->getJoinTableInverseJoinColumns($field, $entity)[0];
             }, $this)),
+            new TwigFunction('primary_key_column_name', \Closure::bind(function ($entity) {
+                return $this->getPrimaryKeyColumnName($entity);
+            }, $this)),
         ];
     }
 
@@ -77,6 +81,9 @@ final class DoctrineOrmExtension extends AbstractExtension
             }, $this)),
             new TwigFilter('join_table_inverse_join_column', \Closure::bind(function ($field, $entity) {
                 return $this->getJoinTableInverseJoinColumns($field, $entity)[0];
+            }, $this)),
+            new TwigFilter('primary_key_column_name', \Closure::bind(function ($entity) {
+                return $this->getPrimaryKeyColumnName($entity);
             }, $this)),
         ];
     }
@@ -173,5 +180,33 @@ final class DoctrineOrmExtension extends AbstractExtension
         $mapping  = $metadata->getAssociationMapping($field);
 
         return $mapping['joinTable']['inverseJoinColumns'];
+    }
+
+    /**
+     * Get primary column name of given entity.
+     *
+     * @param string $entity Entity
+     *
+     * @return string[]
+     *
+     * @throws RuntimeException If there is no primary key defined, or primary key is compound key.
+     */
+    private function getPrimaryKeyColumnName(string $entity): string
+    {
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $this->doctrine->getManagerForClass($entity);
+        /** @var ClassMetadataInfo $metadata */
+        $metadata              = $entityManager->getClassMetadata($entity);
+        $identifierColumnNames = $metadata->getIdentifierColumnNames();
+
+        if (0 === \count($identifierColumnNames)) {
+            throw new RuntimeException(\sprintf(
+                'Expected only one primary column for entity "%s", got "%s".',
+                $entity,
+                \count($identifierColumnNames)
+            ));
+        }
+
+        return $identifierColumnNames[0];
     }
 }
