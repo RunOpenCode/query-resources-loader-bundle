@@ -10,6 +10,7 @@ use Doctrine\DBAL\TransactionIsolationLevel;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
 use Doctrine\DBAL\Connection;
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -50,6 +51,16 @@ final class DoctrineDbalExecutor implements ExecutorInterface
         }
 
         return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws DBALException
+     */
+    public function iterate(string $query, array $parameters = [], array $types = [], array $options = []): IterateResultInterface
+    {
+        return new DoctrineDbalIterateResult($this, $query, $parameters, $types, $options);
     }
 
     private function resolveOptions(array $options): array

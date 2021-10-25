@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor;
 
+use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Driver\Statement;
 use Doctrine\DBAL\ParameterType;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
@@ -16,17 +17,17 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
  *
  * @implements \IteratorAggregate<mixed, mixed>
  */
-final class DoctrineDbalExecutionResult implements \IteratorAggregate, ExecutionResultInterface, Statement
+final class DoctrineDbalExecutionResult implements \IteratorAggregate, ExecutionResultInterface, Statement, Result
 {
     /**
-     * @var Statement<mixed>
+     * @var Statement<mixed>&Result
      */
     private Statement $statement;
 
     private bool $debug;
 
     /**
-     * @param Statement<mixed> $statement
+     * @param Statement<mixed>&Result $statement
      */
     public function __construct(Statement $statement, bool $debug = true)
     {
@@ -165,6 +166,62 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
     public function fetchColumn($columnIndex = 0)
     {
         return $this->statement->fetchColumn($columnIndex);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchNumeric()
+    {
+        return $this->statement->fetchNumeric();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchAssociative()
+    {
+        return $this->statement->fetchAssociative();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchOne()
+    {
+        return $this->statement->fetchOne();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchAllNumeric(): array
+    {
+        return $this->statement->fetchAllNumeric();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchAllAssociative(): array
+    {
+        return $this->statement->fetchAllAssociative();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchFirstColumn(): array
+    {
+        return $this->statement->fetchFirstColumn();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function free(): void
+    {
+        $this->statement->free();
     }
 
     /**

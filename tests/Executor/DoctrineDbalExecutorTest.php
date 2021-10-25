@@ -10,6 +10,7 @@ use Doctrine\DBAL\Logging\EchoSQLLogger;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\TransactionIsolationLevel;
 use PHPUnit\Framework\TestCase;
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor;
@@ -251,5 +252,52 @@ final class DoctrineDbalExecutorTest extends TestCase
         $this->expectNotice();
         $result = $this->executor->execute('SELECT * FROM test;');
         \count($result);
+    }
+
+    /**
+     * @test
+     */
+    public function itIteratesInBatchAndYieldsRow(): void
+    {
+        $invocationCount = 0;
+        $rowsCount       = 0;
+        $result          = $this->executor->iterate('SELECT * FROM test;', [], [], [
+            'batch_size'   => 2,
+            'on_batch_end' => static function () use (&$invocationCount): void {
+                $invocationCount++;
+            },
+        ]);
+
+        foreach ($result as $row) {
+            $rowsCount++;
+            $this->assertSame((int)$row['id'], $rowsCount);
+            $this->assertSame($row['title'], \sprintf('Some title %s', $rowsCount));
+            $this->assertSame($row['description'], \sprintf('Some description %s', $rowsCount));
+        }
+
+        $this->assertSame(3, $invocationCount);
+    }
+
+    /**
+     * @test
+     */
+    public function itIteratesInBatchAndYieldsSingleColumn(): void
+    {
+        $invocationCount = 0;
+        $rowsCount       = 0;
+        $result          = $this->executor->iterate('SELECT title FROM test;', [], [], [
+            'iterate'      => IterateResultInterface::ITERATE_COLUMN,
+            'batch_size'   => 3,
+            'on_batch_end' => static function () use (&$invocationCount): void {
+                $invocationCount++;
+            },
+        ]);
+
+        foreach ($result as $column) {
+            $rowsCount++;
+            $this->assertSame($column, \sprintf('Some title %s', $rowsCount));
+        }
+
+        $this->assertSame(2, $invocationCount);
     }
 }

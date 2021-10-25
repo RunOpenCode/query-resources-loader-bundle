@@ -11,6 +11,15 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\Contract;
 interface ManagerInterface
 {
     /**
+     * Check if manager have the Query source code by its given name.
+     *
+     * @param string $name The name of the Query source to check if can be loaded.
+     *
+     * @return bool TRUE If the Query source code is handled by this manager or not.
+     */
+    public function has(string $name): bool;
+
+    /**
      * Get Query source by its name.
      *
      * @param string               $name Name of Query source code.
@@ -34,11 +43,31 @@ interface ManagerInterface
     public function execute(string $name, array $args = [], array $types = [], array $options = [], ?string $executor = null): ExecutionResultInterface;
 
     /**
-     * Check if manager have the Query source code by its given name.
+     * Execute query and iterate results in batches.
      *
-     * @param string $name The name of the Query source to check if can be loaded.
+     * Query is modified in order to accommodate LIMIT/OFFSET clauses,
+     * provided query must not contain mentioned statements. Purpose is to
+     * iterate rows without using table/database cursor and achieving small
+     * memory footprint on both application and database side.
      *
-     * @return bool TRUE If the Query source code is handled by this manager or not.
+     * Options may contain additional keys, depending on concrete driver,
+     * but all contains the following:
+     *
+     * - iterate: string, how values should be yielded for each row.
+     * - batch_size: int, how many rows to process per query.
+     * - on_batch_end: callable, callable to invoke when batch is fully processed.
+     *
+     * Executor may provide for prepared statement "last_batch_row" with last row
+     * of previous batch which may be used for building of query for next batch.
+     *
+     * @param string                                                                                $query      Query to execute.
+     * @param array<string, mixed>                                                                  $parameters Parameters required for query.
+     * @param array<string, string|int>                                                             $types      Parameter types required for query.
+     * @param array<string, mixed>|array{iterate?:string, batch_size?:int, on_batch_end?: callable} $options    Any executor specific options (depending on concrete driver).
+     *
+     * @return IterateResultInterface<mixed, mixed> Result of execution.
+     *
+     * @see \RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface::ITERATE_*
      */
-    public function has(string $name): bool;
+    public function iterate(string $name, array $args = [], array $types = [], array $options = [], ?string $executor = null): IterateResultInterface;
 }

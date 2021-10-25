@@ -9,6 +9,15 @@ Manager defines 3 public methods:
     interface ManagerInterface
     {
         /**
+         * Check if manager have the Query source code by its given name.
+         *
+         * @param string $name The name of the Query source to check if can be loaded.
+         *
+         * @return bool TRUE If the Query source code is handled by this manager or not.
+         */
+        public function has(string $name): bool;
+
+        /**
          * Get Query source by its name.
          *
          * @param string               $name Name of Query source code.
@@ -30,15 +39,35 @@ Manager defines 3 public methods:
          * @return ExecutionResultInterface<mixed, mixed> Execution results.
          */
         public function execute(string $name, array $args = [], array $types = [], array $options = [], ?string $executor = null): ExecutionResultInterface;
-    
+
         /**
-         * Check if manager have the Query source code by its given name.
+         * Execute query and iterate results in batches.
          *
-         * @param string $name The name of the Query source to check if can be loaded.
+         * Query is modified in order to accommodate LIMIT/OFFSET clauses,
+         * provided query must not contain mentioned statements. Purpose is to
+         * iterate rows without using table/database cursor and achieving small 
+         * memory footprint on both application and database side.
          *
-         * @return bool TRUE If the Query source code is handled by this manager or not.
+         * Options may contain additional keys, depending on concrete driver,
+         * but all contains the following:
+         *
+         * - iterate: string, how values should be yielded for each row.
+         * - batch_size: int, how many rows to process per query.
+         * - on_batch_end: callable, callable to invoke when batch is fully processed.
+         *
+         * Executor may provide for prepared statement "last_batch_row" with last row
+         * of previous batch which may be used for building of query for next batch.
+         *
+         * @param string                                                                                $query      Query to execute.
+         * @param array<string, mixed>                                                                  $parameters Parameters required for query.
+         * @param array<string, string>                                                                 $types      Parameter types required for query.
+         * @param array<string, mixed>|array{iterate?:string, batch_size?:int, on_batch_end?: callable} $options    Any executor specific options (depending on concrete driver).
+         *
+         * @return IterateResultInterface<mixed, mixed> Result of execution.
+         *
+         * @see \RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface::ITERATE_*
          */
-        public function has(string $name): bool;
+        public function iterate(string $name, array $args = [], array $types = [], array $options = [], ?string $executor = null): IterateResultInterface;
     }
 
     
@@ -109,5 +138,37 @@ be a query that uses, per example, prepared statement:
         
 By using Twig within this bundle, you can do a really serious and complex
 query building as well.        
+
+## Iterate
+
+Consider that you have a table (or dataset) which you want to iterate trough with the smallest possible 
+memory footprint on both application and database side. In general, your motivation is batch processing.
+There are several methods to achieve similar, starting from using plain statement, Doctrine ORM method
+stated in documentation
+[https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/batch-processing.html](https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/batch-processing.html),
+special libraries for that purpose (like: [https://github.com/Ocramius/DoctrineBatchUtils](https://github.com/Ocramius/DoctrineBatchUtils)),
+cursors on database levels, you name it.
+
+This library allows you to use `iterate()` method which will modify your query, appending `LIMIT` and `OFFSET`
+and iterate your recordset in pages, offloading pressure from booth database and application level. You may
+configure a batch size (number of items per page), how rows should be yielded (whole row or just first column) as
+well as you may pass a callable which you want to invoke after each bach of records, per example:
+
+- you iterate through IDs of some entities
+- you load each entity with ORM
+- you modify each entity 
+- you flush your changes and clear entity manager for each batch
+
+(as in example given here: [https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/batch-processing.html](https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/batch-processing.html))
+
+However, note that quality of application of this method depends on many factors and data consistency may be
+jeopardised. Some useful recommendations:
+
+- always write queries without `LIMIT`/`OFFSET`.
+- make sorting stable (per example, add at the end `ORDER BY id ASC` and, if possible, add order by some timestamped 
+field, like "created_at") 
+- iterate() is not executed within transaction, if data consistency can be impacted by that, wrap everything in
+transaction, or lock affected tables, or use some other method to batch process data.
+
 
 [<< Proposed solution](proposed-solution.md) | [Table of contents](index.md) | [Twig support >>](twig-support.md)
