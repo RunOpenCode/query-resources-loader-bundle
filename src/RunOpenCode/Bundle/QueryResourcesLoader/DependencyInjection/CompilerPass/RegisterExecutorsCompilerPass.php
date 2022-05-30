@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass;
 
+use RunOpenCode\Bundle\QueryResourcesLoader\Manager\DefaultManager;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -21,11 +22,11 @@ final class RegisterExecutorsCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->hasDefinition('runopencode.query_resources_loader')) {
+        if (!$container->hasDefinition(DefaultManager::class)) {
             return;
         }
 
-        $definition     = $container->getDefinition('runopencode.query_resources_loader');
+        $definition     = $container->findDefinition(DefaultManager::class);
         $taggedServices = $container->findTaggedServiceIds('runopencode.query_resources_loader.executor');
         $executors      = [];
 
