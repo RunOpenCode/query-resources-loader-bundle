@@ -21,7 +21,7 @@
 
         <service
                 id="RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface"
-                alias="runopencode.query_resources_loader"
+                alias="RunOpenCode\Bundle\QueryResourcesLoader\Manager\DefaultManager"
         />
 
         <service
