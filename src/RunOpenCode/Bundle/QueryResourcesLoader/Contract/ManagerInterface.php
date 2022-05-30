@@ -60,12 +60,12 @@ interface ManagerInterface
      * Executor may provide for prepared statement "last_batch_row" with last row
      * of previous batch which may be used for building of query for next batch.
      *
-     * @param string                                                                                $query      Query to execute.
-     * @param array<string, mixed>                                                                  $parameters Parameters required for query.
-     * @param array<string, string|int>                                                             $types      Parameter types required for query.
-     * @param array<string, mixed>|array{iterate?:string, batch_size?:int, on_batch_end?: callable} $options    Any executor specific options (depending on concrete driver).
+     * @param string                                                                                $name    Name of Query source code.
+     * @param array<string, mixed>                                                                  $args    Arguments for modification/compilation of Query source code, as well as params for query statement.
+     * @param array<string, string|int>                                                             $types   Parameter types required for query.
+     * @param array<string, mixed>|array{iterate?:string, batch_size?:int, on_batch_end?: callable} $options Any executor specific options (depending on concrete driver).
      *
-     * @return IterateResultInterface<mixed, mixed> Result of execution.
+     * @return IterateResultInterface Result of execution.
      *
      * @see \RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface::ITERATE_*
      */

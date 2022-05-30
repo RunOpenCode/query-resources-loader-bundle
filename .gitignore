@@ -2,3 +2,5 @@ vendor
 build/
 tools/
 cache.properties
+.php-cs-fixer.cache
+.phpunit.result.cache

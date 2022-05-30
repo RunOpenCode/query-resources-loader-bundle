@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\Manager;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Statement;
+use Doctrine\DBAL\Result;
 use PHPUnit\Framework\TestCase;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface;
@@ -171,7 +171,7 @@ final class TwigQuerySourceManagerTest extends TestCase
 
         $stub
             ->method('executeQuery')
-            ->willReturn($this->createMock(Statement::class));
+            ->willReturn($this->createMock(Result::class));
 
         return new DoctrineDbalExecutor($stub);
     }

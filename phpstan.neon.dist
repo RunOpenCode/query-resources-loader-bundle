@@ -1,14 +1,7 @@
 parameters:
     paths:
         - src
-    level: 8
-    ignoreErrors:
-        -
-           message: '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\[a-zA-Z0-9\\_]+::[a-zA-Z0-9_]+\(\).#'
-           path: src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/Configuration.php
-        -
-           message: '#Cannot call method scalarNode\(\) on Symfony\\Component\\Config\\Definition\\Builder\\NodeParentInterface\|null.#'
-           path: src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/TwigNodeDefinition.php
-        -
-           message: '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\[a-zA-Z0-9\\_]+::[a-zA-Z0-9_]+\(\).#'
-           path: src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/TwigNodeDefinition.php
+    level: max
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon        

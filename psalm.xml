@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <psalm
-        totallyTyped="true"
         resolveFromConfigFile="true"
         strictBinaryOperands="true"
         checkForThrowsDocblock="true"
@@ -20,68 +19,11 @@
     </projectFiles>
 
     <issueHandlers>
-        <LessSpecificReturnType errorLevel="info"/>
-
-        <DeprecatedMethod errorLevel="info"/>
-        <DeprecatedProperty errorLevel="info"/>
-        <DeprecatedClass errorLevel="info"/>
-        <DeprecatedConstant errorLevel="info"/>
-        <DeprecatedFunction errorLevel="info"/>
-        <DeprecatedInterface errorLevel="info"/>
-        <DeprecatedTrait errorLevel="info"/>
-
-        <InternalMethod errorLevel="info"/>
-        <InternalProperty errorLevel="info"/>
-        <InternalClass errorLevel="info"/>
-
-        <MissingClosureReturnType errorLevel="info"/>
-        <MissingReturnType errorLevel="info"/>
-        <MissingPropertyType errorLevel="info"/>
-        <InvalidDocblock errorLevel="info"/>
-        <MisplacedRequiredParam errorLevel="info"/>
-
-        <PropertyNotSetInConstructor errorLevel="info"/>
-        <MissingConstructor errorLevel="info"/>
-        <MissingClosureParamType errorLevel="info"/>
-        <MissingParamType errorLevel="info"/>
-
-        <RedundantCondition errorLevel="info"/>
-
-        <DocblockTypeContradiction errorLevel="info"/>
-        <RedundantConditionGivenDocblockType errorLevel="info"/>
-
-        <UnresolvableInclude errorLevel="info"/>
-
-        <RawObjectIteration errorLevel="info"/>
-
-        <InvalidStringClass errorLevel="info"/>
-
-        <PossiblyUnusedMethod>
-            <errorLevel type="suppress">
-                <file name="src/RunOpenCode/Bundle/QueryResourcesLoader/Contract/ExecutionResultInterface.php" />
-            </errorLevel>
-        </PossiblyUnusedMethod>
-
-        <MixedMethodCall>
-            <errorLevel type="suppress">
-                <file name="src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/TwigNodeDefinition.php" />
-                <file name="src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/Configuration.php"/>
-            </errorLevel>
-        </MixedMethodCall>
-
-        <PossiblyNullReference>
-            <errorLevel type="suppress">
-                <file name="src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/TwigNodeDefinition.php" />
-                <file name="src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/Configuration.php"/>
-            </errorLevel>
-        </PossiblyNullReference>
-
-        <PossiblyUndefinedMethod>
-            <errorLevel type="suppress">
-                <file name="src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/TwigNodeDefinition.php" />
-                <file name="src/RunOpenCode/Bundle/QueryResourcesLoader/DependencyInjection/Configuration/Configuration.php"/>
-            </errorLevel>
-        </PossiblyUndefinedMethod>
-
+        <MissingThrowsDocblock errorLevel="info"/>
+        <UnusedClass errorLevel="info"/>
+        <PossiblyUnusedMethod errorLevel="info"/>
     </issueHandlers>
+    <plugins>
+        <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/>
+    </plugins>
 </psalm>

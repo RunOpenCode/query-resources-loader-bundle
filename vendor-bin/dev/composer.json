@@ -1,0 +1,12 @@
+{
+    "require": {
+        "phpunit/phpunit": "^9.5",
+        "maglnet/composer-require-checker": "^3.8",
+        "icanhazstring/composer-unused": "^0.8.2",
+        "phpmd/phpmd": "^2.12",
+        "vimeo/psalm": "^4.23",
+        "friendsofphp/php-cs-fixer": "^3.8",
+        "psalm/plugin-phpunit": "^0.16.1",
+        "psalm/plugin-symfony": "^3.1"
+    }
+}

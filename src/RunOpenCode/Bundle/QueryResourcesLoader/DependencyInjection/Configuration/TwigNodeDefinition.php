@@ -30,6 +30,9 @@ final class TwigNodeDefinition extends ArrayNodeDefinition
      */
     private function configureTwigOptions(): void
     {
+        /**
+         * @phpstan-ignore-next-line
+         */
         $this
             ->fixXmlConfig('path')
             ->children()
@@ -49,7 +52,7 @@ final class TwigNodeDefinition extends ArrayNodeDefinition
                     ->beforeNormalization()
                     ->always()
                     ->then(static function ($paths) {
-                        $normalized = array();
+                        $normalized = [];
                         foreach ($paths as $path => $namespace) {
                             if (\is_array($namespace)) {
                                 // xml
@@ -79,6 +82,9 @@ final class TwigNodeDefinition extends ArrayNodeDefinition
      */
     private function configureTwigFormatOptions(): void
     {
+        /**
+         * @phpstan-ignore-next-line
+         */
         $this
             ->children()
                 ->arrayNode('date')
@@ -110,6 +116,9 @@ final class TwigNodeDefinition extends ArrayNodeDefinition
      */
     private function configureTwigGlobals(): void
     {
+        /**
+         * @phpstan-ignore-next-line
+         */
         $this
             ->fixXmlConfig('global')
             ->children()
@@ -142,7 +151,7 @@ final class TwigNodeDefinition extends ArrayNodeDefinition
                                 return true;
                             })
                             ->then(static function ($v) {
-                                return array('value' => $v);
+                                return ['value' => $v];
                             })
                         ->end()
                         ->children()

@@ -11,6 +11,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Process Twig loaders.
+ *
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 final class TwigLoaderCompilerPass implements CompilerPassInterface
 {
@@ -45,7 +47,6 @@ final class TwigLoaderCompilerPass implements CompilerPassInterface
         \krsort($prioritizedLoaders);
 
         foreach ($prioritizedLoaders as $loaders) {
-            /** @var string $loader */
             foreach ($loaders as $loader) {
                 $chainLoader->addMethodCall('addLoader', [new Reference($loader)]);
             }

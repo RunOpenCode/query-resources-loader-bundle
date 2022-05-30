@@ -33,7 +33,7 @@ final class TwigEnvironmentCompilerPass implements CompilerPassInterface
 
         $definition->setMethodCalls([]);
 
-        foreach ($extensionServices as $id => $attributes) {
+        foreach (\array_keys($extensionServices) as $id) {
             $definition->addMethodCall('addExtension', [new Reference($id)]);
         }
 

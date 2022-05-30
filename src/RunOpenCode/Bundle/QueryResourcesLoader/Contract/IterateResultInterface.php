@@ -6,7 +6,7 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\Contract;
 
 /**
  * Iteration result.
- * 
+ *
  * @extends \Traversable<mixed, mixed>
  */
 interface IterateResultInterface extends \Traversable

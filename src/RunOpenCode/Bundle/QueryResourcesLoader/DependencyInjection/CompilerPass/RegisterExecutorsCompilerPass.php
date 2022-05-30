@@ -11,6 +11,8 @@ use Symfony\Component\DependencyInjection\Exception\LogicException;
 
 /**
  * Registers query executors.
+ *
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 final class RegisterExecutorsCompilerPass implements CompilerPassInterface
 {
@@ -51,9 +53,10 @@ final class RegisterExecutorsCompilerPass implements CompilerPassInterface
             throw new LogicException('At least one query executor is required to be registered, none found.');
         }
 
-        $defaultExecutor = $container->hasParameter('runopencode.query_resources_loader.default_executor')
+        /** @var string $defaultExecutor */
+        $defaultExecutor = ($container->hasParameter('runopencode.query_resources_loader.default_executor')
             ? $container->getParameter('runopencode.query_resources_loader.default_executor')
-            : \array_values($executors)[0];
+            : \array_values($executors)[0]);
 
         if (!$container->hasDefinition($defaultExecutor)) {
             throw new LogicException(\sprintf(

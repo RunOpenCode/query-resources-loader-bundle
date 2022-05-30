@@ -18,8 +18,14 @@ final class DoctrineDbalIterateResult implements \IteratorAggregate, IterateResu
 
     private string $query;
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $parameters;
 
+    /**
+     * @var array<string, string|int>
+     */
     private array $types;
 
     /**
@@ -38,7 +44,7 @@ final class DoctrineDbalIterateResult implements \IteratorAggregate, IterateResu
      *     iterate?: string,
      *     batch_size?: int,
      *     on_batch_end?: callable
-     *     } $options                $options
+     *  } $options                $options
      */
     public function __construct(
         DoctrineDbalExecutor $executor,
@@ -83,6 +89,7 @@ final class DoctrineDbalIterateResult implements \IteratorAggregate, IterateResu
             $query      = \sprintf('%s LIMIT %s OFFSET %s', $this->query, $limit, $offset);
             $result     = $this->executor->execute($query, $parameters, $this->types, $options);
 
+            /** @var array<array-key, string|null> $row */
             foreach ($result as $row) {
                 $count++;
 
@@ -116,13 +123,13 @@ final class DoctrineDbalIterateResult implements \IteratorAggregate, IterateResu
      *     iterate?: string,
      *     batch_size?: int,
      *     on_batch_end?: callable
-     *     } $options
+     * } $options
      *
      * @return array{
      *     iterate: string,
      *     batch_size: int,
      *     on_batch_end: callable
-     * } $options
+     * }
      */
     private function resolveOptions(array $options): array
     {
@@ -146,12 +153,13 @@ final class DoctrineDbalIterateResult implements \IteratorAggregate, IterateResu
 
             $resolver->setDefault('on_batch_end', null);
             $resolver->setAllowedTypes('on_batch_end', ['null', 'callable']);
+            /** @psalm-suppress UnusedClosureParam, MissingClosureParamType */
             $resolver->setNormalizer('on_batch_end', static function (Options $options, $value) {
                 return $value ?? static function () {
-                    };
+                };
             });
         }
 
-        return $resolver->resolve($options);
+        return $resolver->resolve($options); // @phpstan-ignore-line
     }
 }

@@ -17,7 +17,7 @@ interface ExecutorInterface
      * @param array<string, string|int> $types      Parameter types required for query.
      * @param array<string, mixed>      $options    Any executor specific options (depending on concrete driver).
      *
-     * @return ExecutionResultInterface<mixed, mixed> Result of execution.
+     * @return ExecutionResultInterface Result of execution.
      */
     public function execute(string $query, array $parameters = [], array $types = [], array $options = []): ExecutionResultInterface;
 
@@ -29,7 +29,7 @@ interface ExecutorInterface
      * @param array<string, string|int>                                                             $types      Parameter types required for query.
      * @param array<string, mixed>&array{iterate?:string, batch_size?:int, on_batch_end?: callable} $options    Any executor specific options (depending on concrete driver).
      *
-     * @return IterateResultInterface<mixed, mixed> Result of execution.
+     * @return IterateResultInterface Result of execution.
      *
      * @see \RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface::ITERATE_*
      */

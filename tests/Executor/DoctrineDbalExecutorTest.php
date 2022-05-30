@@ -6,7 +6,6 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\Executor;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Logging\EchoSQLLogger;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\TransactionIsolationLevel;
 use PHPUnit\Framework\TestCase;
@@ -159,9 +158,10 @@ final class DoctrineDbalExecutorTest extends TestCase
     {
         $result = $this->executor->execute('SELECT id, title, description FROM test WHERE id = 3;', []);
 
-        $this->assertEquals([
-            'id' => 3, 'title' => 'Some title 3', 'description' => 'Some description 3',
-            0    => 3, 1 => 'Some title 3', 2 => 'Some description 3',
+        $this->assertSame([
+            'id'          => '3',
+            'title'       => 'Some title 3',
+            'description' => 'Some description 3',
         ], $result->getSingleResult());
     }
 
@@ -214,20 +214,23 @@ final class DoctrineDbalExecutorTest extends TestCase
      */
     public function itSetsIsolationLevel(): void
     {
-        $this->connection->getConfiguration()->setSQLLogger(new EchoSQLLogger());
+        $logger = new BufferedLogger();
+        $this->connection->getConfiguration()->setSQLLogger($logger);
         $isolation = $this->connection->getTransactionIsolation();
 
         $this->assertNotSame($isolation, TransactionIsolationLevel::READ_UNCOMMITTED);
 
-        \ob_start();
         $this->executor->execute('SELECT * FROM test WHERE 1 = 0;');
-        $this->assertSame('SELECT * FROM test WHERE 1 = 0;', \trim(\ob_get_clean()));
+        $this->assertSame('SELECT * FROM test WHERE 1 = 0;', $logger->getLastQuery());
 
-        \ob_start();
+        $logger->clear();
+
         $this->executor->execute('SELECT * FROM test WHERE 1 = 0;', [], [], ['isolation' => TransactionIsolationLevel::READ_UNCOMMITTED]);
-        $logged = \ob_get_clean();
-        $this->assertStringContainsString('PRAGMA read_uncommitted = 1', $logged);
-        $this->assertStringContainsString('SELECT * FROM test WHERE 1 = 0;', $logged);
+
+        $this->assertStringContainsString('START TRANSACTION', $logger->getQueries()[0]);
+        $this->assertStringContainsString('PRAGMA read_uncommitted = 0', $logger->getQueries()[1]);
+        $this->assertStringContainsString('SELECT * FROM test WHERE 1 = 0;', $logger->getQueries()[2]);
+        $this->assertStringContainsString('COMMIT', $logger->getQueries()[3]);
 
         $this->assertSame($this->connection->getTransactionIsolation(), $isolation);
     }

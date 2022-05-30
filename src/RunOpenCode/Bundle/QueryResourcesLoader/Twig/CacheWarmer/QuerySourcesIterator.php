@@ -27,7 +27,7 @@ final class QuerySourcesIterator implements \IteratorAggregate
     /**
      * @var string[]
      */
-    private array $queries;
+    private ?array $queries = null;
 
     /**
      * @param KernelInterface $kernel           A KernelInterface instance
@@ -46,7 +46,7 @@ final class QuerySourcesIterator implements \IteratorAggregate
      */
     public function getIterator(): \Traversable
     {
-        if (!isset($this->queries)) {
+        if (null === $this->queries) {
             $this->queries = $this->findQuerySourcesInDirectory($this->projectDirectory . '/query');
             $bundles       = $this->kernel->getBundles();
             $bundleQueries = [];

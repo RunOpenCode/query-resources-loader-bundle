@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor;
 
+use Doctrine\DBAL\Result as ExecutionResult;
 use Doctrine\DBAL\Driver\Result;
-use Doctrine\DBAL\Driver\Statement;
-use Doctrine\DBAL\ParameterType;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
@@ -16,34 +15,31 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
  * SELECT statement.
  *
  * @implements \IteratorAggregate<mixed, mixed>
+ *
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-final class DoctrineDbalExecutionResult implements \IteratorAggregate, ExecutionResultInterface, Statement, Result
+final class DoctrineDbalExecutionResult implements \IteratorAggregate, ExecutionResultInterface, Result
 {
-    /**
-     * @var Statement<mixed>&Result
-     */
-    private Statement $statement;
+    private ExecutionResult $result;
 
     private bool $debug;
 
-    /**
-     * @param Statement<mixed>&Result $statement
-     */
-    public function __construct(Statement $statement, bool $debug = true)
+    public function __construct(ExecutionResult $result, bool $debug = true)
     {
-        $this->statement = $statement;
-        $this->debug     = $debug;
+        $this->result = $result;
+        $this->debug  = $debug;
     }
 
     public function getSingleScalarResult()
     {
-        $scalar = $this->statement->fetchColumn(0);
+        $scalar = $this->result->fetchOne();
 
         if (false === $scalar) {
             throw new NoResultException('Expected on result for given query.');
         }
 
-        if (false !== $this->statement->fetch()) {
+        if (false !== $this->result->fetchOne()) {
             throw new NonUniqueResultException('Expected only one result for given query.');
         }
 
@@ -68,7 +64,7 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
     {
         $result = [];
 
-        while ($val = $this->statement->fetchColumn()) {
+        while ($val = $this->result->fetchOne()) {
             $result[] = $val;
         }
 
@@ -93,13 +89,13 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
 
     public function getSingleResult()
     {
-        $row = $this->statement->fetch(\PDO::FETCH_BOTH);
+        $row = $this->result->fetchAssociative();
 
         if (false === $row) {
             throw new NoResultException('Expected on result for given query.');
         }
 
-        if (false !== $this->statement->fetch()) {
+        if (false !== $this->result->fetchAssociative()) {
             throw new NonUniqueResultException('Expected only ine result for given query.');
         }
 
@@ -123,57 +119,9 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
     /**
      * {@inheritdoc}
      */
-    public function closeCursor(): bool
-    {
-        return $this->statement->closeCursor();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function columnCount(): int
     {
-        return $this->statement->columnCount();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setFetchMode($fetchMode, $arg2 = null, $arg3 = null): bool
-    {
-        return $this->statement->setFetchMode($fetchMode, $arg2, $arg3);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetch($fetchMode = null, $cursorOrientation = \PDO::FETCH_ORI_NEXT, $cursorOffset = 0)
-    {
-        return $this->statement->fetch($fetchMode, $cursorOrientation, $cursorOffset);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchAll($fetchMode = null, $fetchArgument = null, $ctorArgs = null)
-    {
-        return $this->statement->fetchAll($fetchMode, $fetchArgument, $ctorArgs);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchColumn($columnIndex = 0)
-    {
-        return $this->statement->fetchColumn($columnIndex);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchNumeric()
-    {
-        return $this->statement->fetchNumeric();
+        return $this->result->columnCount();
     }
 
     /**
@@ -181,7 +129,15 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
      */
     public function fetchAssociative()
     {
-        return $this->statement->fetchAssociative();
+        return $this->result->fetchAssociative();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchNumeric()
+    {
+        return $this->result->fetchNumeric();
     }
 
     /**
@@ -189,7 +145,7 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
      */
     public function fetchOne()
     {
-        return $this->statement->fetchOne();
+        return $this->result->fetchOne();
     }
 
     /**
@@ -197,7 +153,7 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
      */
     public function fetchAllNumeric(): array
     {
-        return $this->statement->fetchAllNumeric();
+        return $this->result->fetchAllNumeric();
     }
 
     /**
@@ -205,7 +161,7 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
      */
     public function fetchAllAssociative(): array
     {
-        return $this->statement->fetchAllAssociative();
+        return $this->result->fetchAllAssociative();
     }
 
     /**
@@ -213,7 +169,7 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
      */
     public function fetchFirstColumn(): array
     {
-        return $this->statement->fetchFirstColumn();
+        return $this->result->fetchFirstColumn();
     }
 
     /**
@@ -221,52 +177,15 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
      */
     public function free(): void
     {
-        $this->statement->free();
+        $this->result->free();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function bindValue($param, $value, $type = null)
+    public function rowCount(): int
     {
-        return $this->statement->bindValue($param, $value, $type ?? ParameterType::STRING);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function bindParam($column, &$variable, $type = null, $length = null)
-    {
-        return $this->statement->bindParam($column, $variable, $type ?? ParameterType::STRING, $length);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function errorCode()
-    {
-        return $this->statement->errorCode();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function errorInfo()
-    {
-        return $this->statement->errorInfo();
-    }
-
-    public function execute($params = null)
-    {
-        return $this->statement->execute($params);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function rowCount()
-    {
-        return $this->statement->rowCount();
+        return $this->result->rowCount();
     }
 
     /**
@@ -274,7 +193,7 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
      */
     public function getIterator(): \Traversable
     {
-        while (false !== ($row = $this->statement->fetch(\PDO::FETCH_BOTH))) {
+        while (false !== ($row = $this->result->fetchAssociative())) {
             yield $row;
         }
     }
@@ -291,12 +210,12 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
             );
         }
 
-        if (0 === $this->statement->columnCount()) {
-            return $this->statement->rowCount();
+        if (0 === $this->result->columnCount()) {
+            return $this->result->rowCount();
         }
 
         /** @var iterable<mixed>|array $data */
-        $data = $this->fetchAll();
+        $data = $this->result->fetchAllAssociative();
 
         return \count(\is_array($data) ? $data : \iterator_to_array($data));
     }
@@ -310,7 +229,7 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
      */
     public function __get($name)
     {
-        return $this->statement->{$name};
+        return $this->result->{$name};
     }
 
     /**
@@ -323,7 +242,7 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
      */
     public function __set($name, $value)
     {
-        $this->statement->{$name} = $value;
+        $this->result->{$name} = $value;
     }
 
     /**
@@ -353,7 +272,7 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
     public function __call($name, $arguments)
     {
         /** @var callable $callable */
-        $callable = [$this->statement, $name];
+        $callable = [$this->result, $name];
 
         return call_user_func_array($callable, $arguments);
     }

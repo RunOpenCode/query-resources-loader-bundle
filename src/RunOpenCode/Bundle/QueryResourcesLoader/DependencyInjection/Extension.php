@@ -12,6 +12,9 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * @psalm-suppress MoreSpecificImplementedParamType
+ */
 final class Extension extends BaseExtension
 {
     /**
@@ -51,10 +54,10 @@ final class Extension extends BaseExtension
         $configuration = new Configuration();
         $config        = $this->processConfiguration($configuration, $configs);
 
-        $this->configureTwigGlobals($config, $container);
-        $this->configureTwigEnvironment($config, $container);
-        $this->configureTwigWarmUpCommand($config, $container);
-        $this->configureTwigResourcePaths($config, $container);
+        $this->configureTwigGlobals($config, $container); // @phpstan-ignore-line
+        $this->configureTwigEnvironment($config, $container); // @phpstan-ignore-line
+        $this->configureTwigWarmUpCommand($config, $container); // @phpstan-ignore-line
+        $this->configureTwigResourcePaths($config, $container); // @phpstan-ignore-line
         $this->configureTwigBundlePaths($config, $container);
 
         if (null !== $config['default_executor']) {
@@ -71,7 +74,15 @@ final class Extension extends BaseExtension
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param array{
+     *      twig: array{
+     *           globals?: array<string, array{
+     *              type?: string,
+     *              id: string,
+     *              value: string,
+     *           }>
+     *      }
+     * } $config
      */
     private function configureTwigGlobals(array $config, ContainerBuilder $container): void
     {
@@ -79,7 +90,7 @@ final class Extension extends BaseExtension
             return;
         }
 
-        if (empty($config['twig']['globals'])) {
+        if (!isset($config['twig']['globals'])) {
             return;
         }
 
@@ -96,7 +107,20 @@ final class Extension extends BaseExtension
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param array{
+     *     twig: array{
+     *         date: array{
+     *              format: string,
+     *              interval_format: string,
+     *              timezone: string,
+     *         },
+     *         number_format: array{
+     *              decimals: int,
+     *              decimal_point: string,
+     *              thousands_separator: string
+     *         }
+     *     }
+     * } $config
      */
     private function configureTwigEnvironment(array $config, ContainerBuilder $container): void
     {
@@ -110,7 +134,11 @@ final class Extension extends BaseExtension
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param array{
+     *     twig: array{
+     *          paths: array<string, string>
+     *     }
+     * } $config
      */
     private function configureTwigWarmUpCommand(array $config, ContainerBuilder $container): void
     {
@@ -120,12 +148,17 @@ final class Extension extends BaseExtension
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param array{
+     *     twig: array{
+     *          paths: array<string, string>
+     *     }
+     * } $config
      */
     private function configureTwigResourcePaths(array $config, ContainerBuilder $container): void
     {
-        $loader     = $container->getDefinition('runopencode.query_resources_loader.twig.loader.filesystem');
+        /** @var string $projectDir */
         $projectDir = $container->getParameter('kernel.project_dir');
+        $loader     = $container->getDefinition('runopencode.query_resources_loader.twig.loader.filesystem');
 
         // add "query" directory within project directory as default path, if exists
         $defaultPath = \sprintf('%s/query', $projectDir);
@@ -149,11 +182,18 @@ final class Extension extends BaseExtension
 
     /**
      * @param array<string, mixed> $config
+     *
+     * @psalm-suppress UnusedParam
      */
     private function configureTwigBundlePaths(array $config, ContainerBuilder $container): void
     {
-        $loader      = $container->getDefinition('runopencode.query_resources_loader.twig.loader.filesystem');
-        $addTwigPath = static function ($dir, $bundle) use ($loader) {
+        /** @var array<string, class-string> $bundles */
+        $bundles = $container->getParameter('kernel.bundles');
+        $loader  = $container->getDefinition('runopencode.query_resources_loader.twig.loader.filesystem');
+        /** @var string $projectDir */
+        $projectDir = $container->getParameter('kernel.project_dir');
+
+        $addTwigPath = static function (string $dir, string $bundle) use ($loader): void {
             $name = $bundle;
 
             if ('Bundle' === \substr($name, -6)) {
@@ -163,9 +203,9 @@ final class Extension extends BaseExtension
             $loader->addMethodCall('addPath', [$dir, $name]);
         };
 
-        // register bundles as Twig namespaces
-        foreach ($container->getParameter('kernel.bundles') as $bundle => $class) {
-            $dir = $container->getParameter('kernel.project_dir') . '/query/bundles/' . $bundle;
+        // Register bundles as Twig namespaces
+        foreach ($bundles as $bundle => $class) {
+            $dir = $projectDir . '/query/bundles/' . $bundle;
 
             if (\is_dir($dir)) {
                 $addTwigPath($dir, $bundle);

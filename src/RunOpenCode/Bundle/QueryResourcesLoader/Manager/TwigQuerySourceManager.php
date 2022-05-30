@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Manager;
 
-use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExceptionInterface;
+use RunOpenCode\Bundle\QueryResourcesLoader\Exception\ExceptionInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface;
@@ -95,7 +95,7 @@ final class TwigQuerySourceManager implements ManagerInterface
      */
     public function execute(string $name, array $args = [], array $types = [], array $options = [], ?string $executor = null): ExecutionResultInterface
     {
-        /** @var ExecutorInterface $executorInstance */
+        /** @psalm-suppress PossiblyNullArrayOffset */
         $executorInstance = $this->executors[$executor ?? \array_key_first($this->executors)] ?? null;
 
         if (null === $executorInstance) {
@@ -119,12 +119,20 @@ final class TwigQuerySourceManager implements ManagerInterface
     /**
      * {@inheritdoc}
      *
+     * @psalm-suppress MoreSpecificImplementedParamType
+     *
+     * @param array{
+     *     iterate?: string,
+     *     batch_size?: int,
+     *     on_batch_end?: callable
+     * } $options
+     *
      * @throws RuntimeException
      * @throws ExecutionException
      */
     public function iterate(string $name, array $args = [], array $types = [], array $options = [], ?string $executor = null): IterateResultInterface
     {
-        /** @var ExecutorInterface $executorInstance */
+        /** @psalm-suppress PossiblyNullArrayOffset */
         $executorInstance = $this->executors[$executor ?? \array_key_first($this->executors)] ?? null;
 
         if (null === $executorInstance) {
