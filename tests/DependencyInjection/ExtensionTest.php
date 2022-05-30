@@ -8,6 +8,7 @@ use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Extension;
 use RunOpenCode\Bundle\QueryResourcesLoader\Tests\Fixtures\Bundles\BarBundle\BarBundle;
 use RunOpenCode\Bundle\QueryResourcesLoader\Tests\Fixtures\Bundles\FooBundle\FooBundle;
+use RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer\QuerySourcesIterator;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -181,7 +182,7 @@ final class ExtensionTest extends AbstractExtensionTestCase
             }
         }
 
-        $this->container->getDefinition('runopencode.query_resources_loader.twig.query_sources_iterator')->getArgument(2);
+        $this->container->getDefinition(QuerySourcesIterator::class)->getArgument(2);
 
         $this->assertEquals([
             [$this->container->getParameter('runopencode.query_resources_loader.default_path')],

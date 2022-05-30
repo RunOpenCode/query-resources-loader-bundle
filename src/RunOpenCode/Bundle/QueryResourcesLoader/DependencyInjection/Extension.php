@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection;
 
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Configuration\Configuration;
+use RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer\QuerySourcesIterator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension as BaseExtension;
@@ -49,7 +50,8 @@ final class Extension extends BaseExtension
     public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.xml');
+        $loader->load('loader.xml');
+        $loader->load('manager.xml');
 
         $configuration = new Configuration();
         $config        = $this->processConfiguration($configuration, $configs);
@@ -142,9 +144,7 @@ final class Extension extends BaseExtension
      */
     private function configureTwigWarmUpCommand(array $config, ContainerBuilder $container): void
     {
-        $container
-            ->getDefinition('runopencode.query_resources_loader.twig.query_sources_iterator')
-            ->replaceArgument(2, $config['twig']['paths']);
+        $container->getDefinition(QuerySourcesIterator::class)->replaceArgument(2, $config['twig']['paths']);
     }
 
     /**

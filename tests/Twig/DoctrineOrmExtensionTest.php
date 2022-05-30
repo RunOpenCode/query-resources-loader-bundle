@@ -7,7 +7,7 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\Twig;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use PHPUnit\Framework\TestCase;
-use RunOpenCode\Bundle\QueryResourcesLoader\Twig\DoctrineOrmExtension;
+use RunOpenCode\Bundle\QueryResourcesLoader\Twig\Extension\DoctrineOrmExtension;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Twig\TwigFilter;
 use Twig\TwigFunction;

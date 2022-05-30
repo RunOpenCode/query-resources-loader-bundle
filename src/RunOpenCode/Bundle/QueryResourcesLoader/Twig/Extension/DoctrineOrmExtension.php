@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RunOpenCode\Bundle\QueryResourcesLoader\Twig;
+namespace RunOpenCode\Bundle\QueryResourcesLoader\Twig\Extension;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;

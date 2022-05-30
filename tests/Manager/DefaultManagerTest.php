@@ -8,83 +8,19 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Result;
 use PHPUnit\Framework\TestCase;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\LoaderInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\ExecutionException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\RuntimeException;
-use RunOpenCode\Bundle\QueryResourcesLoader\Exception\SourceNotFoundException;
-use RunOpenCode\Bundle\QueryResourcesLoader\Exception\SyntaxException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutionResult;
-use RunOpenCode\Bundle\QueryResourcesLoader\Manager\TwigQuerySourceManager;
+use RunOpenCode\Bundle\QueryResourcesLoader\Manager\DefaultManager;
+use RunOpenCode\Bundle\QueryResourcesLoader\Loader\TwigLoader;
 use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 
-final class TwigQuerySourceManagerTest extends TestCase
+final class DefaultManagerTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function itHasQuery(): void
-    {
-        $this->assertTrue($this->getManager()->has('@test/query-1'));
-    }
-
-    /**
-     * @test
-     */
-    public function itDoesNotHaveQuery(): void
-    {
-        $this->assertFalse($this->getManager()->has('unknown'));
-    }
-
-    /**
-     * @test
-     */
-    public function itGetsQuery(): void
-    {
-        $this->assertSame('THIS IS SIMPLE, PLAIN QUERY', $this->getManager()->get('@test/query-1'));
-        $this->assertSame('THIS IS SIMPLE, PLAIN QUERY WITH VARIABLE X', $this->getManager()->get('@test/query-2', ['var' => 'X']));
-    }
-
-    /**
-     * @test
-     */
-    public function itThrowsSyntaxError(): void
-    {
-        $this->expectException(SyntaxException::class);
-        $this->getManager()->get('@test/syntax-error');
-    }
-
-    /**
-     * @test
-     */
-    public function itThrowsNotFoundException(): void
-    {
-        $this->expectException(SourceNotFoundException::class);
-        $this->getManager()->get('not-existing');
-    }
-
-    /**
-     * @test
-     */
-    public function itThrowsUnknownException(): void
-    {
-        $twig = $this
-            ->getMockBuilder(Environment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $twig
-            ->method('render')
-            ->willThrowException(new \Exception());
-
-        $manager = new TwigQuerySourceManager($twig);
-
-        $this->expectException(RuntimeException::class);
-
-        $manager->get('does_not_exists');
-    }
-
     /**
      * @test
      */
@@ -107,7 +43,7 @@ final class TwigQuerySourceManagerTest extends TestCase
      */
     public function itThrowsLibraryExecutionException(): void
     {
-        /** @var TwigQuerySourceManager $manager */
+        /** @var DefaultManager $manager */
         $manager = $this->getManager();
 
         $executor = $this
@@ -130,7 +66,7 @@ final class TwigQuerySourceManagerTest extends TestCase
      */
     public function itWrapsUnknownExceptionAndThrowsLibraryExecutionException(): void
     {
-        /** @var TwigQuerySourceManager $manager */
+        /** @var DefaultManager $manager */
         $manager = $this->getManager();
 
         $executor = $this
@@ -150,19 +86,19 @@ final class TwigQuerySourceManagerTest extends TestCase
 
     private function getManager(): ManagerInterface
     {
-        $manager = new TwigQuerySourceManager($this->getTwig());
+        $manager = new DefaultManager($this->getTwigLoader());
         $manager->registerExecutor($this->getExecutor(), 'default');
 
         return $manager;
     }
 
-    private function getTwig(): Environment
+    private function getTwigLoader(): LoaderInterface
     {
-        return new Environment(new ArrayLoader([
+        return new TwigLoader(new Environment(new ArrayLoader([
             '@test/query-1'      => 'THIS IS SIMPLE, PLAIN QUERY',
             '@test/query-2'      => 'THIS IS SIMPLE, PLAIN QUERY WITH VARIABLE {{var}}',
             '@test/syntax-error' => 'THIS IS SIMPLE, PLAIN QUERY WITH TWIG SYNTAX ERROR {% if x',
-        ]));
+        ])));
     }
 
     private function getExecutor(): ExecutorInterface

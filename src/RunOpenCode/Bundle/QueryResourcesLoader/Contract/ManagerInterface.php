@@ -8,7 +8,7 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\Contract;
  * Manager service provides Query source code from loaders, modifying it, if needed, as per concrete implementation of
  * relevant manager and supported scripting language. Manager can execute a Query as well.
  */
-interface ManagerInterface
+interface ManagerInterface extends LoaderInterface
 {
     /**
      * Check if manager have the Query source code by its given name.
@@ -41,6 +41,8 @@ interface ManagerInterface
      * @return ExecutionResultInterface Execution results.
      */
     public function execute(string $name, array $args = [], array $types = [], array $options = [], ?string $executor = null): ExecutionResultInterface;
+    
+    public function transactional(\Closure $callback, array $options = [], ?string $executor = null): void;
 
     /**
      * Execute query and iterate results in batches.

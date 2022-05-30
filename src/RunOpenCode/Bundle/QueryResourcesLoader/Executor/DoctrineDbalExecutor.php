@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor;
 
 use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Driver\Statement;
-use Doctrine\DBAL\Result;
 use Doctrine\DBAL\TransactionIsolationLevel;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
@@ -77,6 +75,11 @@ final class DoctrineDbalExecutor implements ExecutorInterface
         }
     }
 
+    private function transactional(string $query, array $parameters = [], array $types = [], array $options = [])
+    {
+        
+    }
+    
     /**
      * {@inheritdoc}
      *
