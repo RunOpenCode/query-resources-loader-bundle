@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor;
 
+use Doctrine\DBAL\Connection;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface;
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\LoaderInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\LogicException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,9 +16,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 final class DoctrineDbalIterateResult implements \IteratorAggregate, IterateResultInterface
 {
-    private DoctrineDbalExecutor $executor;
+    private Connection $connection;
 
-    private string $query;
+    private LoaderInterface $loader;
+
+    private string $name;
 
     /**
      * @var array<string, mixed>
@@ -44,21 +48,23 @@ final class DoctrineDbalIterateResult implements \IteratorAggregate, IterateResu
      *     iterate?: string,
      *     batch_size?: int,
      *     on_batch_end?: callable
-     *  } $options                $options
+     *  }                               $options $options
      */
     public function __construct(
-        DoctrineDbalExecutor $executor,
-        string               $query,
-        array                $parameters,
-        array                $types,
-        array                $options
+        Connection      $connection,
+        LoaderInterface $loader,
+        string          $name,
+        array           $parameters,
+        array           $types,
+        array           $options
     ) {
         if (\array_key_exists('last_batch_row', $parameters)) {
             throw new LogicException('Parameter "last_batch_row" is reserved and may not be used.');
         }
 
-        $this->executor   = $executor;
-        $this->query      = \rtrim(\trim($query), ';');
+        $this->connection = $connection;
+        $this->loader     = $loader;
+        $this->name       = $name;
         $this->parameters = $parameters;
         $this->types      = $types;
         $this->options    = $this->resolveOptions($options);
@@ -86,11 +92,14 @@ final class DoctrineDbalIterateResult implements \IteratorAggregate, IterateResu
             $offset     = $batchCount * $batchSize;
             $hasMore    = false;
             $parameters = \array_merge($this->parameters, ['last_batch_row' => $lastBatchRow]);
-            $query      = \sprintf('%s LIMIT %s OFFSET %s', $this->query, $limit, $offset);
-            $result     = $this->executor->execute($query, $parameters, $this->types, $options);
+            $query      = \rtrim(\trim($this->loader->get($this->name, $this->parameters)), ';');
+            $query      = \sprintf('%s LIMIT %s OFFSET %s', $query, $limit, $offset);
+            $result     = $this->connection->executeQuery($query, $parameters, $this->types);
 
-            /** @var array<array-key, string|null> $row */
-            foreach ($result as $row) {
+            /**
+             * @var array<array-key, string|null> $row
+             */
+            while (false !== ($row = $result->fetchAssociative())) {
                 $count++;
 
                 if ($count > $batchSize) {
@@ -101,6 +110,7 @@ final class DoctrineDbalIterateResult implements \IteratorAggregate, IterateResu
                     $onBatchEnd();
                     break;
                 }
+
 
                 $totalYield++;
 

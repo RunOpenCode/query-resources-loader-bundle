@@ -10,12 +10,7 @@
         <service
                 id="RunOpenCode\Bundle\QueryResourcesLoader\Manager\DefaultManager"
                 class="RunOpenCode\Bundle\QueryResourcesLoader\Manager\DefaultManager"
-        >
-            <argument
-                    type="service"
-                    id="RunOpenCode\Bundle\QueryResourcesLoader\Contract\LoaderInterface"
-            />
-        </service>
+        />
         
         <!-- Register a bunch of aliases -->
 

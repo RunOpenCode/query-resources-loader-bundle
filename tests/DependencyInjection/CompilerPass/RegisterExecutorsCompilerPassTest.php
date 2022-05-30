@@ -7,6 +7,7 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\DependencyInjection\Comp
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractCompilerPassTestCase;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\RegisterExecutorsCompilerPass;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor;
+use RunOpenCode\Bundle\QueryResourcesLoader\Manager\DefaultManager;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
@@ -19,7 +20,7 @@ final class RegisterExecutorsCompilerPassTest extends AbstractCompilerPassTestCa
      */
     public function itRegisterDefaultExecutor(): void
     {
-        $this->setDefinition('runopencode.query_resources_loader', new Definition());
+        $this->setDefinition(DefaultManager::class, new Definition());
 
         $executor = new Definition(DoctrineDbalExecutor::class, []);
 
@@ -28,12 +29,12 @@ final class RegisterExecutorsCompilerPassTest extends AbstractCompilerPassTestCa
 
         $this->compile();
 
-        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader', 'registerExecutor', [
+        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall(DefaultManager::class, 'registerExecutor', [
             new Reference('executor'),
             'dummy_executor',
         ]);
 
-        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader', 'registerExecutor', [
+        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall(DefaultManager::class, 'registerExecutor', [
             new Reference('executor'),
             'default',
         ]);
@@ -44,7 +45,7 @@ final class RegisterExecutorsCompilerPassTest extends AbstractCompilerPassTestCa
      */
     public function itRequiresAtLeastOneExecutor(): void
     {
-        $this->setDefinition('runopencode.query_resources_loader', new Definition());
+        $this->setDefinition(DefaultManager::class, new Definition());
 
         $this->expectException(LogicException::class);
 
@@ -56,7 +57,7 @@ final class RegisterExecutorsCompilerPassTest extends AbstractCompilerPassTestCa
      */
     public function itAllowsConfigurationOfDefaultExecutor(): void
     {
-        $this->setDefinition('runopencode.query_resources_loader', new Definition());
+        $this->setDefinition(DefaultManager::class, new Definition());
 
         $executorOne = new Definition(DoctrineDbalExecutor::class, []);
 
@@ -72,17 +73,17 @@ final class RegisterExecutorsCompilerPassTest extends AbstractCompilerPassTestCa
 
         $this->compile();
 
-        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader', 'registerExecutor', [
+        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall(DefaultManager::class, 'registerExecutor', [
             new Reference('executor_one'),
             'dummy_executor_one',
         ]);
 
-        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader', 'registerExecutor', [
+        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall(DefaultManager::class, 'registerExecutor', [
             new Reference('executor_two'),
             'dummy_executor_two',
         ]);
 
-        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall('runopencode.query_resources_loader', 'registerExecutor', [
+        $this->assertContainerBuilderHasServiceDefinitionWithMethodCall(DefaultManager::class, 'registerExecutor', [
             new Reference('executor_two'),
             'default',
         ]);
@@ -93,7 +94,7 @@ final class RegisterExecutorsCompilerPassTest extends AbstractCompilerPassTestCa
      */
     public function itContainsInvalidDefaultExecutorConfiguration(): void
     {
-        $this->setDefinition('runopencode.query_resources_loader', new Definition());
+        $this->setDefinition(DefaultManager::class, new Definition());
 
         $executorOne = new Definition(DoctrineDbalExecutor::class, []);
 

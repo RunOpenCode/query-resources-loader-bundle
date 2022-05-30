@@ -15,7 +15,7 @@ use Twig\Error\SyntaxError;
 final class TwigLoader implements LoaderInterface
 {
     private Environment $twig;
-    
+
     public function __construct(Environment $twig)
     {
         $this->twig = $twig;

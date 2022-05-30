@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass;
 
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\LoaderInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -29,7 +30,7 @@ final class ExecutorBuilderCompilerPass implements CompilerPassInterface
         $definition->setClass(DoctrineDbalExecutor::class);
         $definition->setArguments([
             new Reference('doctrine.dbal.default_connection'),
-            $container->hasParameter('kernel.debug') ? $container->getParameter('kernel.debug') : false,
+            new Reference(LoaderInterface::class),
         ]);
         $definition->setPublic(false);
 

@@ -15,9 +15,6 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Exception\RuntimeException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutionResult;
 use RunOpenCode\Bundle\QueryResourcesLoader\Manager\DefaultManager;
-use RunOpenCode\Bundle\QueryResourcesLoader\Loader\TwigLoader;
-use Twig\Environment;
-use Twig\Loader\ArrayLoader;
 
 final class DefaultManagerTest extends TestCase
 {
@@ -35,7 +32,7 @@ final class DefaultManagerTest extends TestCase
     public function itThrowsExceptionWhenExecutorDoesNotExists(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->getManager()->execute('@test/query-1', [], [], [], 'dummy');
+        $this->getManager()->execute('@test/query-1', [], [], 'dummy');
     }
 
     /**
@@ -58,7 +55,7 @@ final class DefaultManagerTest extends TestCase
 
         $this->expectException(ExecutionException::class);
 
-        $manager->execute('@test/query-1', [], [], [], 'throwing');
+        $manager->execute('@test/query-1', [], [], 'throwing');
     }
 
     /**
@@ -81,34 +78,26 @@ final class DefaultManagerTest extends TestCase
 
         $this->expectException(ExecutionException::class);
 
-        $manager->execute('@test/query-1', [], [], [], 'throwing');
+        $manager->execute('@test/query-1', [], [], 'throwing');
     }
 
     private function getManager(): ManagerInterface
     {
-        $manager = new DefaultManager($this->getTwigLoader());
+        $manager = new DefaultManager();
         $manager->registerExecutor($this->getExecutor(), 'default');
 
         return $manager;
     }
 
-    private function getTwigLoader(): LoaderInterface
-    {
-        return new TwigLoader(new Environment(new ArrayLoader([
-            '@test/query-1'      => 'THIS IS SIMPLE, PLAIN QUERY',
-            '@test/query-2'      => 'THIS IS SIMPLE, PLAIN QUERY WITH VARIABLE {{var}}',
-            '@test/syntax-error' => 'THIS IS SIMPLE, PLAIN QUERY WITH TWIG SYNTAX ERROR {% if x',
-        ])));
-    }
-
     private function getExecutor(): ExecutorInterface
     {
-        $stub = $this->createMock(Connection::class);
+        $connection = $this->createMock(Connection::class);
+        $loader     = $this->createMock(LoaderInterface::class);
 
-        $stub
+        $connection
             ->method('executeQuery')
             ->willReturn($this->createMock(Result::class));
 
-        return new DoctrineDbalExecutor($stub);
+        return new DoctrineDbalExecutor($connection, $loader);
     }
 }

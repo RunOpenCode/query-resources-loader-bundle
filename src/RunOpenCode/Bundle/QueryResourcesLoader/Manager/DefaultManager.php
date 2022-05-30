@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Manager;
 
-use RunOpenCode\Bundle\QueryResourcesLoader\Contract\LoaderInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\ExceptionInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
@@ -12,16 +11,12 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\ExecutionException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\RuntimeException;
-use RunOpenCode\Bundle\QueryResourcesLoader\Exception\SourceNotFoundException;
-use RunOpenCode\Bundle\QueryResourcesLoader\Exception\SyntaxException;
 
 /**
  * Default query executor.
  */
 final class DefaultManager implements ManagerInterface
 {
-    private LoaderInterface $loader;
-
     /**
      * @var array<string, ExecutorInterface>
      */
@@ -30,9 +25,8 @@ final class DefaultManager implements ManagerInterface
     /**
      * @param array<string, ExecutorInterface> $executors
      */
-    public function __construct(LoaderInterface $loader, iterable $executors = [])
+    public function __construct(iterable $executors = [])
     {
-        $this->loader    = $loader;
         $this->executors = [];
 
         foreach ($executors as $name => $executor) {
@@ -53,33 +47,17 @@ final class DefaultManager implements ManagerInterface
 
     /**
      * {@inheritdoc}
-     */
-    public function has(string $name): bool
-    {
-        return $this->loader->has($name);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws SourceNotFoundException
-     * @throws SyntaxException
-     * @throws RuntimeException
-     */
-    public function get(string $name, array $args = []): string
-    {
-        return $this->loader->get($name, $args);
-    }
-
-    /**
-     * {@inheritdoc}
      *
      * @throws RuntimeException
      * @throws ExecutionException
      */
-    public function execute(string $name, array $args = [], array $types = [], array $options = [], ?string $executor = null): ExecutionResultInterface
+    public function execute(string $name, array $args = [], array $types = [], ?string $executor = null): ExecutionResultInterface
     {
-        /** @psalm-suppress PossiblyNullArrayOffset */
+        /**
+         * @psalm-suppress PossiblyNullArrayOffset, UnnecessaryVarAnnotation
+         *
+         * @var ExecutorInterface|null $instance
+         */
         $instance = $this->executors[$executor ?? \array_key_first($this->executors)] ?? null;
 
         if (null === $instance) {
@@ -87,15 +65,13 @@ final class DefaultManager implements ManagerInterface
         }
 
         try {
-            return $instance->execute($this->get($name, $args), $args, $types, $options);
+            return $instance->execute($name, $args, $types);
+        } catch (ExceptionInterface $exception) {
+            throw $exception;
         } catch (\Exception $exception) {
-            if ($exception instanceof ExceptionInterface) {
-                throw $exception;
-            }
-
             throw new ExecutionException(\sprintf(
-                'Query "%s" could not be executed.',
-                $name
+                'Unable to execute query "%s".',
+                $name,
             ), $exception);
         }
     }
@@ -103,18 +79,26 @@ final class DefaultManager implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function transactional(\Closure $callback, array $options = [], ?string $executor = null): void
+    public function transactional(\Closure $scope, array $options = [], ?string $executor = null): void
     {
-        /** @psalm-suppress PossiblyNullArrayOffset */
+        /**
+         * @psalm-suppress PossiblyNullArrayOffset, UnnecessaryVarAnnotation
+         *
+         * @var ExecutorInterface|null $instance
+         */
         $instance = $this->executors[$executor ?? \array_key_first($this->executors)] ?? null;
 
         if (null === $instance) {
             throw new RuntimeException(null !== $executor ? \sprintf('Executor "%s" does not exists.', $executor) : 'There are no registered executors.');
         }
-        
-        // begin
-        $callback($this);
-        // commit
+
+        try {
+            $instance->transactional($scope, $options);
+        } catch (ExceptionInterface $exception) {
+            throw $exception;
+        } catch (\Exception $exception) {
+            throw new ExecutionException('Unable to execute transaction.', $exception);
+        }
     }
 
     /**
@@ -133,7 +117,11 @@ final class DefaultManager implements ManagerInterface
      */
     public function iterate(string $name, array $args = [], array $types = [], array $options = [], ?string $executor = null): IterateResultInterface
     {
-        /** @psalm-suppress PossiblyNullArrayOffset */
+        /**
+         * @psalm-suppress PossiblyNullArrayOffset, UnnecessaryVarAnnotation
+         *
+         * @var ExecutorInterface|null $instance
+         */
         $instance = $this->executors[$executor ?? \array_key_first($this->executors)] ?? null;
 
         if (null === $instance) {
@@ -141,7 +129,7 @@ final class DefaultManager implements ManagerInterface
         }
 
         try {
-            return $instance->iterate($this->get($name, $args), $args, $types, $options);
+            return $instance->iterate($name, $args, $types, $options);
         } catch (\Exception $exception) {
             if ($exception instanceof ExceptionInterface) {
                 throw $exception;

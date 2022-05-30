@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor;
 
-use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\TransactionIsolationLevel;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
 use Doctrine\DBAL\Connection;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface;
-use Symfony\Component\OptionsResolver\Options;
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\LoaderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -25,79 +24,71 @@ final class DoctrineDbalExecutor implements ExecutorInterface
      */
     private Connection $connection;
 
-    public function __construct(Connection $connection)
+    private LoaderInterface $loader;
+
+    public function __construct(Connection $connection, LoaderInterface $loader)
     {
         $this->connection = $connection;
+        $this->loader     = $loader;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function execute(string $name, array $parameters = [], array $types = []): ExecutionResultInterface
+    {
+        $query  = $this->loader->get($name, $parameters);
+        $result = $this->connection->executeQuery($query, $parameters, $types);
+
+        return new DoctrineDbalExecutionResult($result);
     }
 
     /**
      * {@inheritdoc}
      *
      * @param array{
-     *     transactional?: bool,
      *     isolation?: TransactionIsolationLevel::*|null
      * } $options
-     *
-     * @throws Exception
      */
-    public function execute(string $query, array $parameters = [], array $types = [], array $options = []): ExecutionResultInterface
+    public function transactional(\Closure $scope, array $options = []): void
     {
-        $options = $this->resolveOptions($options);
+        $options           = $this->resolveOptions($options);
+        $previousIsolation = $this->connection->getTransactionIsolation();
 
-        if (!$options['transactional']) {
-            $result = $this->connection->executeQuery($query, $parameters, $types);
-            return new DoctrineDbalExecutionResult($result);
-        }
-
-        $currentIsolationLevel = $this->connection->getTransactionIsolation();
-
-        $this->connection->beginTransaction();
 
         if (null !== $options['isolation']) {
             $this->connection->setTransactionIsolation($options['isolation']);
         }
 
+        $this->connection->beginTransaction();
+
         try {
-            $result = $this->connection->executeQuery($query, $parameters, $types);
-            $result = new DoctrineDbalExecutionResult($result);
-
+            $scope($this);
             $this->connection->commit();
-
-            return $result;
         } catch (\Exception $exception) {
             $this->connection->rollBack();
-
             throw $exception;
         } finally {
             if (null !== $options['isolation']) {
-                $this->connection->setTransactionIsolation($currentIsolationLevel);
+                $this->connection->setTransactionIsolation($previousIsolation);
             }
         }
     }
 
-    private function transactional(string $query, array $parameters = [], array $types = [], array $options = [])
-    {
-        
-    }
-    
     /**
      * {@inheritdoc}
-     *
-     * @throws Exception
      */
-    public function iterate(string $query, array $parameters = [], array $types = [], array $options = []): IterateResultInterface
+    public function iterate(string $name, array $parameters = [], array $types = [], array $options = []): IterateResultInterface
     {
-        return new DoctrineDbalIterateResult($this, $query, $parameters, $types, $options);
+        return new DoctrineDbalIterateResult($this->connection, $this->loader, $name, $parameters, $types, $options);
     }
 
     /**
      * @param array{
-     *     transactional?: bool,
      *     isolation?: TransactionIsolationLevel::*|null
      * } $options
      *
      * @return array{
-     *     transactional: bool,
      *     isolation: TransactionIsolationLevel::*|null
      * }
      */
@@ -109,9 +100,6 @@ final class DoctrineDbalExecutor implements ExecutorInterface
         if (null === $resolver) {
             $resolver = new OptionsResolver();
 
-            $resolver->setDefault('transactional', false);
-            $resolver->setAllowedTypes('transactional', 'bool');
-
             $resolver->setDefault('isolation', null);
             $resolver->setAllowedTypes('isolation', ['int', 'null']);
             $resolver->setAllowedValues('isolation', [
@@ -121,15 +109,6 @@ final class DoctrineDbalExecutor implements ExecutorInterface
                 TransactionIsolationLevel::SERIALIZABLE,
                 null,
             ]);
-
-            /** @psalm-suppress MissingClosureParamType */
-            $resolver->setNormalizer('transactional', static function (Options $options, $value): bool {
-                if (null !== $options['isolation']) {
-                    return true;
-                }
-
-                return $value;
-            });
         }
 
         return $resolver->resolve($options); // @phpstan-ignore-line
