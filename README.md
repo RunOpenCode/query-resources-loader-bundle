@@ -65,7 +65,7 @@ like as in example below:
     }
 
 With this bundle, you can store your queries in `Resources/query` directory
-as typical `.sql` file (or any other extension that your query language uses) 
+as typical `.sql` file (or any other extension that your query language uses)
 and load that query using `runopencode.query_loader` service, thus, decreasing amount
 of code in your repository classes, or, even better, you can inject service
 into your repository:
@@ -95,8 +95,8 @@ into your repository:
 
 `\RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface` defines
 `execute($name, array $args = array(), $executor = 'default')` method as well,
-so, if you are using Doctrine, you can use this *method out-of-the-box*. 
-Otherwise, you may provide your own executor (see full documentation 
+so, if you are using Doctrine, you can use this *method out-of-the-box*.
+Otherwise, you may provide your own executor (see full documentation
 regarding this topic). Here is our improved repository:
 
     use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface;
@@ -118,7 +118,7 @@ regarding this topic). Here is our improved repository:
         }
     }
 
-## Building complex queries 
+## Building complex queries
 
 Sometimes, you will need a possibility to build up your queries depending
 on your application logic. For that purpose, query loader knows Twig and
@@ -138,13 +138,11 @@ Example, file `@MyBundle/query.twig.sql`:
     {% endif %}
     
     ;
-    
 
 For other details about this bundle, as well as for tips on how to use it,
-read the documentation [here](docs/index.md).    
-    
-    
- 
- 
+read the documentation [here](docs/index.md).
 
+## TODO
 
+- Remove `RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface::iterate()` method in version 8.0,
+  depreciate support for PHP 7+.

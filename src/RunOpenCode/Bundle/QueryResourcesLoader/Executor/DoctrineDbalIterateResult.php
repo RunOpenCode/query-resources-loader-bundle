@@ -13,6 +13,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @implements \IteratorAggregate<mixed, mixed>
+ * 
+ * @deprecated Use https://github.com/ReactiveX/RxPHP for buffering and batching results.
  */
 final class DoctrineDbalIterateResult implements \IteratorAggregate, IterateResultInterface
 {

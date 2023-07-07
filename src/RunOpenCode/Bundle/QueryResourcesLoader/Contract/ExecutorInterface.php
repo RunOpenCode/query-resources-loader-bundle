@@ -23,12 +23,14 @@ interface ExecutorInterface
     /**
      * Create transactional scope and execute queries within single transaction.
      *
-     * @param \Closure(ExecutorInterface $executor): void $scope Closure to invoke in order to execute statements within transaction scope.
-     * @param array<string, mixed> $options  Any executor specific options (depending on concrete driver).
+     * @template T
      *
-     * @return void
+     * @param \Closure(ExecutorInterface $executor): T $scope   Closure to invoke in order to execute statements within transaction scope.
+     * @param array<string, mixed>                     $options Any executor specific options (depending on concrete driver).
+     *
+     * @return mixed Result of transactional scope.
      */
-    public function transactional(\Closure $scope, array $options = []): void;
+    public function transactional(\Closure $scope, array $options = []);
 
     /**
      * Execute query and iterate results in batches.
@@ -41,6 +43,8 @@ interface ExecutorInterface
      * @return IterateResultInterface Result of execution.
      *
      * @see \RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface::ITERATE_*
+     *                                                                                        
+     * @deprecated Use https://github.com/ReactiveX/RxPHP for buffering and batching results.
      */
     public function iterate(string $name, array $parameters = [], array $types = [], array $options = []): IterateResultInterface;
 }

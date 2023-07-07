@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\TransactionIsolationLevel;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
-use Doctrine\DBAL\Connection;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\LoaderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -50,7 +50,7 @@ final class DoctrineDbalExecutor implements ExecutorInterface
      *     isolation?: TransactionIsolationLevel::*|null
      * } $options
      */
-    public function transactional(\Closure $scope, array $options = []): void
+    public function transactional(\Closure $scope, array $options = [])
     {
         $options           = $this->resolveOptions($options);
         $previousIsolation = $this->connection->getTransactionIsolation();
@@ -62,8 +62,10 @@ final class DoctrineDbalExecutor implements ExecutorInterface
 
         $this->connection->beginTransaction();
 
+        $result = null;
+
         try {
-            $scope($this);
+            $result = $scope($this);
             $this->connection->commit();
         } catch (\Exception $exception) {
             $this->connection->rollBack();
@@ -73,6 +75,8 @@ final class DoctrineDbalExecutor implements ExecutorInterface
                 $this->connection->setTransactionIsolation($previousIsolation);
             }
         }
+
+        return $result;
     }
 
     /**
