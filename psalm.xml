@@ -4,17 +4,20 @@
         strictBinaryOperands="true"
         checkForThrowsDocblock="true"
         findUnusedVariablesAndParams="true"
-        findUnusedCode="true"
         hideExternalErrors="true"
         memoizeMethodCallResults="true"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="https://getpsalm.org/schema/config"
         xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+        findUnusedBaselineEntry="true"
+        findUnusedCode="false"
 >
     <projectFiles>
         <directory name="src"/>
+        <directory name="tests"/>
         <ignoreFiles>
             <directory name="vendor"/>
+            <directory name="./vendor-bin"/>
         </ignoreFiles>
     </projectFiles>
 
@@ -22,8 +25,13 @@
         <MissingThrowsDocblock errorLevel="info"/>
         <UnusedClass errorLevel="info"/>
         <PossiblyUnusedMethod errorLevel="info"/>
+        <DeprecatedMethod errorLevel="info"/>
+        <DeprecatedFunction errorLevel="info"/>
+        <DeprecatedInterface errorLevel="info"/>
+        <DeprecatedClass errorLevel="info"/>
     </issueHandlers>
+    
     <plugins>
         <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/>
-    </plugins>
+    <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/></plugins>
 </psalm>

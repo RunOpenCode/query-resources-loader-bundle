@@ -30,7 +30,7 @@ final class TwigLoaderCompilerPass implements CompilerPassInterface
         }
 
         if (1 === \count($loaderIds)) {
-            $container->setAlias('runopencode.query_resources_loader.twig.loader', (string)\key($loaderIds));
+            $container->setAlias('runopencode.query_resources_loader.twig.loader', \key($loaderIds));
             return;
         }
 

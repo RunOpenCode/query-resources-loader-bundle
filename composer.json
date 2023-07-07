@@ -47,14 +47,15 @@
         "symfony/doctrine-bridge": "^4.0|^5.0|^6.0"
     },
     "require-dev": {
-        "phpstan/phpstan": "^1.7",
+        "phpstan/phpstan": "^1.8.2",
         "phpstan/phpstan-phpunit": "^1.1",
-        "roave/security-advisories": "dev-master",
-        "matthiasnoback/symfony-dependency-injection-test": "^4.1",
-        "matthiasnoback/symfony-config-test": "^4.1",
+        "phpstan/phpstan-symfony": "^1.2",
+        "phpunit/phpunit": "^9.5",
+        "roave/security-advisories": "dev-latest",
         "bamarni/composer-bin-plugin": "^1.5"
     },
     "scripts": {
+        "bin": "echo 'bamarni/composer-bin-plugin is not installed.'",
         "phpunit": "vendor/bin/phpunit --coverage-html ./build/phpunit",
         "composer-require-checker": "vendor/bin/composer-require-checker check composer.json --config-file=`pwd`/composer-require-checker.config.dist.json",
         "composer-unused": "vendor/bin/composer-unused --excludeDir=build --excludeDir=tools",

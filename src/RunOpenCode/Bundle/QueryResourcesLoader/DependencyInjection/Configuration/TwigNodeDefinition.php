@@ -30,9 +30,6 @@ final class TwigNodeDefinition extends ArrayNodeDefinition
      */
     private function configureTwigOptions(): void
     {
-        /**
-         * @phpstan-ignore-next-line
-         */
         $this
             ->fixXmlConfig('path')
             ->children()
@@ -82,9 +79,6 @@ final class TwigNodeDefinition extends ArrayNodeDefinition
      */
     private function configureTwigFormatOptions(): void
     {
-        /**
-         * @phpstan-ignore-next-line
-         */
         $this
             ->children()
                 ->arrayNode('date')
@@ -116,9 +110,6 @@ final class TwigNodeDefinition extends ArrayNodeDefinition
      */
     private function configureTwigGlobals(): void
     {
-        /**
-         * @phpstan-ignore-next-line
-         */
         $this
             ->fixXmlConfig('global')
             ->children()

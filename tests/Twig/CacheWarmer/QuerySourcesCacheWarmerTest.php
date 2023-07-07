@@ -46,6 +46,7 @@ final class QuerySourcesCacheWarmerTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        /** @psalm-suppress InternalMethod */
         $twig
             ->method('load')
             ->willReturn(new TemplateWrapper($twig, $template));

@@ -27,7 +27,7 @@ class QueryResourcesLoaderBundleTest extends TestCase
     /**
      * @test
      */
-    public function itHasExtension()
+    public function itHasExtension(): void
     {
         $this->assertInstanceOf(Extension::class, $this->getBundle()->getContainerExtension());
     }
@@ -35,21 +35,19 @@ class QueryResourcesLoaderBundleTest extends TestCase
     /**
      * @test
      */
-    public function itRegistersCompilerPasses()
+    public function itRegistersCompilerPasses(): void
     {
-        $bundle = $this->getBundle();
+        $bundle   = $this->getBundle();
         $compiler = new ContainerBuilder();
+
         $bundle->build($compiler);
 
-        /**
-         * @var PassConfig $passConfig
-         */
         $passConfig = $compiler->getCompiler()->getPassConfig();
 
         $passes = array_filter(array_map(function (CompilerPassInterface $compilerPass) {
             $class = get_class($compilerPass);
 
-            if (0 === strpos($class, 'RunOpenCode')) {
+            if (str_starts_with($class, 'RunOpenCode')) {
                 return $class;
             }
 
@@ -70,7 +68,7 @@ class QueryResourcesLoaderBundleTest extends TestCase
         $this->assertEquals($expected, $passes);
     }
 
-    private function getBundle()
+    private function getBundle(): QueryResourcesLoaderBundle
     {
         return new QueryResourcesLoaderBundle();
     }

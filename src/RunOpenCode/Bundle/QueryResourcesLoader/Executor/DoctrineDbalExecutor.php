@@ -81,6 +81,8 @@ final class DoctrineDbalExecutor implements ExecutorInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-suppress RedundantCastGivenDocblockType, InvalidArgument
      */
     public function iterate(string $name, array $parameters = [], array $types = [], array $options = []): IterateResultInterface
     {

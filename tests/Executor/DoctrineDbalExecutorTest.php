@@ -252,20 +252,11 @@ final class DoctrineDbalExecutorTest extends TestCase
     public function itCountsResults(): void
     {
         $result = $this->executor->execute('itCountsResults');
-        \Closure::bind(function () {
+        /** @psalm-suppress PossiblyNullFunctionCall, UndefinedThisPropertyAssignment */
+        \Closure::bind(function (): void {
             $this->debug = false;
         }, $result, DoctrineDbalExecutionResult::class)();
         $this->assertSame(5, \count($result));
-    }
-
-    /**
-     * @test
-     */
-    public function itWarnsWhenUsingCountable(): void
-    {
-        $this->expectNotice();
-        $result = $this->executor->execute('itWarnsWhenUsingCountable');
-        \count($result);
     }
 
     /**

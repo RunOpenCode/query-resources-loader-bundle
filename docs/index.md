@@ -17,3 +17,5 @@ service method call, keeping your code clean and well organised.
 - [Using manager](using-manager.md)
 - [Twig support](twig-support.md)
 - [DoctrineDbalExecutorResult](doctrine-dbal-executor-result.md)
+- [Transaction support](transactions.md)
+- [FAQ](faq.md)

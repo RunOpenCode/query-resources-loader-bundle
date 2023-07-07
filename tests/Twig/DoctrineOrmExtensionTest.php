@@ -103,14 +103,11 @@ final class DoctrineOrmExtensionTest extends TestCase
             ->willReturn($manager);
 
         $extension = new DoctrineOrmExtension($registry);
-
-        /**
-         * @var TwigFunction $function
-         */
-        $function = \array_values(\array_filter($extension->getFunctions(), function (TwigFunction $function) {
+        $function  = \array_values(\array_filter($extension->getFunctions(), function (TwigFunction $function) {
             return 'table_name' === $function->getName();
         }))[0];
 
+        /** @psalm-suppress PossiblyNullFunctionCall */
         $this->assertEquals('some_table_name', \call_user_func($function->getCallable(), ''));
     }
 
@@ -147,14 +144,11 @@ final class DoctrineOrmExtensionTest extends TestCase
             ->willReturn($manager);
 
         $extension = new DoctrineOrmExtension($registry);
-
-        /**
-         * @var TwigFunction $function
-         */
-        $function = \array_values(\array_filter($extension->getFunctions(), static function (TwigFunction $function) {
+        $function  = \array_values(\array_filter($extension->getFunctions(), static function (TwigFunction $function) {
             return 'column_name' === $function->getName();
         }))[0];
 
+        /** @psalm-suppress PossiblyNullFunctionCall */
         $this->assertEquals('some_column_name', \call_user_func($function->getCallable(), '', ''));
     }
 

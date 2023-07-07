@@ -8,6 +8,8 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\Contract;
  * Iteration result.
  *
  * @extends \Traversable<mixed, mixed>
+ *
+ * @deprecated Use https://github.com/ReactiveX/RxPHP for buffering and batching results.
  */
 interface IterateResultInterface extends \Traversable
 {

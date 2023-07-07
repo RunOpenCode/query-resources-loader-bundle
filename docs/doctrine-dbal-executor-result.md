@@ -28,4 +28,4 @@ or NULL value if result set is empty.
 
 Note that `ExecutionResultInterface` implements `\Traversable` and `\Countable`.
 
-[<< Using manager](using-manager.md) | [Table of contents](index.md)
+[<< Using manager](using-manager.md) | [Table of contents](index.md) | [Transaction support >>](transactions.md)
