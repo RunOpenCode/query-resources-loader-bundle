@@ -79,7 +79,7 @@ final class DefaultManager implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function transactional(\Closure $scope, array $options = [], ?string $executor = null): void
+    public function transactional(\Closure $scope, array $options = [], ?string $executor = null)
     {
         /**
          * @psalm-suppress PossiblyNullArrayOffset, UnnecessaryVarAnnotation
@@ -93,7 +93,7 @@ final class DefaultManager implements ManagerInterface
         }
 
         try {
-            $instance->transactional($scope, $options);
+            return $instance->transactional($scope, $options);
         } catch (ExceptionInterface $exception) {
             throw $exception;
         } catch (\Exception $exception) {
