@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Twig\Extension;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\ORM\Mapping\MappingException;
 use Doctrine\Persistence\ManagerRegistry;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\RuntimeException;
@@ -137,8 +136,7 @@ final class DoctrineOrmExtension extends AbstractExtension
     {
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $this->doctrine->getManagerForClass($entity);
-        /** @var ClassMetadataInfo<object> $metadata */
-        $metadata = $entityManager->getClassMetadata($entity);
+        $metadata      = $entityManager->getClassMetadata($entity);
         /** @var array{joinTable: array{name: string}} $mapping */
         $mapping = $metadata->getAssociationMapping($field);
 
@@ -159,8 +157,7 @@ final class DoctrineOrmExtension extends AbstractExtension
     {
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $this->doctrine->getManagerForClass($entity);
-        /** @var ClassMetadataInfo<object> $metadata */
-        $metadata = $entityManager->getClassMetadata($entity);
+        $metadata      = $entityManager->getClassMetadata($entity);
         /** @var array{joinTable: array{joinColumns: string[]}} $mapping */
         $mapping = $metadata->getAssociationMapping($field);
 
@@ -181,8 +178,7 @@ final class DoctrineOrmExtension extends AbstractExtension
     {
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $this->doctrine->getManagerForClass($entity);
-        /** @var ClassMetadataInfo<object> $metadata */
-        $metadata = $entityManager->getClassMetadata($entity);
+        $metadata      = $entityManager->getClassMetadata($entity);
         /** @var array{joinTable: array{inverseJoinColumns: string[]}} $mapping */
         $mapping = $metadata->getAssociationMapping($field);
 
@@ -199,8 +195,7 @@ final class DoctrineOrmExtension extends AbstractExtension
     private function getPrimaryKeyColumnName(string $entity): string
     {
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = $this->doctrine->getManagerForClass($entity);
-        /** @var ClassMetadataInfo<object> $metadata */
+        $entityManager         = $this->doctrine->getManagerForClass($entity);
         $metadata              = $entityManager->getClassMetadata($entity);
         $identifierColumnNames = $metadata->getIdentifierColumnNames();
 

@@ -16,6 +16,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Doctrine Dbal query executor.
  *
  * @psalm-suppress MoreSpecificImplementedParamType
+ *                 
+ * @phpstan-type IsolationLevel = TransactionIsolationLevel::READ_UNCOMMITTED|TransactionIsolationLevel::READ_COMMITTED|TransactionIsolationLevel::REPEATABLE_READ|TransactionIsolationLevel::SERIALIZABLE
+ * @psalm-type IsolationLevel = TransactionIsolationLevel::READ_UNCOMMITTED|TransactionIsolationLevel::READ_COMMITTED|TransactionIsolationLevel::REPEATABLE_READ|TransactionIsolationLevel::SERIALIZABLE
  */
 final class DoctrineDbalExecutor implements ExecutorInterface
 {
@@ -37,8 +40,9 @@ final class DoctrineDbalExecutor implements ExecutorInterface
      */
     public function execute(string $name, array $parameters = [], array $types = []): ExecutionResultInterface
     {
-        $query  = $this->loader->get($name, $parameters);
-        $result = $this->connection->executeQuery($query, $parameters, $types);
+        $query = $this->loader->get($name, $parameters);
+        /** @psalm-suppress InvalidArgument */
+        $result = $this->connection->executeQuery($query, $parameters, $types); // @phpstan-ignore-line
 
         return new DoctrineDbalExecutionResult($result);
     }
@@ -47,7 +51,7 @@ final class DoctrineDbalExecutor implements ExecutorInterface
      * {@inheritdoc}
      *
      * @param array{
-     *     isolation?: TransactionIsolationLevel::*|null
+     *     isolation?: IsolationLevel|null
      * } $options
      */
     public function transactional(\Closure $scope, array $options = [])
@@ -91,11 +95,11 @@ final class DoctrineDbalExecutor implements ExecutorInterface
 
     /**
      * @param array{
-     *     isolation?: TransactionIsolationLevel::*|null
+     *     isolation?: IsolationLevel|null
      * } $options
      *
      * @return array{
-     *     isolation: TransactionIsolationLevel::*|null
+     *     isolation: IsolationLevel|null
      * }
      */
     private function resolveOptions(array $options): array
@@ -107,7 +111,7 @@ final class DoctrineDbalExecutor implements ExecutorInterface
             $resolver = new OptionsResolver();
 
             $resolver->setDefault('isolation', null);
-            $resolver->setAllowedTypes('isolation', ['int', 'null']);
+            $resolver->setAllowedTypes('isolation', ['int', 'null', TransactionIsolationLevel::class]);
             $resolver->setAllowedValues('isolation', [
                 TransactionIsolationLevel::READ_UNCOMMITTED,
                 TransactionIsolationLevel::READ_COMMITTED,

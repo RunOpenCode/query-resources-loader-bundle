@@ -96,7 +96,8 @@ final class DoctrineDbalIterateResult implements \IteratorAggregate, IterateResu
             $parameters = \array_merge($this->parameters, ['last_batch_row' => $lastBatchRow]);
             $query      = \rtrim(\trim($this->loader->get($this->name, $this->parameters)), ';');
             $query      = \sprintf('%s LIMIT %s OFFSET %s', $query, $limit, $offset);
-            $result     = $this->connection->executeQuery($query, $parameters, $this->types);
+            /** @psalm-suppress InvalidArgument */
+            $result = $this->connection->executeQuery($query, $parameters, $this->types); // @phpstan-ignore-line
 
             /**
              * @var array<array-key, string|null> $row

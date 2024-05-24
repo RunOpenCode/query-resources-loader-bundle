@@ -11,7 +11,7 @@
         xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
         findUnusedBaselineEntry="true"
         findUnusedCode="false"
-        phpVersion="8.0"
+        phpVersion="8.1"
 >
     <projectFiles>
         <directory name="src"/>
@@ -31,8 +31,9 @@
         <DeprecatedInterface errorLevel="info"/>
         <DeprecatedClass errorLevel="info"/>
     </issueHandlers>
-    
+
     <plugins>
         <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/>
-    <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/></plugins>
+        <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
+    </plugins>
 </psalm>

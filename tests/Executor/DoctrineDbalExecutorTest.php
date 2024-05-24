@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\Executor;
 
+use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Logging\Middleware;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\TransactionIsolationLevel;
 use PHPUnit\Framework\TestCase;
@@ -13,9 +15,10 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
-use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutionResult;
+use RunOpenCode\Bundle\QueryResourcesLoader\Executor\DoctrineDbalExecutor;
 use RunOpenCode\Bundle\QueryResourcesLoader\Loader\TwigLoader;
+use Symfony\Component\ErrorHandler\BufferingLogger;
 use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 
@@ -28,12 +31,19 @@ final class DoctrineDbalExecutorTest extends TestCase
 
     private Connection $connection;
 
+    private BufferingLogger $logger;
+
     public function setUp(): void
     {
+        $configuration = new Configuration();
+        $this->logger  = new BufferingLogger();
+
+        $configuration->setMiddlewares([new Middleware($this->logger)]);
+
         $this->connection = DriverManager::getConnection([
             'memory' => true,
             'driver' => 'pdo_sqlite',
-        ]);
+        ], $configuration);
 
         $schema = new Schema();
 
@@ -58,6 +68,14 @@ final class DoctrineDbalExecutorTest extends TestCase
         }
 
         $this->executor = new DoctrineDbalExecutor($this->connection, $this->getTwigLoader());
+
+        $this->logger->cleanLogs();
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        $this->logger->cleanLogs();
     }
 
     /**
@@ -218,30 +236,30 @@ final class DoctrineDbalExecutorTest extends TestCase
      */
     public function itSetsIsolationLevelAndExecutesTransaction(): void
     {
-        $logger = new BufferedLogger();
-        $this->connection->getConfiguration()->setSQLLogger($logger);
         $isolation = $this->connection->getTransactionIsolation();
 
         $this->assertNotSame($isolation, TransactionIsolationLevel::READ_UNCOMMITTED);
 
-        $this->executor->execute('itSetsIsolationLevelAndExecutesTransaction_first');
-        $this->assertSame('SELECT id FROM test;', $logger->getLastQuery());
-
-        $logger->clear();
+        $this->executor->execute('itSetsIsolationLevelAndExecutesTransaction_first')->getScalarResult();
+        
+        $this->assertSame('SELECT id FROM test;', $this->logger->cleanLogs()[0][2]['sql']);
 
         $this->executor->transactional(function(ExecutorInterface $executor): void {
             $executor->execute('itSetsIsolationLevelAndExecutesTransaction_first');
             $executor->execute('itSetsIsolationLevelAndExecutesTransaction_second');
         }, ['isolation' => TransactionIsolationLevel::READ_UNCOMMITTED]);
 
-        $this->assertStringContainsString('PRAGMA read_uncommitted = 0', $logger->getQueries()[0]);
-        $this->assertStringContainsString('START TRANSACTION', $logger->getQueries()[1]);
-        $this->assertStringContainsString('SELECT id FROM test;', $logger->getQueries()[2]);
-        $this->assertStringContainsString('SELECT title FROM test;', $logger->getQueries()[3]);
-        $this->assertStringContainsString('COMMIT', $logger->getQueries()[4]);
-        $this->assertStringContainsString('PRAGMA read_uncommitted = 1', $logger->getQueries()[5]);
+        
+        $logs = $this->logger->cleanLogs();
 
-        $this->assertCount(6, $logger->getQueries());
+        $this->assertStringContainsString('PRAGMA read_uncommitted = 0', $logs[0][2]['sql']);
+        $this->assertStringContainsString('Beginning transaction', $logs[1][1]);
+        $this->assertStringContainsString('SELECT id FROM test;', $logs[2][2]['sql']);
+        $this->assertStringContainsString('SELECT title FROM test;', $logs[3][2]['sql']);
+        $this->assertStringContainsString('Committing transaction', $logs[4][1]);
+        $this->assertStringContainsString('PRAGMA read_uncommitted = 1', $logs[5][2]['sql']);
+
+        $this->assertCount(6, $logs);
 
         $this->assertSame($this->connection->getTransactionIsolation(), $isolation);
     }

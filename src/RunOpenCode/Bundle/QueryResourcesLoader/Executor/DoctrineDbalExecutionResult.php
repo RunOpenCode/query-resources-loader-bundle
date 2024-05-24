@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor;
 
-use Doctrine\DBAL\Result as ExecutionResult;
 use Doctrine\DBAL\Driver\Result;
+use Doctrine\DBAL\Result as ExecutionResult;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
@@ -127,7 +127,7 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
     /**
      * {@inheritdoc}
      */
-    public function fetchAssociative()
+    public function fetchAssociative(): array|false
     {
         return $this->result->fetchAssociative();
     }
@@ -135,7 +135,7 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
     /**
      * {@inheritdoc}
      */
-    public function fetchNumeric()
+    public function fetchNumeric(): array|false
     {
         return $this->result->fetchNumeric();
     }
@@ -143,7 +143,7 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
     /**
      * {@inheritdoc}
      */
-    public function fetchOne()
+    public function fetchOne(): mixed
     {
         return $this->result->fetchOne();
     }
@@ -183,7 +183,7 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
     /**
      * {@inheritdoc}
      */
-    public function rowCount(): int
+    public function rowCount(): string|int
     {
         return $this->result->rowCount();
     }
@@ -204,14 +204,11 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
     public function count(): int
     {
         if ($this->debug) {
-            \trigger_error(
-                'It is not advisable to rely on \Countable interface of DoctrineDbalExecutionResult because results depends on underlying DBMS implementation.',
-                E_USER_NOTICE
-            );
+            \trigger_error('It is not advisable to rely on \Countable interface of DoctrineDbalExecutionResult because results depends on underlying DBMS implementation.');
         }
 
         if (0 === $this->result->columnCount()) {
-            return $this->result->rowCount();
+            return (int)$this->result->rowCount();
         }
 
         /** @var iterable<mixed>|array $data */

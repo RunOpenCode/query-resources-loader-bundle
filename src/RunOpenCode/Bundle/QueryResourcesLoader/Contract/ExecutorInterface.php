@@ -12,9 +12,9 @@ interface ExecutorInterface
     /**
      * Execute query.
      *
-     * @param string                    $name       Name of Query source code.
-     * @param array<string, mixed>      $parameters Arguments for modification/compilation of Query source code, as well as params for query statement.
-     * @param array<string, string|int> $types      Parameter types required for query.
+     * @param string                              $name       Name of Query source code.
+     * @param array<string, mixed>                $parameters Arguments for modification/compilation of Query source code, as well as params for query statement.
+     * @param array<string, string|int|\UnitEnum> $types      Parameter types required for query.
      *
      * @return ExecutionResultInterface Result of execution.
      */
@@ -42,7 +42,7 @@ interface ExecutorInterface
      *
      * @return IterateResultInterface Result of execution.
      *
-     * @see \RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface::ITERATE_*
+     * @see        \RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface::ITERATE_*
      *
      * @deprecated Use https://github.com/ReactiveX/RxPHP for buffering and batching results.
      */
