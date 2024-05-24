@@ -163,7 +163,7 @@ final class DoctrineDbalExecutorTest extends TestCase
         $result = $this->executor->execute('itGivesSingleRowResult', []);
 
         $this->assertSame([
-            'id'          => '3',
+            'id'          => 3,
             'title'       => 'Some title 3',
             'description' => 'Some description 3',
         ], $result->getSingleResult());
@@ -229,7 +229,7 @@ final class DoctrineDbalExecutorTest extends TestCase
 
         $logger->clear();
 
-        $this->executor->transactional(function (ExecutorInterface $executor): void {
+        $this->executor->transactional(function(ExecutorInterface $executor): void {
             $executor->execute('itSetsIsolationLevelAndExecutesTransaction_first');
             $executor->execute('itSetsIsolationLevelAndExecutesTransaction_second');
         }, ['isolation' => TransactionIsolationLevel::READ_UNCOMMITTED]);
@@ -253,7 +253,7 @@ final class DoctrineDbalExecutorTest extends TestCase
     {
         $result = $this->executor->execute('itCountsResults');
         /** @psalm-suppress PossiblyNullFunctionCall, UndefinedThisPropertyAssignment */
-        \Closure::bind(function (): void {
+        \Closure::bind(function(): void {
             $this->debug = false;
         }, $result, DoctrineDbalExecutionResult::class)();
         $this->assertSame(5, \count($result));
@@ -268,7 +268,7 @@ final class DoctrineDbalExecutorTest extends TestCase
         $rowsCount       = 0;
         $result          = $this->executor->iterate('itIteratesInBatchAndYieldsRow', [], [], [
             'batch_size'   => 2,
-            'on_batch_end' => static function () use (&$invocationCount): void {
+            'on_batch_end' => static function() use (&$invocationCount): void {
                 $invocationCount++;
             },
         ]);
@@ -293,7 +293,7 @@ final class DoctrineDbalExecutorTest extends TestCase
         $result          = $this->executor->iterate('itIteratesInBatchAndYieldsSingleColumn', [], [], [
             'iterate'      => IterateResultInterface::ITERATE_COLUMN,
             'batch_size'   => 3,
-            'on_batch_end' => static function () use (&$invocationCount): void {
+            'on_batch_end' => static function() use (&$invocationCount): void {
                 $invocationCount++;
             },
         ]);

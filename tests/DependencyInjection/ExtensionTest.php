@@ -118,7 +118,7 @@ final class ExtensionTest extends AbstractExtensionTestCase
         }
 
         $this->assertEquals([
-            [$this->container->getParameter('runopencode.query_resources_loader.default_path')],
+            [$this->container->getParameter('runopencode.query_resources_loader.default_path'), '__main__'],
             ['path1'],
             ['path2'],
             ['namespaced_path1', 'namespace1'],
@@ -151,7 +151,7 @@ final class ExtensionTest extends AbstractExtensionTestCase
         }
 
         $this->assertEquals([
-            [$this->container->getParameter('runopencode.query_resources_loader.default_path')],
+            [$this->container->getParameter('runopencode.query_resources_loader.default_path'), '__main__'],
             [\realpath(__DIR__ . '/../Fixtures/app/query/bundles/FooBundle'), 'Foo'],
             [\realpath(__DIR__ . '/../Fixtures/Bundles/FooBundle/Resources/query'), 'Foo'],
             [\realpath(__DIR__ . '/../Fixtures/Bundles/BarBundle/Resources/query'), 'Bar'],
@@ -185,7 +185,7 @@ final class ExtensionTest extends AbstractExtensionTestCase
         $this->container->getDefinition(QuerySourcesIterator::class)->getArgument(2);
 
         $this->assertEquals([
-            [$this->container->getParameter('runopencode.query_resources_loader.default_path')],
+            [$this->container->getParameter('runopencode.query_resources_loader.default_path'), '__main__'],
             ['path1'],
             ['namespaced_path1', 'namespace1'],
         ], $paths);

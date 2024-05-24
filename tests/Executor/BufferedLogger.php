@@ -38,7 +38,7 @@ final class BufferedLogger implements SQLLogger
 
     public function getQueries(): array
     {
-        return \array_map(static function ($record): string {
+        return \array_map(static function($record): string {
             return $record[0];
         }, $this->records);
     }

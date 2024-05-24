@@ -32,7 +32,7 @@ final class QuerySourcesCacheWarmer implements CacheWarmerInterface
     /**
      * {@inheritdoc}
      */
-    public function warmUp(string $cacheDir): array
+    public function warmUp(string $cacheDir, ?string $buildDir = null): array
     {
         foreach ($this->iterator as $template) {
             try {

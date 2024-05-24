@@ -48,7 +48,7 @@ final class TwigNodeDefinition extends ArrayNodeDefinition
                     ->useAttributeAsKey('paths')
                     ->beforeNormalization()
                     ->always()
-                    ->then(static function ($paths) {
+                    ->then(static function($paths) {
                         $normalized = [];
                         foreach ($paths as $path => $namespace) {
                             if (\is_array($namespace)) {
@@ -119,10 +119,10 @@ final class TwigNodeDefinition extends ArrayNodeDefinition
                     ->example(['foo' => '"@bar"', 'pi' => 3.14])
                     ->prototype('array')
                         ->beforeNormalization()
-                            ->ifTrue(static function ($v) {
-                                return is_string($v) && 0 === strpos($v, '@');
+                            ->ifTrue(static function($v) {
+                                return \is_string($v) && 0 === \strpos($v, '@');
                             })
-                            ->then(static function ($v) {
+                            ->then(static function($v) {
                                 if (0 === \strpos($v, '@@')) {
                                     return \substr($v, 1);
                                 }
@@ -131,7 +131,7 @@ final class TwigNodeDefinition extends ArrayNodeDefinition
                             })
                         ->end()
                         ->beforeNormalization()
-                            ->ifTrue(static function ($v) {
+                            ->ifTrue(static function($v) {
                                 if (\is_array($v)) {
                                     $keys = \array_keys($v);
                                     \sort($keys);
@@ -141,7 +141,7 @@ final class TwigNodeDefinition extends ArrayNodeDefinition
 
                                 return true;
                             })
-                            ->then(static function ($v) {
+                            ->then(static function($v) {
                                 return ['value' => $v];
                             })
                         ->end()

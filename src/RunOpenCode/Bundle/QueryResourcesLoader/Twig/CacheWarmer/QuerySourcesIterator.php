@@ -55,8 +55,8 @@ final class QuerySourcesIterator implements \IteratorAggregate
             foreach ($bundles as $bundle) {
                 $name = $bundle->getName();
 
-                if ('Bundle' === substr($name, -6)) {
-                    $name = substr($name, 0, -6);
+                if ('Bundle' === \substr($name, -6)) {
+                    $name = \substr($name, 0, -6);
                 }
 
                 $bundleQueries[] = $this->findQuerySourcesInDirectory($bundle->getPath() . '/Resources/query', $name);
@@ -95,7 +95,7 @@ final class QuerySourcesIterator implements \IteratorAggregate
         $files = Finder::create()->files()->followLinks()->in($dir);
 
         foreach ($files as $file) {
-            $templates[] = (null !== $namespace ? '@' . $namespace . '/' : '') . str_replace('\\', '/', $file->getRelativePathname());
+            $templates[] = (null !== $namespace ? '@' . $namespace . '/' : '') . \str_replace('\\', '/', $file->getRelativePathname());
         }
 
         return $templates;

@@ -75,7 +75,7 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
     {
         $result = $this->getScalarResult();
 
-        if (0 === count($result)) {
+        if (0 === \count($result)) {
             return $default;
         }
 
@@ -274,6 +274,6 @@ final class DoctrineDbalExecutionResult implements \IteratorAggregate, Execution
         /** @var callable $callable */
         $callable = [$this->result, $name];
 
-        return call_user_func_array($callable, $arguments);
+        return \call_user_func_array($callable, $arguments);
     }
 }

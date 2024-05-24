@@ -159,15 +159,15 @@ final class DoctrineDbalIterateResult implements \IteratorAggregate, IterateResu
 
             $resolver->setDefault('batch_size', 100);
             $resolver->setAllowedTypes('batch_size', 'int');
-            $resolver->setAllowedValues('batch_size', static function (int $value): bool {
+            $resolver->setAllowedValues('batch_size', static function(int $value): bool {
                 return $value > 0;
             });
 
             $resolver->setDefault('on_batch_end', null);
             $resolver->setAllowedTypes('on_batch_end', ['null', 'callable']);
             /** @psalm-suppress UnusedClosureParam, MissingClosureParamType */
-            $resolver->setNormalizer('on_batch_end', static function (Options $options, $value) {
-                return $value ?? static function () {
+            $resolver->setNormalizer('on_batch_end', static function(Options $options, $value) {
+                return $value ?? static function() {
                 };
             });
         }

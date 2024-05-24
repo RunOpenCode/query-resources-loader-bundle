@@ -1,5 +1,3 @@
-version: '3.3'
-
 services:
 
     php:
@@ -8,4 +6,3 @@ services:
             context: './'
         volumes:
             -  './:/var/www/html'
-            - '${HOME}/.phive:${HOME}/.phive'

@@ -164,7 +164,7 @@ final class Extension extends BaseExtension
         $defaultPath = \sprintf('%s/query', $projectDir);
 
         if (\is_dir($defaultPath)) {
-            $loader->addMethodCall('addPath', [$defaultPath]);
+            $loader->addMethodCall('addPath', [$defaultPath, '__main__']);
             $container->addResource(new FileExistenceResource($defaultPath));
             $container->setParameter('runopencode.query_resources_loader.default_path', $defaultPath);
         }
@@ -193,10 +193,10 @@ final class Extension extends BaseExtension
         /** @var string $projectDir */
         $projectDir = $container->getParameter('kernel.project_dir');
 
-        $addTwigPath = static function (string $dir, string $bundle) use ($loader): void {
+        $addTwigPath = static function(string $dir, string $bundle) use ($loader): void {
             $name = $bundle;
 
-            if ('Bundle' === \substr($name, -6)) {
+            if (\str_ends_with($name, 'Bundle')) {
                 $name = \substr($name, 0, -6);
             }
 

@@ -30,28 +30,28 @@ final class DoctrineOrmExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('table_name', \Closure::bind(function (string $entity): string {
+            new TwigFunction('table_name', \Closure::bind(function(string $entity): string {
                 return $this->getTableName($entity); // @phpstan-ignore-line
             }, $this)),
-            new TwigFunction('join_table_name', \Closure::bind(function (string $field, string $entity): string {
+            new TwigFunction('join_table_name', \Closure::bind(function(string $field, string $entity): string {
                 return $this->getJoinTableName($field, $entity); // @phpstan-ignore-line
             }, $this)),
-            new TwigFunction('column_name', \Closure::bind(function (string $field, string $entity): string {
+            new TwigFunction('column_name', \Closure::bind(function(string $field, string $entity): string {
                 return $this->getColumnName($field, $entity); // @phpstan-ignore-line
             }, $this)),
-            new TwigFunction('join_table_join_columns', \Closure::bind(function (string $field, string $entity): array {
+            new TwigFunction('join_table_join_columns', \Closure::bind(function(string $field, string $entity): array {
                 return $this->getJoinTableJoinColumns($field, $entity); // @phpstan-ignore-line
             }, $this)),
-            new TwigFunction('join_table_inverse_join_columns', \Closure::bind(function (string $field, string $entity): array {
+            new TwigFunction('join_table_inverse_join_columns', \Closure::bind(function(string $field, string $entity): array {
                 return $this->getJoinTableInverseJoinColumns($field, $entity); // @phpstan-ignore-line
             }, $this)),
-            new TwigFunction('join_table_join_column', \Closure::bind(function (string $field, string $entity): string {
+            new TwigFunction('join_table_join_column', \Closure::bind(function(string $field, string $entity): string {
                 return $this->getJoinTableJoinColumns($field, $entity)[0]; // @phpstan-ignore-line
             }, $this)),
-            new TwigFunction('join_table_inverse_join_column', \Closure::bind(function (string $field, string $entity): string {
+            new TwigFunction('join_table_inverse_join_column', \Closure::bind(function(string $field, string $entity): string {
                 return $this->getJoinTableInverseJoinColumns($field, $entity)[0]; // @phpstan-ignore-line
             }, $this)),
-            new TwigFunction('primary_key_column_name', \Closure::bind(function (string $entity): string {
+            new TwigFunction('primary_key_column_name', \Closure::bind(function(string $entity): string {
                 return $this->getPrimaryKeyColumnName($entity); // @phpstan-ignore-line
             }, $this)),
         ];
@@ -65,28 +65,28 @@ final class DoctrineOrmExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('table_name', \Closure::bind(function (string $entity): string {
+            new TwigFilter('table_name', \Closure::bind(function(string $entity): string {
                 return $this->getTableName($entity); // @phpstan-ignore-line
             }, $this)),
-            new TwigFilter('join_table_name', \Closure::bind(function (string $field, string $entity): string {
+            new TwigFilter('join_table_name', \Closure::bind(function(string $field, string $entity): string {
                 return $this->getJoinTableName($field, $entity); // @phpstan-ignore-line
             }, $this)),
-            new TwigFilter('column_name', \Closure::bind(function (string $field, string $entity): string {
+            new TwigFilter('column_name', \Closure::bind(function(string $field, string $entity): string {
                 return $this->getColumnName($field, $entity); // @phpstan-ignore-line
             }, $this)),
-            new TwigFilter('join_table_join_columns', \Closure::bind(function (string $field, string $entity): array {
+            new TwigFilter('join_table_join_columns', \Closure::bind(function(string $field, string $entity): array {
                 return $this->getJoinTableJoinColumns($field, $entity); // @phpstan-ignore-line
             }, $this)),
-            new TwigFilter('join_table_inverse_join_columns', \Closure::bind(function (string $field, string $entity): array {
+            new TwigFilter('join_table_inverse_join_columns', \Closure::bind(function(string $field, string $entity): array {
                 return $this->getJoinTableInverseJoinColumns($field, $entity); // @phpstan-ignore-line
             }, $this)),
-            new TwigFilter('join_table_join_column', \Closure::bind(function (string $field, string $entity): string {
+            new TwigFilter('join_table_join_column', \Closure::bind(function(string $field, string $entity): string {
                 return $this->getJoinTableJoinColumns($field, $entity)[0]; // @phpstan-ignore-line
             }, $this)),
-            new TwigFilter('join_table_inverse_join_column', \Closure::bind(function (string $field, string $entity): string {
+            new TwigFilter('join_table_inverse_join_column', \Closure::bind(function(string $field, string $entity): string {
                 return $this->getJoinTableInverseJoinColumns($field, $entity)[0]; // @phpstan-ignore-line
             }, $this)),
-            new TwigFilter('primary_key_column_name', \Closure::bind(function (string $entity): string {
+            new TwigFilter('primary_key_column_name', \Closure::bind(function(string $entity): string {
                 return $this->getPrimaryKeyColumnName($entity); // @phpstan-ignore-line
             }, $this)),
         ];

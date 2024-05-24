@@ -26,7 +26,7 @@ final class DoctrineOrmExtensionTest extends TestCase
 
         $extension = new DoctrineOrmExtension($registry);
 
-        $functions = \array_map(static function (TwigFunction $function) {
+        $functions = \array_map(static function(TwigFunction $function) {
             return $function->getName();
         }, $extension->getFunctions());
 
@@ -54,7 +54,7 @@ final class DoctrineOrmExtensionTest extends TestCase
 
         $extension = new DoctrineOrmExtension($registry);
 
-        $filters = \array_map(function (TwigFilter $filter) {
+        $filters = \array_map(function(TwigFilter $filter) {
             return $filter->getName();
         }, $extension->getFilters());
 
@@ -103,7 +103,7 @@ final class DoctrineOrmExtensionTest extends TestCase
             ->willReturn($manager);
 
         $extension = new DoctrineOrmExtension($registry);
-        $function  = \array_values(\array_filter($extension->getFunctions(), function (TwigFunction $function) {
+        $function  = \array_values(\array_filter($extension->getFunctions(), function(TwigFunction $function) {
             return 'table_name' === $function->getName();
         }))[0];
 
@@ -144,7 +144,7 @@ final class DoctrineOrmExtensionTest extends TestCase
             ->willReturn($manager);
 
         $extension = new DoctrineOrmExtension($registry);
-        $function  = \array_values(\array_filter($extension->getFunctions(), static function (TwigFunction $function) {
+        $function  = \array_values(\array_filter($extension->getFunctions(), static function(TwigFunction $function) {
             return 'column_name' === $function->getName();
         }))[0];
 

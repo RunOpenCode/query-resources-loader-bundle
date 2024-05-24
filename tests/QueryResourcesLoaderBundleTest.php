@@ -44,10 +44,10 @@ class QueryResourcesLoaderBundleTest extends TestCase
 
         $passConfig = $compiler->getCompiler()->getPassConfig();
 
-        $passes = array_filter(array_map(function (CompilerPassInterface $compilerPass) {
-            $class = get_class($compilerPass);
+        $passes = \array_filter(\array_map(function(CompilerPassInterface $compilerPass) {
+            $class = \get_class($compilerPass);
 
-            if (str_starts_with($class, 'RunOpenCode')) {
+            if (\str_starts_with($class, 'RunOpenCode')) {
                 return $class;
             }
 
@@ -62,8 +62,8 @@ class QueryResourcesLoaderBundleTest extends TestCase
             RegisterExecutorsCompilerPass::class,
         ];
 
-        sort($passes);
-        sort($expected);
+        \sort($passes);
+        \sort($expected);
 
         $this->assertEquals($expected, $passes);
     }

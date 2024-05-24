@@ -25,7 +25,6 @@
     <target name="prepare">
         <sequential>
             <antcall target="composer-install"/>
-            <antcall target="phive-install"/>
         </sequential>
     </target>
 
@@ -74,12 +73,6 @@
     <target name="composer-install" depends="container-name">
         <exec executable="docker" failonerror="true">
             <arg line="exec -t ${container} composer install"/>
-        </exec>
-    </target>
-
-    <target name="phive-install" depends="container-name">
-        <exec executable="docker" failonerror="true">
-            <arg line="exec -t ${container} phive --home ${HOME}/.phive install --force-accept-unsigned --trust-gpg-keys 4AA394086372C20A,D2CCAC42F6295E7D,F4D32E2C9343B2AE,E82B2FB314E9906E,4AA394086372C20A,0F9684B8B16B7AB0,CF1A108D0E7AE720,31C7E470E2138192,8A03EA3B385DBAA1,8A03EA3B385DBAA1,EB008C0F094A779B"/>
         </exec>
     </target>
 

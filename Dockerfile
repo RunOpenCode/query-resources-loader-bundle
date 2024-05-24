@@ -1,4 +1,4 @@
-FROM php:7.4-fpm
+FROM php:8-fpm
 
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends wget
@@ -13,17 +13,16 @@ RUN docker-php-ext-install pcntl
 RUN docker-php-ext-install posix
 RUN docker-php-ext-install zip
 
-RUN pecl install xdebug-2.9.0
+RUN pecl install xdebug
 
 RUN echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini
-RUN echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/xdebug.ini
-RUN echo "xdebug.remote_autostart=1" >> /usr/local/etc/php/conf.d/xdebug.ini
+RUN echo "xdebug.mode=debug" > /usr/local/etc/php/conf.d/xdebug.ini
+RUN echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/xdebug.ini
+RUN echo "xdebug.discover_client_host=0" >> /usr/local/etc/php/conf.d/xdebug.ini
 RUN echo "xdebug.idekey=\"PHPSTORM\"" >> /usr/local/etc/php/conf.d/xdebug.ini
-RUN echo "xdebug.profiler_enable=0" >> /usr/local/etc/php/conf.d/xdebug.ini
 RUN echo "xdebug.max_nesting_level=700" >> /usr/local/etc/php/conf.d/xdebug.ini
-RUN echo "xdebug.remote_port=9000" >> /usr/local/etc/php/conf.d/xdebug.ini
-RUN echo "xdebug.remote_connect_back=0" >> /usr/local/etc/php/conf.d/xdebug.ini
-RUN echo "xdebug.remote_host=\"host.docker.internal\"" >> /usr/local/etc/php/conf.d/xdebug.ini
+RUN echo "xdebug.client_port=9000" >> /usr/local/etc/php/conf.d/xdebug.ini
+RUN echo "xdebug.client_host=\"host.docker.internal\"" >> /usr/local/etc/php/conf.d/xdebug.ini
 
 #####################################################################################
 #                                                                                   #
@@ -51,17 +50,5 @@ RUN php /tmp/composer-setup.php
 RUN mv /tmp/composer.phar /usr/local/bin/composer.phar && \
     ln -s /usr/local/bin/composer.phar /usr/local/bin/composer && \
     chmod +x /usr/local/bin/composer
-
-#####################################################################################
-#                                                                                   #
-#                                 Setup Phive                                       #
-#                                                                                   #
-#####################################################################################
-
-RUN wget -O phive.phar "https://phar.io/releases/phive.phar"
-RUN wget -O phive.phar.asc "https://phar.io/releases/phive.phar.asc"
-RUN rm phive.phar.asc
-RUN chmod +x phive.phar
-RUN mv phive.phar /usr/local/bin/phive
 
 WORKDIR /var/www/html
