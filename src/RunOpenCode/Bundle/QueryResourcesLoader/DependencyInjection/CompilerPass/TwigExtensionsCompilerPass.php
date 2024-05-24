@@ -17,6 +17,7 @@ final class TwigExtensionsCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container): void
     {
+        /** @psalm-suppress RiskyTruthyFalsyComparison */
         if (!$container->hasParameter('kernel.debug') || !$container->getParameter('kernel.debug')) {
             return;
         }
