@@ -1,0 +1,36 @@
+name: Run CI build script
+
+on:
+    pull_request:
+        types: [ opened, reopened, edited, synchronize ]
+        branches:
+            - master
+
+jobs:
+    quality_control:
+        name: Execute code quality checks
+        runs-on: ubuntu-latest
+        
+        steps:
+            -   name: Checkout repository
+                uses: actions/checkout@v3
+                with:
+                    ref: ${{ github.event.pull_request.head.sha }}
+
+            -   name: Setup python
+                uses: actions/setup-python@v4
+                id: setup-python
+                with:
+                    python-version: 3.12
+
+            -   name: Run pipenv
+                uses: tiagovrtr/actions-pipenv@v1
+                with:
+                    pipenv-version: v2023.12.1
+
+            -   run: pipenv --python ${{ steps.setup-python.outputs.python-path }}
+
+            -   name: Run tests and code quality checks
+                run: |
+                    pipenv install
+                    pipenv run python bin/ci.py --verbose --teardown
