@@ -43,14 +43,14 @@ final class QuerySourcesIteratorTest extends TestCase
         \sort($templates);
 
         $this->assertEquals([
-            'get_all_from_default.sql.twig',
-            'bar/count_from_bar.sql.twig',
-            'bundles/FooBundle/foo.sql',
-            'get_all_from_foo.sql.twig',
-            '@Foo/foo.sql',
             '@Bar/bar.sql',
+            '@Foo/foo.sql',
             '@custom-path-1/query-in-path1.sql',
             '@custom-path-2/query-in-path2.sql',
+            'bar/count_from_bar.sql.twig',
+            'bundles/FooBundle/foo.sql',
+            'get_all_from_default.sql.twig',
+            'get_all_from_foo.sql.twig',
         ], $templates);
     }
 }
