@@ -2,11 +2,14 @@
 
 declare(strict_types=1);
 
-$finder = PhpCsFixer\Finder::create()
-                           ->in([
-                               __DIR__ . '/src',
-                               __DIR__ . '/tests',
-                           ]);
+$finder = PhpCsFixer\Finder::create();
+$finder = $finder
+    ->in([
+        __DIR__ . '/src',
+        __DIR__ . '/tests',
+    ])->notPath([
+        'tests/Resources/var',
+    ]);
 
 $config = new PhpCsFixer\Config();
 

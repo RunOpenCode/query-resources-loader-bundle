@@ -1,4 +1,4 @@
-Query Resources Loader Bundle
+Query resources loader bundle
 =============================
 
 [![Packagist](https://img.shields.io/packagist/v/RunOpenCode/query-resources-loader-bundle.svg)](https://packagist.org/packages/runopencode/query-resources-loader-bundle)
