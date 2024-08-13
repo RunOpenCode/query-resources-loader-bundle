@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container
+        xmlns="http://symfony.com/schema/dic/services"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd"
+>
+    
+    <services>
+
+        <service
+                id="RunOpenCode\Bundle\QueryResourcesLoader\Legacy\Manager"
+                class="RunOpenCode\Bundle\QueryResourcesLoader\Legacy\Manager"
+        >
+            <argument 
+                    type="service" 
+                    id="RunOpenCode\Bundle\QueryResourcesLoader\Contract\QueryResourcesLoaderInterface"
+            />
+
+            <deprecated 
+                    package="runopencode" 
+                    version="8.0"
+            >The "%service_id%" service is deprecated from version 8.0 and will be removed in version 9.0. Use "RunOpenCode\Bundle\QueryResourcesLoader\Contract\QueryResourcesLoaderInterface" instead.</deprecated>
+        </service>
+        
+        <!-- Register a bunch of aliases -->
+
+        <service
+                id="RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface"
+                alias="RunOpenCode\Bundle\QueryResourcesLoader\Legacy\Manager"
+                public="true"
+        >
+            <deprecated
+                    package="runopencode"
+                    version="8.0"
+            >The "%alias_id%" service is deprecated from version 8.0 and will be removed in version 9.0. Use "RunOpenCode\Bundle\QueryResourcesLoader\Contract\QueryResourcesLoaderInterface" instead.</deprecated>
+        </service>
+
+        <service
+                id="runopencode.query_resources_loader"
+                alias="RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface"
+                public="true"
+        >
+            <deprecated
+                    package="runopencode"
+                    version="8.0"
+            >The "%alias_id%" service is deprecated from version 8.0 and will be removed in version 9.0. Use "RunOpenCode\Bundle\QueryResourcesLoader\Contract\QueryResourcesLoaderInterface" instead.</deprecated>
+        </service>
+
+        <service
+                id="roc.query_resources_loader"
+                alias="RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface"
+                public="true"
+        >
+            <deprecated
+                    package="runopencode"
+                    version="8.0"
+            >The "%alias_id%" service is deprecated from version 8.0 and will be removed in version 9.0. Use "RunOpenCode\Bundle\QueryResourcesLoader\Contract\QueryResourcesLoaderInterface" instead.</deprecated>
+        </service>
+        
+        <service
+                id="roc.query_loader"
+                alias="RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface"
+                public="true"
+        >
+            <deprecated
+                    package="runopencode"
+                    version="8.0"
+            >The "%alias_id%" service is deprecated from version 8.0 and will be removed in version 9.0. Use "RunOpenCode\Bundle\QueryResourcesLoader\Contract\QueryResourcesLoaderInterface" instead.</deprecated>
+        </service>
+
+    </services>
+
+</container>

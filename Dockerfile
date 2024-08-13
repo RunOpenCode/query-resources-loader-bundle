@@ -1,4 +1,4 @@
-FROM php:8-fpm
+FROM php:8.2-fpm
 
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends wget
@@ -14,6 +14,7 @@ RUN docker-php-ext-install posix
 RUN docker-php-ext-install zip
 
 RUN pecl install xdebug
+RUN docker-php-ext-enable xdebug
 
 RUN echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini
 RUN echo "xdebug.mode=debug" > /usr/local/etc/php/conf.d/xdebug.ini

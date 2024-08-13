@@ -1,6 +1,6 @@
 {
     "name": "runopencode/query-resources-loader-bundle",
-    "description": "Provides you with possibility to keep long queries in separate files in 'Resources/query' directory in your project.",
+    "description": "Provides you with possibility to keep long queries in separate files in 'query' directory in your project.",
     "keywords": [
         "sql",
         "sql loader",
@@ -33,7 +33,7 @@
         }
     },
     "require": {
-        "php": "^7.4|^8.0",
+        "php": "^8.2",
         "ext-ctype": "*",
         "doctrine/dbal": "^2.0|^3.0|^4.0",
         "doctrine/orm": "^2.0|^3.0|^4.0",
@@ -42,23 +42,30 @@
         "symfony/dependency-injection": "^4.0|^5.0|^6.0|^7.0",
         "symfony/finder": "^4.0|^5.0|^6.0|^7.0",
         "symfony/http-kernel": "^4.0|^5.0|^6.0|^7.0",
+        "symfony/twig-bundle": "^4.0|^5.0|^6.0|^7.0",
         "twig/twig": "^2.0|^3.0",
-        "symfony/options-resolver": "^4.0|^5.0|^6.0|^7.0",
-        "symfony/doctrine-bridge": "^4.0|^5.0|^6.0|^7.0"
+        "symfony/doctrine-bridge": "^4.0|^5.0|^6.0|^7.0",
+        "doctrine/doctrine-bundle": "^1.0|^2.0",
+        "symfony/cache": "^4.0|^5.0|^6.0|^7.0",
+        "symfony/cache-contracts": "^1.0|^2.0|^3.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "bamarni/composer-bin-plugin": "^1.8"
+        "bamarni/composer-bin-plugin": "^1.8",
+        "symfony/monolog-bundle": "^1.0|^2.0|^3.0"
     },
     "scripts": {
         "bin": "echo 'bamarni/composer-bin-plugin is not installed.'",
-        "phpunit": "vendor-bin/dev/vendor/bin/phpunit --coverage-html ./build/phpunit",
-        "composer-require-checker": "vendor-bin/dev/vendor/bin/composer-require-checker check composer.json --config-file=`pwd`/composer-require-checker.config.dist.json",
-        "composer-unused": "vendor-bin/dev/vendor/bin/composer-unused --excludeDir=build --excludeDir=tools",
-        "php-cs-fixer": "vendor-bin/dev/vendor/bin/php-cs-fixer fix --diff --verbose --show-progress=dots --allow-risky=yes",
-        "phpmd": "vendor-bin/dev/vendor/bin/phpmd src xml phpmd.xml --reportfile build/phpmd/phpmd.xml&vendor/bin/phpmd src html phpmd.xml --reportfile build/phpmd/phpmd.html",
-        "phpstan": "vendor-bin/dev/vendor/bin/phpstan analyse --memory-limit=-1",
-        "psalm": "vendor-bin/dev/vendor/bin/psalm --threads=8 --no-diff  --no-cache"
+        "phpunit": [
+            "Composer\\Config::disableProcessTimeout",
+            "XDEBUG_MODE=coverage vendor-bin/dev/vendor/bin/phpunit --coverage-html ./build/phpunit"
+        ],
+        "composer-require-checker": "XDEBUG_MODE=off vendor-bin/dev/vendor/bin/composer-require-checker check composer.json --config-file=`pwd`/composer-require-checker.config.dist.json",
+        "composer-unused": "XDEBUG_MODE=off vendor-bin/dev/vendor/bin/composer-unused --excludeDir=build --excludeDir=tools",
+        "php-cs-fixer": "XDEBUG_MODE=off vendor-bin/dev/vendor/bin/php-cs-fixer fix --diff --verbose --show-progress=dots --allow-risky=yes",
+        "phpmd": "XDEBUG_MODE=off vendor-bin/dev/vendor/bin/phpmd src xml phpmd.xml --reportfile build/phpmd/phpmd.xml&vendor-bin/dev/vendor/bin/phpmd src html phpmd.xml --reportfile build/phpmd/phpmd.html&vendor-bin/dev/vendor/bin/phpmd src text phpmd.xml --reportfile build/phpmd/phpmd.txt",
+        "phpstan": "XDEBUG_MODE=off vendor-bin/dev/vendor/bin/phpstan analyse --memory-limit=-1",
+        "psalm": "XDEBUG_MODE=off vendor-bin/dev/vendor/bin/psalm --threads=8 --no-diff  --no-cache"
     },
     "config": {
         "allow-plugins": {

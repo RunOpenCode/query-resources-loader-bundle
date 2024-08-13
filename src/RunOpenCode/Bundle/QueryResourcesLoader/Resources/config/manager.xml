@@ -4,33 +4,19 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd"
 >
-    
+
     <services>
-
-        <service
-                id="RunOpenCode\Bundle\QueryResourcesLoader\Manager\DefaultManager"
-                class="RunOpenCode\Bundle\QueryResourcesLoader\Manager\DefaultManager"
-        />
         
-        <!-- Register a bunch of aliases -->
-
+       <service
+               id="RunOpenCode\Bundle\QueryResourcesLoader\QueryResourcesLoader"
+               class="RunOpenCode\Bundle\QueryResourcesLoader\QueryResourcesLoader"
+               autowire="true"
+       />
+        
         <service
-                id="RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface"
-                alias="RunOpenCode\Bundle\QueryResourcesLoader\Manager\DefaultManager"
-        />
-
-        <service
-                id="runopencode.query_resources_loader"
-                alias="RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface"
-        />
-
-        <service
-                id="roc.query_resources_loader"
-                alias="RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface"
-        />
-        <service
-                id="roc.query_loader"
-                alias="RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface"
+                id="RunOpenCode\Bundle\QueryResourcesLoader\Contract\QueryResourcesLoaderInterface"
+                alias="RunOpenCode\Bundle\QueryResourcesLoader\QueryResourcesLoader"
+                public="true"
         />
 
     </services>

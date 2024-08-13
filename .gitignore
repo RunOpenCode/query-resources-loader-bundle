@@ -1,6 +1,6 @@
-vendor
 build/
-tools/
+vendor
+tests/Resources/App/var
 cache.properties
 .php-cs-fixer.cache
 .phpunit.result.cache

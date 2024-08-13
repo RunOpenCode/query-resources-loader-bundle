@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader;
 
-use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\ExecutorBuilderCompilerPass;
-use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\RegisterExecutorsCompilerPass;
-use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\TwigEnvironmentCompilerPass;
+use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\ConfigureCacheMiddleware;
+use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\RegisterDbalExecutors;
+use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\RegisterDefaultExecutor;
+use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\RegisterTwigExtensions;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\TwigExtensionsCompilerPass;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\TwigLoaderCompilerPass;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Extension;
@@ -29,10 +30,13 @@ final class QueryResourcesLoaderBundle extends Bundle
      */
     public function build(ContainerBuilder $container): void
     {
-        $container->addCompilerPass(new TwigExtensionsCompilerPass());
-        $container->addCompilerPass(new TwigEnvironmentCompilerPass());
-        $container->addCompilerPass(new TwigLoaderCompilerPass());
-        $container->addCompilerPass(new ExecutorBuilderCompilerPass());
-        $container->addCompilerPass(new RegisterExecutorsCompilerPass());
+        // Register Twig related compiler passes.
+        $container->addCompilerPass(new RegisterTwigExtensions());
+
+        // Register executor compiler passes.
+        $container->addCompilerPass(new RegisterDbalExecutors());
+
+        // Register middleware configuration compiler passes.
+        $container->addCompilerPass(new ConfigureCacheMiddleware());
     }
 }

@@ -12,13 +12,14 @@ use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
 final class ConfigurationTest extends AbstractExtensionConfigurationTestCase
 {
-    /**
-     * @test
-     */
-    public function itHasReasonableDefaults(): void
+    public function testItHasReasonableDefaults(): void
     {
         $this->assertProcessedConfigurationEquals([
             'default_executor' => null,
+            'cache'            => [
+                'default_ttl' => null,
+                'pool'        => 'cache.app',
+            ],
             'twig'             => [
                 'autoescape'                => false,
                 'autoescape_service'        => null,
@@ -40,17 +41,18 @@ final class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'globals'                   => [],
             ],
         ], [
-            __DIR__ . '/../../Fixtures/config/empty.xml',
+            __DIR__ . '/../../Resources/config/empty.xml',
         ]);
     }
 
-    /**
-     * @test
-     */
-    public function itCanBeProperlyConfigured(): void
+    public function testItCanBeProperlyConfigured(): void
     {
         $this->assertProcessedConfigurationEquals([
             'default_executor' => 'some.default.executor',
+            'cache'            => [
+                'default_ttl' => 3600,
+                'pool'        => 'foo',
+            ],
             'twig'             => [
                 'autoescape'                => 'autoescape',
                 'autoescape_service'        => 'autoescape-service',
@@ -82,7 +84,7 @@ final class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 ],
             ],
         ], [
-            __DIR__ . '/../../Fixtures/config/full.xml',
+            __DIR__ . '/../../Resources/config/full.xml',
         ]);
     }
 

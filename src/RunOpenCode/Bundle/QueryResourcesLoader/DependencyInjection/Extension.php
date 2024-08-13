@@ -7,17 +7,49 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Configuration\Configuration;
 use RunOpenCode\Bundle\QueryResourcesLoader\Twig\CacheWarmer\QuerySourcesIterator;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension as BaseExtension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * @psalm-suppress MoreSpecificImplementedParamType
+ * @psalm-suppress MoreSpecificImplementedParamType, UnnecessaryVarAnnotation
+ *
+ * @phpstan-type Config = array{
+ *     default_executor: string,
+ *     cache: array{
+ *         pool: string|null,
+ *         default_ttl: int|null,
+ *     },
+ *     twig: array{
+ *         paths: array<string, string>,
+ *         date: array{
+ *             format: string,
+ *             interval_format: string,
+ *             timezone: string,
+ *         },
+ *         number_format: array{
+ *             decimals: int,
+ *             decimal_point: string,
+ *             thousands_separator: string
+ *         },
+ *         autoescape_service?: string,
+ *         autoescape_service_method?: string,
+ *         globals?: array<string, array{
+ *             type?: string,
+ *             id: string,
+ *             value: string,
+ *         }>
+ *     }
+ * }
  */
 final class Extension extends BaseExtension
 {
+    public const DEFAULT_EXECUTOR  = 'runopencode.query_resources_loader.default_executor';
+    public const CACHE_POOL        = 'runopencode.query_resources_loader.cache.pool';
+    public const CACHE_DEFAULT_TTL = 'runopencode.query_resources_loader.cache.default_ttl';
+
     /**
      * {@inheritdoc}
      */
@@ -50,41 +82,32 @@ final class Extension extends BaseExtension
     public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('cache.xml');
+        $loader->load('executor.xml');
+        $loader->load('legacy.xml');
         $loader->load('loader.xml');
         $loader->load('manager.xml');
+        $loader->load('twig.xml');
 
-        $configuration = new Configuration();
-        $config        = $this->processConfiguration($configuration, $configs);
+        /** @var Config $configuration */
+        $configuration = $this->processConfiguration(new Configuration(), $configs);
 
-        $this->configureTwigGlobals($config, $container); // @phpstan-ignore-line
-        $this->configureTwigEnvironment($config, $container); // @phpstan-ignore-line
-        $this->configureTwigWarmUpCommand($config, $container); // @phpstan-ignore-line
-        $this->configureTwigResourcePaths($config, $container); // @phpstan-ignore-line
-        $this->configureTwigBundlePaths($config, $container);
+        // Set cache middleware configuration parameters.
+        $container->setParameter(self::CACHE_POOL, $configuration['cache']['pool']);
+        $container->setParameter(self::CACHE_DEFAULT_TTL, $configuration['cache']['default_ttl']);
+        // Set name of the default executor.
+        $container->setParameter(self::DEFAULT_EXECUTOR, $configuration['default_executor']);
 
-        if (null !== $config['default_executor']) {
-            $container->setParameter('runopencode.query_resources_loader.default_executor', $config['default_executor']);
-        }
 
-        if (isset($config['twig']['autoescape_service'], $config['twig']['autoescape_service_method'])) {
-            $config['twig']['autoescape'] = [new Reference($config['twig']['autoescape_service']), $config['twig']['autoescape_service_method']];
-        }
-
-        unset($config['twig']['autoescape_service'], $config['twig']['autoescape_service_method'], $config['twig']['globals']);
-
-        $container->getDefinition('runopencode.query_resources_loader.twig')->replaceArgument(1, $config['twig']);
+        $this->configureTwigGlobals($configuration, $container);
+        $this->configureTwigEnvironment($configuration, $container);
+        $this->configureTwigWarmUpCommand($configuration, $container);
+        $this->configureTwigResourcePaths($configuration, $container);
+        $this->configureTwigBundlePaths($configuration, $container);
     }
 
     /**
-     * @param array{
-     *      twig: array{
-     *           globals?: array<string, array{
-     *              type?: string,
-     *              id: string,
-     *              value: string,
-     *           }>
-     *      }
-     * } $config
+     * @param Config $config
      */
     private function configureTwigGlobals(array $config, ContainerBuilder $container): void
     {
@@ -109,20 +132,7 @@ final class Extension extends BaseExtension
     }
 
     /**
-     * @param array{
-     *     twig: array{
-     *         date: array{
-     *              format: string,
-     *              interval_format: string,
-     *              timezone: string,
-     *         },
-     *         number_format: array{
-     *              decimals: int,
-     *              decimal_point: string,
-     *              thousands_separator: string
-     *         }
-     *     }
-     * } $config
+     * @param Config $config
      */
     private function configureTwigEnvironment(array $config, ContainerBuilder $container): void
     {
@@ -133,14 +143,25 @@ final class Extension extends BaseExtension
         $configurator->replaceArgument(3, $config['twig']['number_format']['decimals']);
         $configurator->replaceArgument(4, $config['twig']['number_format']['decimal_point']);
         $configurator->replaceArgument(5, $config['twig']['number_format']['thousands_separator']);
+
+
+        if (isset($config['twig']['autoescape_service'], $config['twig']['autoescape_service_method'])) {
+            $config['twig']['autoescape'] = [new Reference($config['twig']['autoescape_service']), $config['twig']['autoescape_service_method']];
+        }
+
+        unset(
+            $config['twig']['autoescape_service'],
+            $config['twig']['autoescape_service_method'],
+            $config['twig']['globals']
+        );
+
+        $container
+            ->getDefinition('runopencode.query_resources_loader.twig')
+            ->replaceArgument(1, $config['twig']);
     }
 
     /**
-     * @param array{
-     *     twig: array{
-     *          paths: array<string, string>
-     *     }
-     * } $config
+     * @param Config $config
      */
     private function configureTwigWarmUpCommand(array $config, ContainerBuilder $container): void
     {
@@ -148,11 +169,7 @@ final class Extension extends BaseExtension
     }
 
     /**
-     * @param array{
-     *     twig: array{
-     *          paths: array<string, string>
-     *     }
-     * } $config
+     * @param Config $config
      */
     private function configureTwigResourcePaths(array $config, ContainerBuilder $container): void
     {
@@ -181,7 +198,7 @@ final class Extension extends BaseExtension
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param Config $config
      *
      * @psalm-suppress UnusedParam
      */

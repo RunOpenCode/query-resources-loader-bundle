@@ -14,9 +14,9 @@ use Twig\TwigFunction;
 
 final class DoctrineOrmExtension extends AbstractExtension
 {
-    private ManagerRegistry $doctrine;
+    private ?ManagerRegistry $doctrine;
 
-    public function __construct(ManagerRegistry $doctrine)
+    public function __construct(?ManagerRegistry $doctrine)
     {
         $this->doctrine = $doctrine;
     }
@@ -29,30 +29,14 @@ final class DoctrineOrmExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('table_name', \Closure::bind(function(string $entity): string {
-                return $this->getTableName($entity); // @phpstan-ignore-line
-            }, $this)),
-            new TwigFunction('join_table_name', \Closure::bind(function(string $field, string $entity): string {
-                return $this->getJoinTableName($field, $entity); // @phpstan-ignore-line
-            }, $this)),
-            new TwigFunction('column_name', \Closure::bind(function(string $field, string $entity): string {
-                return $this->getColumnName($field, $entity); // @phpstan-ignore-line
-            }, $this)),
-            new TwigFunction('join_table_join_columns', \Closure::bind(function(string $field, string $entity): array {
-                return $this->getJoinTableJoinColumns($field, $entity); // @phpstan-ignore-line
-            }, $this)),
-            new TwigFunction('join_table_inverse_join_columns', \Closure::bind(function(string $field, string $entity): array {
-                return $this->getJoinTableInverseJoinColumns($field, $entity); // @phpstan-ignore-line
-            }, $this)),
-            new TwigFunction('join_table_join_column', \Closure::bind(function(string $field, string $entity): string {
-                return $this->getJoinTableJoinColumns($field, $entity)[0]; // @phpstan-ignore-line
-            }, $this)),
-            new TwigFunction('join_table_inverse_join_column', \Closure::bind(function(string $field, string $entity): string {
-                return $this->getJoinTableInverseJoinColumns($field, $entity)[0]; // @phpstan-ignore-line
-            }, $this)),
-            new TwigFunction('primary_key_column_name', \Closure::bind(function(string $entity): string {
-                return $this->getPrimaryKeyColumnName($entity); // @phpstan-ignore-line
-            }, $this)),
+            new TwigFunction('table_name', $this->getTableName(...)),
+            new TwigFunction('join_table_name', $this->getJoinTableName(...)),
+            new TwigFunction('column_name', $this->getColumnName(...)),
+            new TwigFunction('join_table_join_columns', $this->getJoinTableJoinColumns(...)),
+            new TwigFunction('join_table_inverse_join_columns', $this->getJoinTableInverseJoinColumns(...)),
+            new TwigFunction('join_table_join_column', $this->getJoinTableJoinColumn(...)),
+            new TwigFunction('join_table_inverse_join_column', $this->getJoinTableInverseJoinColumn(...)),
+            new TwigFunction('primary_key_column_name', $this->getPrimaryKeyColumnName(...)),
         ];
     }
 
@@ -64,30 +48,14 @@ final class DoctrineOrmExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('table_name', \Closure::bind(function(string $entity): string {
-                return $this->getTableName($entity); // @phpstan-ignore-line
-            }, $this)),
-            new TwigFilter('join_table_name', \Closure::bind(function(string $field, string $entity): string {
-                return $this->getJoinTableName($field, $entity); // @phpstan-ignore-line
-            }, $this)),
-            new TwigFilter('column_name', \Closure::bind(function(string $field, string $entity): string {
-                return $this->getColumnName($field, $entity); // @phpstan-ignore-line
-            }, $this)),
-            new TwigFilter('join_table_join_columns', \Closure::bind(function(string $field, string $entity): array {
-                return $this->getJoinTableJoinColumns($field, $entity); // @phpstan-ignore-line
-            }, $this)),
-            new TwigFilter('join_table_inverse_join_columns', \Closure::bind(function(string $field, string $entity): array {
-                return $this->getJoinTableInverseJoinColumns($field, $entity); // @phpstan-ignore-line
-            }, $this)),
-            new TwigFilter('join_table_join_column', \Closure::bind(function(string $field, string $entity): string {
-                return $this->getJoinTableJoinColumns($field, $entity)[0]; // @phpstan-ignore-line
-            }, $this)),
-            new TwigFilter('join_table_inverse_join_column', \Closure::bind(function(string $field, string $entity): string {
-                return $this->getJoinTableInverseJoinColumns($field, $entity)[0]; // @phpstan-ignore-line
-            }, $this)),
-            new TwigFilter('primary_key_column_name', \Closure::bind(function(string $entity): string {
-                return $this->getPrimaryKeyColumnName($entity); // @phpstan-ignore-line
-            }, $this)),
+            new TwigFilter('table_name', $this->getTableName(...)),
+            new TwigFilter('join_table_name', $this->getJoinTableName(...)),
+            new TwigFilter('column_name', $this->getColumnName(...)),
+            new TwigFilter('join_table_join_columns', $this->getJoinTableJoinColumns(...)),
+            new TwigFilter('join_table_inverse_join_columns', $this->getJoinTableInverseJoinColumns(...)),
+            new TwigFilter('join_table_join_column', $this->getJoinTableJoinColumn(...)),
+            new TwigFilter('join_table_inverse_join_column', $this->getJoinTableInverseJoinColumn(...)),
+            new TwigFilter('primary_key_column_name', $this->getPrimaryKeyColumnName(...)),
         ];
     }
 
@@ -100,10 +68,7 @@ final class DoctrineOrmExtension extends AbstractExtension
      */
     private function getTableName(string $entity): string
     {
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = $this->doctrine->getManagerForClass($entity);
-
-        return $entityManager->getClassMetadata($entity)->getTableName();
+        return $this->getEntityManager($entity)->getClassMetadata($entity)->getTableName();
     }
 
     /**
@@ -116,10 +81,7 @@ final class DoctrineOrmExtension extends AbstractExtension
      */
     private function getColumnName(string $field, string $entity): string
     {
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = $this->doctrine->getManagerForClass($entity);
-
-        return $entityManager->getClassMetadata($entity)->getColumnName($field);
+        return $this->getEntityManager($entity)->getClassMetadata($entity)->getColumnName($field);
     }
 
     /**
@@ -134,9 +96,7 @@ final class DoctrineOrmExtension extends AbstractExtension
      */
     private function getJoinTableName(string $field, string $entity): string
     {
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = $this->doctrine->getManagerForClass($entity);
-        $metadata      = $entityManager->getClassMetadata($entity);
+        $metadata = $this->getEntityManager($entity)->getClassMetadata($entity);
         /** @var array{joinTable: array{name: string}} $mapping */
         $mapping = $metadata->getAssociationMapping($field);
 
@@ -155,13 +115,27 @@ final class DoctrineOrmExtension extends AbstractExtension
      */
     private function getJoinTableJoinColumns(string $field, string $entity): array
     {
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = $this->doctrine->getManagerForClass($entity);
-        $metadata      = $entityManager->getClassMetadata($entity);
+        $metadata = $this->getEntityManager($entity)->getClassMetadata($entity);
         /** @var array{joinTable: array{joinColumns: string[]}} $mapping */
         $mapping = $metadata->getAssociationMapping($field);
 
         return $mapping['joinTable']['joinColumns'];
+    }
+
+    /**
+     * Get join table join column name for property of the entity
+     *
+     * @param string       $field  Entity property
+     * @param class-string $entity Entity
+     * @param int          $index  Index of the column
+     *
+     * @return string
+     *
+     * @throws MappingException
+     */
+    private function getJoinTableJoinColumn(string $field, string $entity, int $index = 0): string
+    {
+        return \array_values($this->getJoinTableJoinColumns($field, $entity))[$index];
     }
 
     /**
@@ -176,13 +150,27 @@ final class DoctrineOrmExtension extends AbstractExtension
      */
     private function getJoinTableInverseJoinColumns(string $field, string $entity): array
     {
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = $this->doctrine->getManagerForClass($entity);
-        $metadata      = $entityManager->getClassMetadata($entity);
+        $metadata = $this->getEntityManager($entity)->getClassMetadata($entity);
         /** @var array{joinTable: array{inverseJoinColumns: string[]}} $mapping */
         $mapping = $metadata->getAssociationMapping($field);
 
         return $mapping['joinTable']['inverseJoinColumns'];
+    }
+
+    /**
+     * Get join table inverse join column name for property of the entity
+     *
+     * @param string       $field  Entity property
+     * @param class-string $entity Entity
+     * @param int          $index  Index of the column
+     *
+     * @return string
+     *
+     * @throws MappingException
+     */
+    private function getJoinTableInverseJoinColumn(string $field, string $entity, int $index = 0): string
+    {
+        return \array_values($this->getJoinTableInverseJoinColumns($field, $entity))[$index];
     }
 
     /**
@@ -194,9 +182,7 @@ final class DoctrineOrmExtension extends AbstractExtension
      */
     private function getPrimaryKeyColumnName(string $entity): string
     {
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager         = $this->doctrine->getManagerForClass($entity);
-        $metadata              = $entityManager->getClassMetadata($entity);
+        $metadata              = $this->getEntityManager($entity)->getClassMetadata($entity);
         $identifierColumnNames = $metadata->getIdentifierColumnNames();
 
         if (1 !== \count($identifierColumnNames)) {
@@ -208,5 +194,30 @@ final class DoctrineOrmExtension extends AbstractExtension
         }
 
         return $identifierColumnNames[0];
+    }
+
+    /**
+     * Get entity manager for given entity.
+     *
+     * @param class-string $entity Entity
+     *
+     * @return EntityManagerInterface
+     *
+     * @throws RuntimeException If Doctrine is not available.
+     */
+    private function getEntityManager(string $entity): EntityManagerInterface
+    {
+        if (null === $this->doctrine) {
+            throw new RuntimeException('Doctrine is not available, did you installed doctrine/orm package?');
+        }
+
+        /** @var EntityManagerInterface|null $entityManager */
+        $entityManager = $this->doctrine->getManagerForClass($entity);
+
+        if (null === $entityManager) {
+            throw new RuntimeException(\sprintf('Entity manager for entity "%s" is not available.', $entity));
+        }
+
+        return $entityManager;
     }
 }

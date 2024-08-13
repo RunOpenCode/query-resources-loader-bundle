@@ -11,7 +11,7 @@
         xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
         findUnusedBaselineEntry="true"
         findUnusedCode="false"
-        phpVersion="8.1"
+        phpVersion="8.2"
 >
     <projectFiles>
         <directory name="src"/>
@@ -19,6 +19,7 @@
         <ignoreFiles>
             <directory name="./vendor"/>
             <directory name="./vendor-bin"/>
+            <directory name="./tests/Resources/App/var/cache"/>
         </ignoreFiles>
     </projectFiles>
 
@@ -33,7 +34,9 @@
     </issueHandlers>
 
     <plugins>
-        <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/>
+        <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin">
+            <containerXml>tests/Resources/App/var/cache/test/RunOpenCode_Bundle_QueryResourcesLoader_Tests_Resources_App_TestKernelTestDebugContainer.xml</containerXml>
+        </pluginClass>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
     </plugins>
 </psalm>

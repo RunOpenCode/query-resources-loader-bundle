@@ -31,27 +31,23 @@ final class TwigLoader implements LoaderInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @throws SourceNotFoundException
-     * @throws SyntaxException
-     * @throws RuntimeException
      */
     public function get(string $name, array $args = []): string
     {
         try {
             return $this->twig->render($name, $args);
-        } catch (LoaderError $e) {
+        } catch (LoaderError $exception) {
             throw new SourceNotFoundException(\sprintf(
-                'Could not find query source: "%s".',
+                'Could not find query source "%s".',
                 $name
-            ), $e);
-        } catch (SyntaxError $e) {
+            ), $exception);
+        } catch (SyntaxError $exception) {
             throw new SyntaxException(\sprintf(
                 'Query source "%s" contains Twig syntax error and could not be compiled.',
                 $name
-            ), $e);
-        } catch (\Exception $e) {
-            throw new RuntimeException('Unknown exception occurred', $e);
+            ), $exception);
+        } catch (\Exception $exception) {
+            throw new RuntimeException('Unknown exception occurred', $exception);
         }
     }
 }

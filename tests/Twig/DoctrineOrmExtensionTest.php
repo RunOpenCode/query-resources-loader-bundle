@@ -14,10 +14,7 @@ use Twig\TwigFunction;
 
 final class DoctrineOrmExtensionTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function knownFunctions(): void
+    public function testKnownFunctions(): void
     {
         $registry = $this
             ->getMockBuilder(ManagerRegistry::class)
@@ -42,10 +39,7 @@ final class DoctrineOrmExtensionTest extends TestCase
         ], $functions);
     }
 
-    /**
-     * @test
-     */
-    public function knownFilters(): void
+    public function testKnownFilters(): void
     {
         $registry = $this
             ->getMockBuilder(ManagerRegistry::class)
@@ -70,10 +64,7 @@ final class DoctrineOrmExtensionTest extends TestCase
         ], $filters);
     }
 
-    /**
-     * @test
-     */
-    public function itGetsTableName(): void
+    public function testItGetsTableName(): void
     {
         $registry = $this
             ->getMockBuilder(ManagerRegistry::class)
@@ -107,14 +98,14 @@ final class DoctrineOrmExtensionTest extends TestCase
             return 'table_name' === $function->getName();
         }))[0];
 
-        /** @psalm-suppress PossiblyNullFunctionCall */
+        /**
+         * @psalm-suppress PossiblyNullFunctionCall
+         * @phpstan-ignore-next-line
+         */
         $this->assertEquals('some_table_name', \call_user_func($function->getCallable(), ''));
     }
 
-    /**
-     * @test
-     */
-    public function itGetsColumnName(): void
+    public function testItGetsColumnName(): void
     {
         $registry = $this
             ->getMockBuilder(ManagerRegistry::class)
@@ -148,54 +139,39 @@ final class DoctrineOrmExtensionTest extends TestCase
             return 'column_name' === $function->getName();
         }))[0];
 
-        /** @psalm-suppress PossiblyNullFunctionCall */
+        /**
+         * @psalm-suppress PossiblyNullFunctionCall
+         * @phpstan-ignore-next-line
+         */
         $this->assertEquals('some_column_name', \call_user_func($function->getCallable(), '', ''));
     }
 
-    /**
-     * @test
-     */
-    public function itGetsJoinTableName(): void
+    public function testItGetsJoinTableName(): void
     {
         $this->markTestIncomplete('Missing implementation');
     }
 
-    /**
-     * @test
-     */
-    public function itGetsJoinTableJoinColumns(): void
+    public function testItGetsJoinTableJoinColumns(): void
     {
         $this->markTestIncomplete('Missing implementation');
     }
 
-    /**
-     * @test
-     */
-    public function itGetsJoinTableInverseJoinColumns(): void
+    public function testItGetsJoinTableInverseJoinColumns(): void
     {
         $this->markTestIncomplete('Missing implementation');
     }
 
-    /**
-     * @test
-     */
-    public function itGetsJoinTableJoinColumn(): void
+    public function testItGetsJoinTableJoinColumn(): void
     {
         $this->markTestIncomplete('Missing implementation');
     }
 
-    /**
-     * @test
-     */
-    public function itGetsJoinTableInverseJoinColumn(): void
+    public function testItGetsJoinTableInverseJoinColumn(): void
     {
         $this->markTestIncomplete('Missing implementation');
     }
 
-    /**
-     * @test
-     */
-    public function itGetsPrimaryKeyColumnName(): void
+    public function testItGetsPrimaryKeyColumnName(): void
     {
         $this->markTestIncomplete('Missing implementation');
     }

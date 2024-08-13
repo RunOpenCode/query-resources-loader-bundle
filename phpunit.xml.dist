@@ -4,7 +4,7 @@
         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/8.5/phpunit.xsd"
         backupGlobals="false"
         colors="true"
-        bootstrap="vendor/autoload.php"
+        bootstrap="tests/bootstrap.php"
         failOnRisky="true"
         failOnWarning="true"
 >
@@ -16,7 +16,7 @@
 
     <testsuites>
 
-        <testsuite name="QueryResourcesLoaderBundle test suite">
+        <testsuite name="runopencode/query-resources-loader-bundle test suite">
             <directory>./tests/</directory>
         </testsuite>
 

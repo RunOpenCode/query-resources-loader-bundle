@@ -1,6 +1,6 @@
 services:
 
-    php:
+    php.local:
         container_name: runopencode_query_resources_bundle_test
         build:
             context: './'

@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-docker exec -it runopencode_query_resources_bundle_test sh -c "/bin/bash"

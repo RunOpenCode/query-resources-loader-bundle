@@ -13,10 +13,7 @@ use Twig\TemplateWrapper;
 
 final class QuerySourcesCacheWarmerTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function itIsAlwaysOptional(): void
+    public function testItIsOptional(): void
     {
         $twig = $this
             ->getMockBuilder(Environment::class)
@@ -31,10 +28,7 @@ final class QuerySourcesCacheWarmerTest extends TestCase
         $this->assertTrue($warmer->isOptional());
     }
 
-    /**
-     * @test
-     */
-    public function itWarmsUp(): void
+    public function testItWarmsUp(): void
     {
         $twig = $this
             ->getMockBuilder(Environment::class)
@@ -59,10 +53,7 @@ final class QuerySourcesCacheWarmerTest extends TestCase
         $this->assertTrue(true);
     }
 
-    /**
-     * @test
-     */
-    public function itSilentlySkipsTwigErrorWhenWarmup(): void
+    public function testItSilentlySkipsTwigErrorWhenWarmup(): void
     {
         $twig = $this
             ->getMockBuilder(Environment::class)

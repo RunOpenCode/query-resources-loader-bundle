@@ -4,23 +4,37 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Contract;
 
+use RunOpenCode\Bundle\QueryResourcesLoader\Exception\ExecutionException;
+use RunOpenCode\Bundle\QueryResourcesLoader\Exception\RuntimeException;
+
 /**
- * Manager service provides Query source code from loaders, modifying it, if needed, as per concrete implementation of
- * relevant manager and supported scripting language. Manager can execute a Query as well.
+ * Manager is preserved as compatibility layer for older versions.
+ *
+ * Method 'iterate()' is removed from this interface, as it is recommended
+ * to use either RxPHP or some other library for streaming results.
+ *
+ * Use \RunOpenCode\Bundle\QueryResourcesLoader\Contract\QueryResourcesLoaderInterface instead.
+ *
+ * @see QueryResourcesLoaderInterface
+ *
+ * @deprecated
  */
 interface ManagerInterface
 {
     /**
      * Execute Query source.
      *
-     * @param string                    $name     Name of Query source code.
-     * @param array<string, mixed>      $args     Arguments for modification/compilation of Query source code, as well as params for query statement.
-     * @param array<string, string|int> $types    Types of parameters for prepared statement.
-     * @param null|string               $executor Executor name.
+     * @param string                    $name       Name of Query source code.
+     * @param array<string, mixed>      $parameters Arguments for modification/compilation of Query source code, as well as params for query statement.
+     * @param array<string, string|int> $types      Types of parameters for prepared statement.
+     * @param null|string               $executor   Executor name.
      *
      * @return ExecutionResultInterface Execution results.
+     *
+     * @throws ExecutionException If execution fails. Wraps low level exception.
+     * @throws RuntimeException If any other error occurred.
      */
-    public function execute(string $name, array $args = [], array $types = [], ?string $executor = null): ExecutionResultInterface;
+    public function execute(string $name, array $parameters = [], array $types = [], ?string $executor = null): ExecutionResultInterface;
 
     /**
      * Create transactional scope and execute queries within single transaction.
@@ -32,37 +46,9 @@ interface ManagerInterface
      * @param null|string                              $executor Executor name.
      *
      * @return T Result of transactional scope.
-     */
+     * @throws RuntimeException If any other error occurred.
+     *
+     * @throws ExecutionException If execution fails. Wraps low level exception.
+     * */
     public function transactional(\Closure $scope, array $options = [], ?string $executor = null);
-
-    /**
-     * Execute query and iterate results in batches.
-     *
-     * Query is modified in order to accommodate LIMIT/OFFSET clauses,
-     * provided query must not contain mentioned statements. Purpose is to
-     * iterate rows without using table/database cursor and achieving small
-     * memory footprint on both application and database side.
-     *
-     * Options may contain additional keys, depending on concrete driver,
-     * but all contains the following:
-     *
-     * - iterate: string, how values should be yielded for each row.
-     * - batch_size: int, how many rows to process per query.
-     * - on_batch_end: callable, callable to invoke when batch is fully processed.
-     *
-     * Executor may provide for prepared statement "last_batch_row" with last row
-     * of previous batch which may be used for building of query for next batch.
-     *
-     * @param string                                                                                $name    Name of Query source code.
-     * @param array<string, mixed>                                                                  $args    Arguments for modification/compilation of Query source code, as well as params for query statement.
-     * @param array<string, string|int>                                                             $types   Parameter types required for query.
-     * @param array<string, mixed>|array{iterate?:string, batch_size?:int, on_batch_end?: callable} $options Any executor specific options (depending on concrete driver).
-     *
-     * @return IterateResultInterface Result of execution.
-     *
-     * @see \RunOpenCode\Bundle\QueryResourcesLoader\Contract\IterateResultInterface::ITERATE_*
-     *
-     * @deprecated Use https://github.com/ReactiveX/RxPHP for buffering and batching results.
-     */
-    public function iterate(string $name, array $args = [], array $types = [], array $options = [], ?string $executor = null): IterateResultInterface;
 }
