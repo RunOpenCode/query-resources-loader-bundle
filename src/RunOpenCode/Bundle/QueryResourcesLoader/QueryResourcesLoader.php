@@ -6,6 +6,7 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader;
 
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\QueryResourcesLoaderInterface;
+use RunOpenCode\Bundle\QueryResourcesLoader\Exception\LogicException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\ExecutorsRegistry;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\QueryExecutor;
 use RunOpenCode\Bundle\QueryResourcesLoader\Model\Options;
@@ -33,10 +34,17 @@ final readonly class QueryResourcesLoader implements QueryResourcesLoaderInterfa
 
     /**
      * {@inheritdoc}
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function transactional(callable $callable, Options ...$options): mixed
     {
-        $options = 0 === \count($options) ? [Options::create()] : $options;
+        $options   = 0 === \count($options) ? [Options::create()] : $options;
+        $executors = \array_unique(\array_map(static fn(Options $option): ?string => $option->executor, $options));
+
+        if (\count($executors) !== \count($options)) {
+            throw new LogicException('You cannot use same executor multiple time within same transaction scope.');
+        }
 
         try {
             foreach ($options as $option) {

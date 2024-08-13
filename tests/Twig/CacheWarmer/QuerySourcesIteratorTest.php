@@ -40,6 +40,8 @@ final class QuerySourcesIteratorTest extends TestCase
             $templates[] = $template;
         }
 
+        \sort($templates);
+
         $this->assertEquals([
             'get_all_from_default.sql.twig',
             'bar/count_from_bar.sql.twig',
