@@ -30,6 +30,9 @@ application that deals with reporting.
   You can control transaction isolation level for current statements within transaction.
 - **Distributed transactions**. You can execute multiple queries within same transaction against different databases. If
 - **Caching**. You can cache your query results, so they are not loaded from database on each execution.
+- **Middlewares**. You can use middlewares to manipulate query before execution, or to manipulate result after
+  execution. You can switch to other database if query fails, you can add monitoring, logging, load balancing on several
+  databases, etc...
 
 Read the documentation [here](docs/index.md).
 
@@ -141,5 +144,3 @@ For other details about this bundle, as well as for tips on how to use it, read 
 ## TODO
 
 - Add profiling for middlewares and query execution.
-- Add changelog.
-- Improve documentation.

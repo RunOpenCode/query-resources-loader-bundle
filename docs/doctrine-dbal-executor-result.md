@@ -26,4 +26,4 @@ for more details.
 
 Note that `ExecutionResultInterface` implements `\Traversable` and `\Countable`.
 
-[<< Using manager](using-manager.md) | [Table of contents](index.md) | [Transaction support >>](transactions.md)
+[<< Twig support](legacy-support) | [Table of contents](index.md) | [Transaction support >>](transactions.md)

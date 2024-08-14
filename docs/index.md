@@ -16,7 +16,7 @@ of entities first, and then use those identifiers to fetch entities themselves.
 
 - [Introduction](introduction.md)
 - [Proposed solution](proposed-solution.md)
-- [Using manager](using-manager.md)
+- [Using manager](legacy-support)
 - [Twig support](twig-support.md)
 - [DoctrineDbalExecutorResult](doctrine-dbal-executor-result.md)
 - [Transaction support](transactions.md)

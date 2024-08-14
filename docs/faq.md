@@ -18,5 +18,16 @@ That being said, `dmaicher/doctrine-test-bundle`tracks transactions of `Connecti
 `START TRANSACTION` statement in your query, `dmaicher/doctrine-test-bundle` is not able to roll back them, because
 those are not explicitly tracked by `Connection` object.
 
+## Legacy support
+
+Prior to version 8, main interface of the library was
+`RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface`. This interface is replaced with
+`RunOpenCode\Bundle\QueryResourcesLoader\Contract\QueryResourcesLoaderInterface` which should be used from now on.
+
+However, to support gradual migration, interface `ManagerInterface` is still available and can be used, but without
+`iterate()` method which is not supported in legacy interface. API for iterating over records/tables will not be
+introduced in future versions as part of this library.
+
+Support for `ManagerInterface` will be removed in version 9.
 
 [FAQ](faq.md) | [Table of contents](index.md)
