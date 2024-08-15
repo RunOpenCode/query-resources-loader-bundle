@@ -75,7 +75,7 @@ class DbalParameters extends Parameters
 
     final public function dateImmutable(string $name, ?\DateTimeInterface $value): self
     {
-        $value = null !== $value && !$value instanceof \DateTimeImmutable ? \DateTimeImmutable::createFromInterface($value) : null;
+        $value = null !== $value && !$value instanceof \DateTimeImmutable ? \DateTimeImmutable::createFromInterface($value) :  $value;
 
         return $this->set($name, $value, Types::DATE_IMMUTABLE);
     }
@@ -92,7 +92,7 @@ class DbalParameters extends Parameters
 
     final public function dateTimeImmutable(string $name, ?\DateTimeInterface $value): self
     {
-        $value = null !== $value && !$value instanceof \DateTimeImmutable ? \DateTimeImmutable::createFromInterface($value) : null;
+        $value = null !== $value && !$value instanceof \DateTimeImmutable ? \DateTimeImmutable::createFromInterface($value) :  $value;
 
         return $this->set($name, $value, Types::DATETIME_IMMUTABLE);
     }
@@ -104,7 +104,7 @@ class DbalParameters extends Parameters
 
     final public function dateTimeTzImmutable(string $name, ?\DateTimeInterface $value): self
     {
-        $value = null !== $value && !$value instanceof \DateTimeImmutable ? \DateTimeImmutable::createFromInterface($value) : null;
+        $value = null !== $value && !$value instanceof \DateTimeImmutable ? \DateTimeImmutable::createFromInterface($value) :  $value;
 
         return $this->set($name, $value, Types::DATETIMETZ_IMMUTABLE);
     }
@@ -171,7 +171,7 @@ class DbalParameters extends Parameters
 
     final public function timeImmutable(string $name, ?\DateTimeInterface $value): self
     {
-        $value = null !== $value && !$value instanceof \DateTimeImmutable ? \DateTimeImmutable::createFromInterface($value) : null;
+        $value = null !== $value && !$value instanceof \DateTimeImmutable ? \DateTimeImmutable::createFromInterface($value) : $value;
 
         return $this->set($name, $value, Types::TIME_IMMUTABLE);
     }

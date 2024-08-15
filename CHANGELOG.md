@@ -7,11 +7,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)and this pr
 
 ## Changelog
 
+## [8.0.2] - 2024-08-15
+
+### Fixed
+
+- Fixed setting immutable date params with mutable date in
+  `RunOpenCode\Bundle\QueryResourcesLoader\Executor\Dbal\DbalParameters`.
+
 ## [8.0.1] - 2024-08-15
 
 ### Fixed
 
-- Fixed nullability of array parameters of `RunOpenCode\Bundle\QueryResourcesLoader\Executor\Dbal\DbalParameters`. 
+- Fixed nullability of array parameters of `RunOpenCode\Bundle\QueryResourcesLoader\Executor\Dbal\DbalParameters`.
 
 ## [8.0.0] - 2024-08-14
 
