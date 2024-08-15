@@ -8,7 +8,7 @@ $finder = $finder
         __DIR__ . '/src',
         __DIR__ . '/tests',
     ])->notPath([
-        'tests/Resources/App/var',
+        '/tests\/Resources\/App\/var\//',
     ]);
 
 $config = new PhpCsFixer\Config();

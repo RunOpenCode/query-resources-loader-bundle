@@ -28,6 +28,7 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Model\Parameters;
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class DbalParameters extends Parameters
 {
