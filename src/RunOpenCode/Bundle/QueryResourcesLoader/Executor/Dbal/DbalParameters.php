@@ -178,13 +178,17 @@ class DbalParameters extends Parameters
     /**
      * Set parameter value as array of integers.
      *
-     * @param string        $name  Parameter name.
-     * @param iterable<int> $value Parameter value.
+     * @param string         $name  Parameter name.
+     * @param ?iterable<int> $value Parameter value.
      *
      * @return self Fluent return.
      */
-    final public function integerArray(string $name, iterable $value): self
+    final public function integerArray(string $name, ?iterable $value): self
     {
+        if (null === $value) {
+            return $this->set($name, null, ArrayParameterType::INTEGER);
+        }
+
         $value = \is_array($value) ? \array_values($value) : \iterator_to_array($value, false);
 
         return $this->set($name, $value, ArrayParameterType::INTEGER);
@@ -193,13 +197,17 @@ class DbalParameters extends Parameters
     /**
      * Set parameter value as array of strings.
      *
-     * @param string                       $name  Parameter name.
-     * @param iterable<\Stringable|string> $value Parameter value.
+     * @param string                        $name  Parameter name.
+     * @param ?iterable<\Stringable|string> $value Parameter value.
      *
      * @return self Fluent return.
      */
-    final public function stringArray(string $name, iterable $value): self
+    final public function stringArray(string $name, ?iterable $value): self
     {
+        if (null === $value) {
+            return $this->set($name, null, ArrayParameterType::STRING);
+        }
+
         $value = \array_map(
             static fn(\Stringable|string $value): string => $value instanceof \Stringable ? (string)$value : $value,
             \is_array($value) ? \array_values($value) : \iterator_to_array($value, false)
@@ -211,13 +219,17 @@ class DbalParameters extends Parameters
     /**
      * Set parameter value as array of ascii strings.
      *
-     * @param string                       $name  Parameter name.
-     * @param iterable<\Stringable|string> $value Parameter value.
+     * @param string                        $name  Parameter name.
+     * @param ?iterable<\Stringable|string> $value Parameter value.
      *
      * @return self Fluent return.
      */
-    final public function asciiArray(string $name, iterable $value): self
+    final public function asciiArray(string $name, ?iterable $value): self
     {
+        if (null === $value) {
+            return $this->set($name, null, ArrayParameterType::ASCII);
+        }
+
         $value = \array_map(
             static fn(\Stringable|string $value): string => $value instanceof \Stringable ? (string)$value : $value,
             \is_array($value) ? \array_values($value) : \iterator_to_array($value, false)
@@ -229,13 +241,17 @@ class DbalParameters extends Parameters
     /**
      * Set parameter value as array of binary values.
      *
-     * @param string          $name  Parameter name.
-     * @param iterable<mixed> $value Parameter value.
+     * @param string           $name  Parameter name.
+     * @param ?iterable<mixed> $value Parameter value.
      *
      * @return self Fluent return.
      */
-    final public function binaryArray(string $name, iterable $value): self
+    final public function binaryArray(string $name, ?iterable $value): self
     {
+        if (null === $value) {
+            return $this->set($name, null, ArrayParameterType::BINARY);
+        }
+
         return $this->set($name, \is_array($value) ? \array_values($value) : \iterator_to_array($value, false), ArrayParameterType::BINARY);
     }
 }
