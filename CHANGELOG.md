@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)and this pr
 
 ## Changelog
 
+## [8.0.1] - 2024-08-15
+
+### Fixed
+
+- Fixed nullability of array parameters of `RunOpenCode\Bundle\QueryResourcesLoader\Executor\Dbal\DbalParameters`. 
+
 ## [8.0.0] - 2024-08-14
 
 ### Added
