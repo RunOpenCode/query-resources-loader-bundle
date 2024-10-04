@@ -35,7 +35,9 @@ def ci(verbose, install, teardown):
         'composer run php-cs-fixer': ('composer run php-cs-fixer', False),
         'composer run phpmd': ('composer run phpmd', False),
         'composer run phpstan': ('composer run phpstan', False),
-        'composer run psalm': ('composer run psalm', False)
+        'composer run psalm': ('composer run psalm', False),
+        'composer run composer-require-checker': ('composer run composer-require-checker', False),
+        'composer run composer-unused': ('composer run composer-unused', False)
     }
 
     if not install:

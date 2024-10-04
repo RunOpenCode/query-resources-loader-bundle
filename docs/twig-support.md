@@ -1,13 +1,9 @@
 # Twig support
 
 Sometimes, you will need to have complex queries which are built in runtime, depending on certain parameters provided by
-user.
-
-That is a major advantage of using some sort of query builder (like Doctrine's query builder) which allows you to do
-implement pretty complex query building logic.
-
-That is possible to do with string manipulation as well, however, code do tend to be quite complex and hard to interpret
-and maintain.
+user. That is a major advantage of using some sort of query builder (like Doctrine's query builder) which allows you to
+do implement pretty complex query building logic. It is possible to achieve the same with string manipulation as well,
+however, code do tend to be quite complex and hard to interpret and maintain.
 
 Query building is a desirable feature, and Twig can help you in doing such thing.
 
@@ -21,52 +17,50 @@ Before you start using Twig in your queries, you should note several important t
 - You can, of course, create/register your own extensions for query loader Twig environment, register it as a service
   and tag it with `runopencode.query_resources_loader.twig.extension` tag.
 - You cannot load Twig templates from `templates` directories (at least not with default settings), this mixing is not
-  something that is desirable nor wanted
+  something that is desirable nor wanted.
 - Same principle applies if you want to override queries from other bundles as if you want to override bundle's
   templates (place query file with same name as in bundle's `Resources/query` directory in your `query` directory on
   path `bundles/BundleName/query/...`).
 
 In general - bundle uses a new instance of Twig environment, it checks files in `query`, `Resources/query` and other
-configured directories.
+configured directories when resolving query file, and it does not use Twig environment used for rendering templates.
+
+Read more about [Twig configuration](../docs/installation.md#twig-loader-configuration).
 
 ## Some examples
 
 How you are going to use power of Twig is up to you, but here is general idea with simple example:
 
 ```php
-$loader->execute('common.ledger.sql', DbalParameters::create()
+$loader->execute('common.ledger.sql.twig', DbalParameters::create()
     ->dateTimeImmutable('from', $filters->getFrom())
     ->dateTimeImmutable('to', $filters->getTo())
     ->integer('account', $filters->getAccount())
 );
 ```
 
-So, as you can see, year and budget limit can depend on, per example, user input. However, we can use same query with
-little help of Twig:
+So, as you can see, retrieving data may require additional filtering logic in your SQL query. With a little help of Twig
+you can build complex queries in runtime, per example:
 
 ```sql
 
 SELECT *
+
 FROM expenses_table ET
 
 WHERE 1 # A trick, "WHERE 1" always evaluate to TRUE, so you can add other conditions with AND
 
-    {% if
-from is not null %}
-    AND
-    ET.from > :
-from
-    {% endif %}
+{% if from is not null %}
+    AND ET.from > :from
+{% endif %}
 
-    {% if to is not null %}
-    AND
-    ET.to > : to
-    {% endif %}
+{% if to is not null %}
+    AND ET.to > : to
+{% endif %}
 
-    {% if account is not null %}
-    AND
-    ET.account = : account
-    {% endif %}
+{% if account is not null %}
+    AND ET.account = : account
+{% endif %}
 ```
 
 **Note that you can pass extra parameters when executing statement**, Doctrine will not complain if you have passed
@@ -83,13 +77,11 @@ $loader->execute('common.ledger.sql', DbalParameters::create()
 SELECT *
 FROM expenses_table ET
 
-WHERE 1 {% if flag %}
+WHERE 1
 
-    AND
-
-    ET.year = :year
-
-{% endif %}    
+{% if flag %}
+    AND ET.year = :year
+{% endif %}
 ```
 
 ## Extension delivered out of the box
@@ -112,11 +104,9 @@ for more details and full list of functions/filters.
 Usage example:
 
 ```sql
-SELECT 
+SELECT ET.{{ 'someProperty'|column_name('Full\\Qualified\\Entity\\Name') }} AS column_alias_name
 
-ET.{{ 'someProperty'|column_name('Full\\Qualified\\Entity\\Name') }} as alias_name
-
-FROM {{ 'Full\\Qualified\\Entity\\Name'|table_name }} ET    
+FROM {{ 'Full\\Qualified\\Entity\\Name'| table_name }} ET    
 ```
 
-[<< Twig support](twig-support.md) | [Table of contents](index.md) | [DoctrineDbalExecutorResult >>](doctrine-dbal-executor-result.md)
+[<< Twig support](twig-support.md) | [Table of contents](index.md) | [DoctrineDbalExecutorResult >>](doctrine-dbal-executor)

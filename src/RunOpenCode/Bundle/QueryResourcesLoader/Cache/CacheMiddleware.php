@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Cache;
 
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\CacheIdentifiableInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\MiddlewareInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Model\Options;
@@ -36,18 +37,24 @@ final readonly class CacheMiddleware implements MiddlewareInterface
             return $next($query, $parameters, $options);
         }
 
-        $identity = $options->cache;
-        $identity = $identity->withTtl($options->cache->ttl ?? $this->defaultTtl);
+        /** @var CacheIdentity $identity */
+        $identity = $options->cache instanceof CacheIdentifiableInterface ?
+            $options->cache->getCacheIdentity()
+            : $options->cache;
 
-        return $this->cache->get($identity->key, function(ItemInterface $item, bool &$save) use ($query, $parameters, $identity, $options, $next): ExecutionResultInterface {
+
+        // ensure TTL is set
+        $identity = $identity->withTtl($identity->getTtl() ?? $this->defaultTtl);
+
+        return $this->cache->get($identity->getKey(), function(ItemInterface $item, bool &$save) use ($query, $parameters, $identity, $options, $next): ExecutionResultInterface {
             $result = $next($query, $parameters, $options);
             $save   = true;
 
             $item->set($result);
-            $item->expiresAfter($identity->ttl);
+            $item->expiresAfter($identity->getTtl());
 
-            if (!empty($identity->tags)) {
-                $item->tag($identity->tags);
+            if (!empty($identity->getTags())) {
+                $item->tag($identity->getTags());
             }
 
             return $result;

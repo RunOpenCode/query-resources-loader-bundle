@@ -29,6 +29,7 @@ application that deals with reporting.
 - **Transactions**. You can execute your queries within transaction. Supports `transactional()` API from Doctrine Dbal.
   You can control transaction isolation level for current statements within transaction.
 - **Distributed transactions**. You can execute multiple queries within same transaction against different databases. If
+  any of statements fail, transaction will be rolled back for all databases.
 - **Caching**. You can cache your query results, so they are not loaded from database on each execution.
 - **Middlewares**. You can use middlewares to manipulate query before execution, or to manipulate result after
   execution. You can switch to other database if query fails, you can add monitoring, logging, load balancing on several
@@ -132,10 +133,12 @@ queries, per example:
 SELECT *
 FROM my_table T
 
-WHERE T.field_1 = :some_parameter {% if some_other_parameter is defined %}
+WHERE T.field_1 = :some_parameter
+
+{% if some_other_parameter is defined %}
 
     AND T.field_2 = :some_other_parameter 
-    
+
 {% endif %}
 ```
 

@@ -12,7 +12,8 @@ how Doctrine's `Connection::transactional()` method works.
 However, there are some differences:
 
 - `transactional()` method accepts, after callable, variadic number of instance of
-  `RunOpenCode\Bundle\QueryResourcesLoader\Model\Options`.
+  `RunOpenCode\Bundle\QueryResourcesLoader\Model\Options`. Options are used to define which executors should be used for
+  creating transactional scope.
 - If options are not provided, it is assumed that default executor should be used for creating transactional scope.
 - Otherwise, with each passed option instance, you may define executors which need to be used for creating transactional
   scope. This is useful when you have multiple executors, and you want to execute statements from different executors
@@ -47,7 +48,7 @@ $loader->transactional(static function(QueryResourcesLoaderInterface $loader): i
     // selects records from baz_connection, but not in transaction scope, since baz_connection is not part of distributed transaction
     return $executor->execute('@baz/select.sql', Options::executor('doctrine.dbal.baz_connection'));
 
-}, Options::executor('doctrine.dbal.foo_connection'), , Options::executor('doctrine.dbal.bar_connection'));
+}, Options::executor('doctrine.dbal.foo_connection'), Options::executor('doctrine.dbal.bar_connection'));
 ```
 
 API is deliberately designed to be similar to `Doctrine\DBAL\Connection::transactional()` method where you are able to
@@ -58,4 +59,4 @@ etc... Library will take care of that for you. On top of that, if you
 use [https://github.com/dmaicher/doctrine-test-bundle](https://github.com/dmaicher/doctrine-test-bundle) having
 transaction statements in your SQL files will cause issues when rolling back database to initial state.
 
-[DoctrineDbalExecutorResult](doctrine-dbal-executor-result.md) | [Table of contents](index.md) | [FAQ](faq.md)
+[DoctrineDbalExecutorResult](doctrine-dbal-executor) | [Table of contents](index.md) | [FAQ](faq.md)

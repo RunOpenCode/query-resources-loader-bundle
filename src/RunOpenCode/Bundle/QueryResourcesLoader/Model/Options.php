@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Model;
 
-use RunOpenCode\Bundle\QueryResourcesLoader\Cache\CacheIdentity;
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\CacheIdentifiableInterface;
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\CacheIdentityInterface;
 
 /**
  * Execution options.
@@ -13,107 +14,181 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Cache\CacheIdentity;
  *
  * Extend this class to add more options related to
  * executor low level implementation.
+ *
+ * @implements \IteratorAggregate<string, mixed>
+ * @implements \ArrayAccess<string, mixed>
+ *     
+ * @property string|null $executor
+ * @property CacheIdentityInterface|CacheIdentifiableInterface|null $cache
+ * 
+ * @method getExecutor(): string|null
+ * @method getCache(): CacheIdentityInterface|CacheIdentifiableInterface|null
  */
-readonly class Options
+readonly class Options implements \IteratorAggregate, \ArrayAccess
 {
     /**
-     * Executor name (NULL for default one).
+     * @param array<string, mixed> $options
      */
-    public ?string $executor;
-
-    /**
-     * Cache identity.
-     */
-    public ?CacheIdentity $cache;
-
-    protected function __construct(
-        ?string         $executor = null,
-        ?CacheIdentity $cache = null,
+    private final function __construct(
+        private array $options
     ) {
-        $this->executor = $executor;
-        $this->cache    = $cache;
-    }
-
-    public static function executor(string $executor, ?CacheIdentity $cache = null): static
-    {
-        return static::create([
-            'executor' => $executor,
-            'cache'    => $cache,
-        ]);
+        // noop
     }
 
     /**
      * Create new instance of options.
      *
-     * @param array{
-     *     executor?: string|null,
-     *     cache?: CacheIdentity|null
-     * } $options Options to create new instance of options.
+     * @param array<string, mixed> $options Options.
      *
      * @return static New options instance.
      */
     public static function create(array $options = []): static
     {
-        $options['executor'] = $options['executor'] ?? null;
-        $options['cache']    = $options['cache'] ?? null;
-
-        if (static::class === self::class) {
-            /** @psalm-suppress LessSpecificReturnStatement */
-            return new self($options['executor'], $options['cache']); // @phpstan-ignore-line
-        }
-
-        $reflection  = new \ReflectionClass(static::class);
-        $constructor = null;
-
-        while (null === $constructor) {
-            $constructor = $reflection->getConstructor();
-            $reflection  = $reflection->getParentClass();
-
-            \assert($reflection instanceof \ReflectionClass);
-        }
-
-        $parameters = $constructor->getParameters();
-        $arguments  = [];
-
-        foreach ($parameters as $parameter) {
-            $name = $parameter->getName();
-
-            if (\array_key_exists($name, $options)) {
-                $arguments[] = $options[$name];
-                continue;
-            }
-
-            $arguments[] = $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null;
-        }
-
-        /**
-         * @psalm-suppress PossiblyInvalidCast, UnsafeInstantiation, PossiblyNullArgument, PossiblyInvalidArgument
-         * @phpstan-ignore-next-line
-         */
-        return new static(...$arguments);
+        return new static($options);
     }
 
+    /**
+     * Convert options to instance of this class.
+     *
+     * @param Options|array<string, mixed> ...$options
+     */
+    public static function from(Options|array ...$options): static
+    {
+        return static::create(\array_merge(...\array_map(
+            static fn(Options|array $option): array => $option instanceof Options ? $option->toArray() : $option,
+            $options
+        )));
+    }
+
+    /**
+     * Create new instance of options with executor.
+     */
+    public static function executor(string $executor): static
+    {
+        return static::create([
+            'executor' => $executor,
+        ]);
+    }
+
+    /**
+     * Create new instance of options with cache and default executor.
+     */
+    public static function cached(CacheIdentityInterface|CacheIdentifiableInterface $cache): static
+    {
+        return static::create([
+            'cache' => $cache,
+        ]);
+    }
+
+    /**
+     * @return array<string, mixed> Options.
+     */
+    public function toArray(): array
+    {
+        return $this->options;
+    }
+
+    public function __get(string $name): mixed
+    {
+        return $this->options[$name] ?? null;
+    }
+
+    public function __isset(string $name): bool
+    {
+        return \array_key_exists($name, $this->options);
+    }
+
+    /**
+     * @param mixed[] $arguments
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        if (\str_starts_with($name, 'with') && 1 === \count($arguments)) {
+            $name = \lcfirst(\substr($name, 4));
+            return self::from($this, [$name => $arguments[0]]);
+        }
+
+        if (\str_starts_with($name, 'get') && 0 === \count($arguments)) {
+            $name = \lcfirst(\substr($name, 3));
+            return $this->options[$name] ?? null;
+        }
+
+        throw new \BadMethodCallException(\sprintf(
+            'Undefined method "%s" called.',
+            $name
+        ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetExists(mixed $offset): bool
+    {
+        return array_key_exists($offset, $this->options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetGet(mixed $offset): mixed
+    {
+        return $this->options[$offset] ?? null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        throw new \BadMethodCallException('Options are immutable.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetUnset(mixed $offset): void
+    {
+        throw new \BadMethodCallException('Options are immutable.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator(): \Traversable
+    {
+        return new \ArrayIterator($this->options);
+    }
+
+    /**
+     * Set executor.
+     */
     public function withExecutor(?string $executor): static
     {
-        /**
-         * @psalm-suppress InvalidArgument
-         * @phpstan-ignore-next-line
-         */
         return static::create(\array_merge(
-            \get_object_vars($this),
+            $this->options,
             ['executor' => $executor]
         ));
     }
 
-    public function withCache(CacheIdentity $cache): static
+    /**
+     * Set cache.
+     */
+    public function withCache(CacheIdentityInterface|CacheIdentifiableInterface|null $cache): static
     {
-        /**
-         * @psalm-suppress InvalidArgument
-         * @phpstan-ignore-next-line
-         */
         return static::create(\array_merge(
-            \get_object_vars($this),
+            $this->options,
             ['cache' => $cache]
+        ));
+    }
+    
+    /**
+     * Set arbitrary option.
+     */
+    public function withOption(string $name, mixed $value): static
+    {
+        return static::create(\array_merge(
+            $this->options,
+            [$name => $value]
         ));
     }
 }
