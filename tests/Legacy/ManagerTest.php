@@ -9,7 +9,6 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\RuntimeException;
-use RunOpenCode\Bundle\QueryResourcesLoader\Exception\SourceNotFoundException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\Dbal\DoctrineDbalExecutionResult;
 use RunOpenCode\Bundle\QueryResourcesLoader\Tests\Fixtures\Fixtures;
 use RunOpenCode\Bundle\QueryResourcesLoader\Tests\KernelTestCase;
@@ -70,7 +69,7 @@ final class ManagerTest extends KernelTestCase
         $result = $this->manager->transactional(function(ExecutorInterface $executor): ExecutionResultInterface {
             return $executor->execute('get_all_from_foo.sql.twig');
         }, [
-            'isolation' => TransactionIsolationLevel::READ_UNCOMMITTED
+            'isolation' => TransactionIsolationLevel::READ_UNCOMMITTED,
         ], 'doctrine.dbal.foo_connection');
 
         $this->assertInstanceOf(DoctrineDbalExecutionResult::class, $result);
@@ -86,12 +85,5 @@ final class ManagerTest extends KernelTestCase
         $this->expectException(RuntimeException::class);
 
         $this->manager->execute('get_all_from_default.sql.twig', [], [], 'qux');
-    }
-
-    public function testItThrowsExceptionWhenQueryDoesNotExists(): void
-    {
-        $this->expectException(SourceNotFoundException::class);
-
-        $this->manager->execute('foo');
     }
 }

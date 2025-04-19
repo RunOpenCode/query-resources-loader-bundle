@@ -11,8 +11,8 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Model\Options;
 use RunOpenCode\Bundle\QueryResourcesLoader\Model\Parameters;
 use RunOpenCode\Bundle\QueryResourcesLoader\Tests\Executor\ExecutionResultStub;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 final class CacheMiddlewareTest extends TestCase
 {
@@ -51,7 +51,7 @@ final class CacheMiddlewareTest extends TestCase
 
     public function testItSetsProperCacheMetadata(): void
     {
-        $cache  = $this->createMock(CacheInterface::class);
+        $cache  = $this->createMock(TagAwareCacheInterface::class);
         $item   = $this->createMock(ItemInterface::class);
         $save   = false;
         $result = new ExecutionResultStub();
@@ -64,7 +64,7 @@ final class CacheMiddlewareTest extends TestCase
         $item
             ->expects($this->once())
             ->method('tag')
-            ->with(['tag1', 'tag2']);
+            ->with(['tag1', 'tag2', CacheMiddleware::TAG]);
 
         $item
             ->expects($this->once())

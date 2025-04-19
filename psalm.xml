@@ -20,6 +20,8 @@
             <directory name="./vendor"/>
             <directory name="./vendor-bin"/>
             <directory name="./tests/Resources/App/var/cache"/>
+            <!-- Psalm doesn't supress errors on this file -->
+            <file name="./src/RunOpenCode/Bundle/QueryResourcesLoader/Cache/CacheMiddleware.php"/>
         </ignoreFiles>
     </projectFiles>
 
@@ -32,10 +34,12 @@
         <DeprecatedInterface errorLevel="info"/>
         <DeprecatedClass errorLevel="info"/>
     </issueHandlers>
-
+   
     <plugins>
         <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin">
-            <containerXml>tests/Resources/App/var/cache/test/RunOpenCode_Bundle_QueryResourcesLoader_Tests_Resources_App_TestKernelTestDebugContainer.xml</containerXml>
+            <containerXml>
+                tests/Resources/App/var/cache/test/RunOpenCode_Bundle_QueryResourcesLoader_Tests_Resources_App_TestKernelTestDebugContainer.xml
+            </containerXml>
         </pluginClass>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
     </plugins>

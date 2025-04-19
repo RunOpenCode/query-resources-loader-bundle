@@ -47,7 +47,6 @@ final readonly class Manager implements ManagerInterface
          */
         $options = isset($options['isolation'])
             ?
-            // @phpstan-ignore-next-line
             DbalOptions::create([
                 'isolation' => $options['isolation'],
                 'executor'  => $executor,

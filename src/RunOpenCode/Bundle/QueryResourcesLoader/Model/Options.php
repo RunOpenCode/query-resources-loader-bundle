@@ -17,19 +17,21 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Contract\CacheIdentityInterface;
  *
  * @implements \IteratorAggregate<string, mixed>
  * @implements \ArrayAccess<string, mixed>
- *     
+ *
  * @property string|null $executor
  * @property CacheIdentityInterface|CacheIdentifiableInterface|null $cache
- * 
- * @method getExecutor(): string|null
- * @method getCache(): CacheIdentityInterface|CacheIdentifiableInterface|null
+ *
+ * @method string|null getExecutor()
+ * @method CacheIdentityInterface|CacheIdentifiableInterface|null getCache()
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 readonly class Options implements \IteratorAggregate, \ArrayAccess
 {
     /**
      * @param array<string, mixed> $options
      */
-    private final function __construct(
+    final private function __construct(
         private array $options
     ) {
         // noop
@@ -51,6 +53,8 @@ readonly class Options implements \IteratorAggregate, \ArrayAccess
      * Convert options to instance of this class.
      *
      * @param Options|array<string, mixed> ...$options
+     *
+     * @psalm-suppress NamedArgumentNotAllowed
      */
     public static function from(Options|array ...$options): static
     {
@@ -124,7 +128,7 @@ readonly class Options implements \IteratorAggregate, \ArrayAccess
      */
     public function offsetExists(mixed $offset): bool
     {
-        return array_key_exists($offset, $this->options);
+        return \array_key_exists($offset, $this->options);
     }
 
     /**
@@ -180,7 +184,7 @@ readonly class Options implements \IteratorAggregate, \ArrayAccess
             ['cache' => $cache]
         ));
     }
-    
+
     /**
      * Set arbitrary option.
      */

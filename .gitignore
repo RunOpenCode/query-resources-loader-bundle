@@ -1,6 +1,7 @@
 build/
 vendor
 tests/Resources/App/var
+node_modules/
 cache.properties
 .php-cs-fixer.cache
 .phpunit.result.cache

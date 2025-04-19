@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Cache;
 
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\CacheIdentifiableInterface;
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\CacheIdentityInterface;
+use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultAwareInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\MiddlewareInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Model\Options;
@@ -13,6 +15,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 /**
  * Cache middleware.
@@ -21,9 +24,11 @@ use Symfony\Contracts\Cache\ItemInterface;
  */
 final readonly class CacheMiddleware implements MiddlewareInterface
 {
+    public const TAG = 'runopencode_query_resources_loader_cache';
+
     public function __construct(
-        private CacheInterface $cache = new TagAwareAdapter(new ArrayAdapter()),
-        private ?int           $defaultTtl = null,
+        private CacheInterface&TagAwareCacheInterface $cache = new TagAwareAdapter(new ArrayAdapter()),
+        private ?int                                  $defaultTtl = null,
     ) {
         // noop
     }
@@ -37,7 +42,10 @@ final readonly class CacheMiddleware implements MiddlewareInterface
             return $next($query, $parameters, $options);
         }
 
-        /** @var CacheIdentity $identity */
+        /**
+         * @psalm-suppress UnnecessaryVarAnnotation
+         * @var CacheIdentityInterface $identity
+         */
         $identity = $options->cache instanceof CacheIdentifiableInterface ?
             $options->cache->getCacheIdentity()
             : $options->cache;
@@ -51,11 +59,23 @@ final readonly class CacheMiddleware implements MiddlewareInterface
             $save   = true;
 
             $item->set($result);
-            $item->expiresAfter($identity->getTtl());
 
-            if (!empty($identity->getTags())) {
-                $item->tag($identity->getTags());
+            // If cache identity is aware of execution result, we can pass it
+            // to it in order to mutate tags and/or TTL.
+            if ($identity instanceof ExecutionResultAwareInterface) {
+                $identity = $identity->withExecutionResult($result);
             }
+
+            /**
+             * @psalm-suppress UnnecessaryVarAnnotation
+             * @var CacheIdentityInterface $identity
+             */
+            $item->expiresAfter($identity->getTtl());
+            /** @psalm-suppress UndefinedInterfaceMethod */
+            $item->tag(\array_merge(
+                $identity->getTags(),
+                [self::TAG]
+            ));
 
             return $result;
         });

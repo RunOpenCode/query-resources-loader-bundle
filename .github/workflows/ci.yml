@@ -44,4 +44,4 @@ jobs:
               if: github.repository == 'runopencode/query-resources-loader-bundle'
               with:
                   cli-args: "--format=php-clover build/logs/clover.xml --revision=${{ github.event.pull_request.head.sha || github.sha }}"                    
-                    
+

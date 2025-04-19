@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor\Dbal;
 
-use Doctrine\DBAL\Cache\ArrayResult;
-use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Driver\Exception as DbalDriverException;
-use Doctrine\DBAL\Result as DbalResult;
 use Doctrine\DBAL\Driver\Result as DbalDriverResult;
+use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Result as DbalResult;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\DriverException;
 
 /**
@@ -167,23 +166,47 @@ final class ResultProxy implements \Countable
 
         // If rowCount() returns 0, we need to fetch all rows to count them,
         // and we need to replace result with array result to be able to fetch all rows.
-        $data         = $this->fetchAllAssociative();
-        $this->result = new ArrayResult($data);
+        $rows        = $this->fetchAllNumeric();
+        $columnNames = [];
+
+        for ($index = 0; $index < $this->columnCount(); ++$index) {
+            $columnNames[] = $this->result->getColumnName($index);
+        }
+
+        $this->result = new ArrayResult($columnNames, $rows);
 
         return $this->rowCount();
     }
 
+    /**
+     * @return array{
+     *     columnNames: list<string>,
+     *     rows: list<list<mixed>>
+     * }
+     */
     public function __serialize(): array
     {
-        return $this->fetchAllAssociative();
+        $columnNames = [];
+
+        for ($index = 0; $index < $this->columnCount(); ++$index) {
+            $columnNames[] = $this->result->getColumnName($index);
+        }
+
+        return [
+            'columnNames' => $columnNames,
+            'rows'        => $this->result->fetchAllNumeric(),
+        ];
     }
 
     /**
-     * @param list<array<string, mixed>> $data
+     * @param array{
+     *     columnNames: list<string>,
+     *     rows: list<list<mixed>>
+     * } $data
      */
     public function __unserialize(array $data): void
     {
-        $this->result = new ArrayResult($data);
+        $this->result = new ArrayResult($data['columnNames'], $data['rows']);
     }
 
     private function createException(\Throwable $inner, string $method): DriverException

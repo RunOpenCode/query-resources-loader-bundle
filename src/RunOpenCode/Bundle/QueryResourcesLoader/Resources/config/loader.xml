@@ -21,6 +21,17 @@
                     label="twig"
             />
         </service>
+        
+        <service
+                id="RunOpenCode\Bundle\QueryResourcesLoader\Loader\RawLoader"
+                class="RunOpenCode\Bundle\QueryResourcesLoader\Loader\RawLoader"
+        >
+            <tag
+                    name="runopencode.query_resources_loader.loader"
+                    priority="-1000"
+                    label="raw"
+            />
+        </service>
 
         <service
                 id="RunOpenCode\Bundle\QueryResourcesLoader\Loader\ChainedLoader"

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor\Dbal;
 
-use Doctrine\DBAL\Cache\ArrayResult;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Result as ExecutionResult;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;

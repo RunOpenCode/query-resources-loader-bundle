@@ -11,8 +11,10 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Model\Options;
  * Options for Dbal executor.
  *
  * @property TransactionIsolationLevel|int|null $isolation
- * 
- * @method getIsolation(): TransactionIsolationLevel|int|null
+ *
+ * @method TransactionIsolationLevel|int|null getIsolation()
+ *
+ * @psalm-suppress MoreSpecificReturnType, LessSpecificReturnStatement
  */
 readonly class DbalOptions extends Options
 {
@@ -70,22 +72,22 @@ readonly class DbalOptions extends Options
             'isolation' => $level,
         ]);
     }
-    
+
     public function withReadUncommitted(): static
     {
         return $this->withIsolation(TransactionIsolationLevel::READ_UNCOMMITTED);
     }
-    
+
     public function withReadCommitted(): static
     {
         return $this->withIsolation(TransactionIsolationLevel::READ_COMMITTED);
     }
-    
+
     public function withRepeatableRead(): static
     {
         return $this->withIsolation(TransactionIsolationLevel::REPEATABLE_READ);
     }
-    
+
     public function withSerializable(): static
     {
         return $this->withIsolation(TransactionIsolationLevel::SERIALIZABLE);
