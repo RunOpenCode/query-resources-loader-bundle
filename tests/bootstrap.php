@@ -18,7 +18,7 @@ $bootstrap = \getenv('BOOTSTRAP') ?: 'true';
 // when we are running only one test case.
 if (\in_array(\strtolower($bootstrap), ['yes', '1', 'true'], true)) {
     // Clear the cache before running the tests.
-    (new Filesystem())->remove(__DIR__ . '/Resources/var/cache');
+    (new Filesystem())->remove(__DIR__ . '/Resources/App/var/cache');
 
     $kernel = new TestKernel('test', false);
 

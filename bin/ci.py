@@ -32,12 +32,12 @@ def ci(verbose, install, teardown):
     commands = {
         'composer install': ('XDEBUG_MODE=off composer install', False),
         'composer run phpunit': ('XDEBUG_MODE=coverage composer run phpunit', False),    
-        'composer run php-cs-fixer': ('composer run php-cs-fixer', False),
-        'composer run phpmd': ('composer run phpmd', False),
-        'composer run phpstan': ('composer run phpstan', False),
-        'composer run psalm': ('composer run psalm', False),
-        'composer run composer-require-checker': ('composer run composer-require-checker', False),
-        'composer run composer-unused': ('composer run composer-unused', False)
+        'composer run php-cs-fixer': ('XDEBUG_MODE=off composer run php-cs-fixer', False),
+        'composer run phpmd': ('XDEBUG_MODE=off composer run phpmd', False),
+        'composer run phpstan': ('XDEBUG_MODE=off composer run phpstan', False),
+        'composer run psalm': ('XDEBUG_MODE=off composer run psalm', False),
+        'composer run composer-require-checker': ('XDEBUG_MODE=off composer run composer-require-checker', False),
+        'composer run composer-unused': ('XDEBUG_MODE=off composer run composer-unused', False)
     }
 
     if not install:

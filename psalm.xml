@@ -37,9 +37,7 @@
    
     <plugins>
         <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin">
-            <containerXml>
-                tests/Resources/App/var/cache/test/RunOpenCode_Bundle_QueryResourcesLoader_Tests_Resources_App_TestKernelTestDebugContainer.xml
-            </containerXml>
+            <containerXml>tests/Resources/App/var/cache/test/RunOpenCode_Bundle_QueryResourcesLoader_Tests_Resources_App_TestKernelTestDebugContainer.xml</containerXml>
         </pluginClass>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
     </plugins>
