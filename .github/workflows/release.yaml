@@ -9,6 +9,8 @@ permissions:
     contents: read
 
 jobs:
+    ci:
+        uses: ./.github/workflows/ci.yaml
     release:
         name: Release
         runs-on: ubuntu-latest
@@ -16,6 +18,8 @@ jobs:
             contents: write
             issues: write
             pull-requests: write
+        needs:
+            - ci
 
         steps:
             -   name: Checkout
@@ -27,9 +31,9 @@ jobs:
                 with:
                     node-version: "lts/*"
             -   name: Install dependencies
-                run: npm clean-install                  
-            - name: Release
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: npx semantic-release                
+                run: npm clean-install
+            -   name: Release
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                run: npx semantic-release                
                 

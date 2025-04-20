@@ -1,14 +1,11 @@
 name: Run CI build script
 
 on:
-    push:
-        branches: 
-            - master    
+    workflow_call: 
     pull_request:
         types: [ opened, reopened, edited, synchronize ]
         branches:
             - master
-
 jobs:
     quality_control:
         name: Execute code quality checks
