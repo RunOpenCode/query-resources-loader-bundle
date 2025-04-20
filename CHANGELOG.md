@@ -1,3 +1,18 @@
+# [8.1.0](https://github.com/RunOpenCode/query-resources-loader-bundle/compare/8.0.2...8.1.0) (2025-04-20)
+
+
+### Bug Fixes
+
+* **ci:** Fixing path to reusable workflow ([2dc9881](https://github.com/RunOpenCode/query-resources-loader-bundle/commit/2dc9881c5a2d831761d438fd398c952f4cc90fec))
+* **ci:** Fixing semantic release workflow for github ([fde700a](https://github.com/RunOpenCode/query-resources-loader-bundle/commit/fde700a18f6125b5aeadc444a6f7da29e02d0fd3))
+* **ci:** Remove scrutinizer from pipeline ([5f6573f](https://github.com/RunOpenCode/query-resources-loader-bundle/commit/5f6573f27b836ed45c3133992aa56232e5a25474))
+* **test:** Fixed issue with CI and psalm ([21be7a3](https://github.com/RunOpenCode/query-resources-loader-bundle/commit/21be7a385e212e34246bc9910ae3d857a665ad67))
+
+
+### Features
+
+* **core:** Improved cache identity, improved cache not to use Doctrine internals, added raw query loader ([4a8eb83](https://github.com/RunOpenCode/query-resources-loader-bundle/commit/4a8eb83724d600d49093a57792bac114f22b394e))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
