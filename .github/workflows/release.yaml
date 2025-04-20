@@ -22,6 +22,10 @@ jobs:
 #            - ci
 
         steps:
+            -   name: Test
+                env:
+                    GH_TOKEN: ${{ secrets.GH_TOKEN }}
+                run: echo $GH_TOKEN
             -   name: Checkout
                 uses: actions/checkout@v4
                 with:
