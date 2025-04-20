@@ -61,7 +61,7 @@
             <tag
                     name="runopencode.query_resources_loader.middleware"
                     priority="500"
-                    label="cache"
+                    label="loader"
             />
         </service>
 

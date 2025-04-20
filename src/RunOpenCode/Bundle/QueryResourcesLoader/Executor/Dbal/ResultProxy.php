@@ -187,14 +187,18 @@ final class ResultProxy implements \Countable
     public function __serialize(): array
     {
         $columnNames = [];
+        $rows        = $this->result->fetchAllNumeric();
 
         for ($index = 0; $index < $this->columnCount(); ++$index) {
             $columnNames[] = $this->result->getColumnName($index);
         }
+        
+        // Replace result with array result so this resultset can be reused.
+        $this->result = new ArrayResult($columnNames, $rows);
 
         return [
             'columnNames' => $columnNames,
-            'rows'        => $this->result->fetchAllNumeric(),
+            'rows'        => $rows,
         ];
     }
 

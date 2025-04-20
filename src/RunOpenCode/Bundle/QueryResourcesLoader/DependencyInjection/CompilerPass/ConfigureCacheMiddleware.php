@@ -25,7 +25,7 @@ final readonly class ConfigureCacheMiddleware implements CompilerPassInterface
         $pool = $container->getParameter(Extension::CACHE_POOL);
         /** @var int|null $ttl */
         $ttl = $container->getParameter(Extension::CACHE_DEFAULT_TTL);
-
+        
         // nothing to reconfigure.
         if (null === $pool && null === $ttl) {
             return;

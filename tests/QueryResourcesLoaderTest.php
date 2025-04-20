@@ -8,7 +8,6 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Contract\QueryResourcesLoaderInterfa
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\Dbal\DbalOptions;
 use RunOpenCode\Bundle\QueryResourcesLoader\Model\Options;
 use RunOpenCode\Bundle\QueryResourcesLoader\Model\Parameters;
-use RunOpenCode\Bundle\QueryResourcesLoader\Tests\Fixtures\Fixtures;
 
 final class QueryResourcesLoaderTest extends KernelTestCase
 {
@@ -18,10 +17,9 @@ final class QueryResourcesLoaderTest extends KernelTestCase
     {
         parent::setUp();
 
-        $this->getContainer()->get(Fixtures::class)->execute(); // @phpstan-ignore-line
-        $this->clearLoggedQueryStatements();
-
         $this->loader = $this->getContainer()->get(QueryResourcesLoaderInterface::class); // @phpstan-ignore-line
+
+        $this->createFixtures();
     }
 
     public function testItExecutesQuery(): void

@@ -10,7 +10,6 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutorInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ManagerInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\RuntimeException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Executor\Dbal\DoctrineDbalExecutionResult;
-use RunOpenCode\Bundle\QueryResourcesLoader\Tests\Fixtures\Fixtures;
 use RunOpenCode\Bundle\QueryResourcesLoader\Tests\KernelTestCase;
 
 final class ManagerTest extends KernelTestCase
@@ -23,7 +22,7 @@ final class ManagerTest extends KernelTestCase
 
         $this->manager = $this->getContainer()->get(ManagerInterface::class); // @phpstan-ignore-line
 
-        $this->getContainer()->get(Fixtures::class)->execute(); // @phpstan-ignore-line
+        $this->createFixtures();
     }
 
     public function testItExecutesFromDefaultExecutor(): void

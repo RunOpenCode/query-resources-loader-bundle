@@ -41,6 +41,18 @@ ENV PATH /composer/vendor/bin:$PATH
 # Allow Composer to be run as root
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
+ARG PHP_XDEBUG_MODE=debug
+ARG PHP_XDEBUG_REMOTE_PORT=9000
+ARG PHP_XDEBUG_REMOTE_ADDRESS=host.docker.internal
+ARG PHP_XDEBUG_IDEKEY=PHPSTORM
+ARG PHP_IDE_CONFIG=serverName=localhost
+
+ENV PHP_XDEBUG_MODE=${PHP_XDEBUG_MODE}
+ENV PHP_XDEBUG_REMOTE_PORT=${PHP_XDEBUG_REMOTE_PORT}
+ENV PHP_XDEBUG_REMOTE_ADDRESS=${PHP_XDEBUG_REMOTE_ADDRESS}
+ENV PHP_XDEBUG_IDEKEY=${PHP_XDEBUG_IDEKEY}
+ENV PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
+
 # Setup the Composer installer
 RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
     && curl -o /tmp/composer-setup.sig https://composer.github.io/installer.sig \

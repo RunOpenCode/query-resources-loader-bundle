@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use RunOpenCode\Bundle\QueryResourcesLoader\Tests\Fixtures\Fixtures;
-use RunOpenCode\Bundle\QueryResourcesLoader\Tests\Resources\App\TestKernel;
 use Symfony\Component\Filesystem\Filesystem;
 
 require \dirname(__DIR__) . '/vendor/autoload.php';
@@ -19,17 +17,4 @@ $bootstrap = \getenv('BOOTSTRAP') ?: 'true';
 if (\in_array(\strtolower($bootstrap), ['yes', '1', 'true'], true)) {
     // Clear the cache before running the tests.
     (new Filesystem())->remove(__DIR__ . '/Resources/App/var/cache');
-
-    $kernel = new TestKernel('test', false);
-
-    $kernel->boot();
-
-    try {
-        /**
-         * @phpstan-ignore-next-line
-         */
-        $kernel->getContainer()->get(Fixtures::class)->execute();
-    } finally {
-        $kernel->shutdown();
-    }
 }
