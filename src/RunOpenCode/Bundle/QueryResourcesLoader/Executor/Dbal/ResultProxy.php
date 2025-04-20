@@ -192,7 +192,7 @@ final class ResultProxy implements \Countable
         for ($index = 0; $index < $this->columnCount(); ++$index) {
             $columnNames[] = $this->result->getColumnName($index);
         }
-        
+
         // Replace result with array result so this resultset can be reused.
         $this->result = new ArrayResult($columnNames, $rows);
 

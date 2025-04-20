@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel;
+
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 final class TestKernel extends Kernel
@@ -81,7 +82,7 @@ final class TestKernel extends Kernel
                 ],
             ],
         ]);
-        
+
         $container->extension('runopencode_query_resources_loader', [
             'cache' => [
                 'pool' => 'app.roc_test_cache',

@@ -30,14 +30,14 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     {
         return TestKernel::class;
     }
-    
-    protected final function createFixtures(): void
+
+    final protected function createFixtures(): void
     {
         $this->getContainer()->get(Fixtures::class)->execute(); // @phpstan-ignore-line
         $this->clearLoggedQueryStatements();
     }
 
-    protected final function clearLoggedQueryStatements(): void
+    final protected function clearLoggedQueryStatements(): void
     {
         /** @var Configuration $configuration */
         $configuration = $this->getContainer()->get(Connection::class)->getConfiguration(); // @phpstan-ignore-line
@@ -53,7 +53,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     /**
      * @return array<string, string[]>
      */
-    protected final function getLoggedQueryStatements(): array
+    final protected function getLoggedQueryStatements(): array
     {
         /** @var Configuration $configuration */
         $configuration = $this->getContainer()->get(Connection::class)->getConfiguration(); // @phpstan-ignore-line
@@ -80,7 +80,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     /**
      * Clear cache for the current test.
      */
-    protected final function clearCache(): void
+    final protected function clearCache(): void
     {
         $booted = self::$booted;
 

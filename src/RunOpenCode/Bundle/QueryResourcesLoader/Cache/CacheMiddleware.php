@@ -49,7 +49,7 @@ final readonly class CacheMiddleware implements MiddlewareInterface
         $identity = $options->cache instanceof CacheIdentifiableInterface ?
             $options->cache->getCacheIdentity()
             : $options->cache;
-        
+
 
         // ensure TTL is set
         $identity = $identity->withTtl($identity->getTtl() ?? $this->defaultTtl);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests\Cache;
 
+use Doctrine\DBAL\Driver\Result;
 use RunOpenCode\Bundle\QueryResourcesLoader\Cache\CacheIdentity;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\QueryResourcesLoaderInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Model\Options;
@@ -15,8 +16,10 @@ final class CacheIntegrationTest extends KernelTestCase
     {
         $this->createFixtures();
 
+        /** @var QueryResourcesLoaderInterface $loader */
         $loader = $this->getContainer()->get(QueryResourcesLoaderInterface::class);
-        $data   = $loader->execute('SELECT id, title FROM bar ORDER BY id', null, Options::cached(new CacheIdentity(
+        /** @var Result $resultSet */
+        $resultSet = $loader->execute('SELECT id, title FROM bar ORDER BY id', null, Options::cached(new CacheIdentity(
             'foo',
         )));
 
@@ -26,13 +29,15 @@ final class CacheIntegrationTest extends KernelTestCase
             ['id' => 3, 'title' => 'Bar title 3'],
             ['id' => 4, 'title' => 'Bar title 4'],
             ['id' => 5, 'title' => 'Bar title 5'],
-        ], $data->fetchAllAssociative());
-        
+        ], $resultSet->fetchAllAssociative());
+
         $this->ensureKernelShutdown();
         $this->bootKernel();
-        
+
+        /** @var QueryResourcesLoaderInterface $loader */
         $loader = $this->getContainer()->get(QueryResourcesLoaderInterface::class);
-        $data   = $loader->execute('SELECT * FROM bar', null, Options::cached(new CacheIdentity(
+        /** @var Result $resultSet */
+        $resultSet = $loader->execute('SELECT * FROM bar', null, Options::cached(new CacheIdentity(
             'foo',
         )));
 
@@ -42,6 +47,6 @@ final class CacheIntegrationTest extends KernelTestCase
             ['id' => 3, 'title' => 'Bar title 3'],
             ['id' => 4, 'title' => 'Bar title 4'],
             ['id' => 5, 'title' => 'Bar title 5'],
-        ], $data->fetchAllAssociative());
+        ], $resultSet->fetchAllAssociative());
     }
 }
