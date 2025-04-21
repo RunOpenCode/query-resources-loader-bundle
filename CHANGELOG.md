@@ -1,3 +1,10 @@
+# [8.2.0](https://github.com/RunOpenCode/query-resources-loader-bundle/compare/8.1.1...8.2.0) (2025-04-21)
+
+
+### Features
+
+* **loader:** Added possibility to configure default loader, to use raw loader or to use chained loader ([e38197c](https://github.com/RunOpenCode/query-resources-loader-bundle/commit/e38197cf4d87d037c42f3365805bd84063891279))
+
 ## [8.1.1](https://github.com/RunOpenCode/query-resources-loader-bundle/compare/8.1.0...8.1.1) (2025-04-20)
 
 
