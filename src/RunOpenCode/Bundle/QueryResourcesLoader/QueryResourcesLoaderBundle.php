@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace RunOpenCode\Bundle\QueryResourcesLoader;
 
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\ConfigureCacheMiddleware;
+use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\ConfigureDefaultLoader;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\RegisterDbalExecutors;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\RegisterTwigExtensions;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Extension;
@@ -35,5 +36,8 @@ final class QueryResourcesLoaderBundle extends Bundle
 
         // Register middleware configuration compiler passes.
         $container->addCompilerPass(new ConfigureCacheMiddleware());
+
+        // Register loader compiler passes.
+        $container->addCompilerPass(new ConfigureDefaultLoader());
     }
 }

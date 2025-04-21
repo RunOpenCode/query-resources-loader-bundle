@@ -6,6 +6,7 @@ namespace RunOpenCode\Bundle\QueryResourcesLoader\Tests;
 
 use PHPUnit\Framework\TestCase;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\ConfigureCacheMiddleware;
+use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\ConfigureDefaultLoader;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\RegisterDbalExecutors;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\CompilerPass\RegisterTwigExtensions;
 use RunOpenCode\Bundle\QueryResourcesLoader\DependencyInjection\Extension;
@@ -43,6 +44,7 @@ final class QueryResourcesLoaderBundleTest extends TestCase
             ConfigureCacheMiddleware::class,
             RegisterTwigExtensions::class,
             RegisterDbalExecutors::class,
+            ConfigureDefaultLoader::class,
         ];
 
         \sort($passes);

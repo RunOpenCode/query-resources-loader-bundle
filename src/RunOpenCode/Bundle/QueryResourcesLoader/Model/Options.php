@@ -20,9 +20,11 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Contract\CacheIdentityInterface;
  *
  * @property string|null $executor
  * @property CacheIdentityInterface|CacheIdentifiableInterface|null $cache
+ * @property string|null $loader
  *
  * @method string|null getExecutor()
  * @method CacheIdentityInterface|CacheIdentifiableInterface|null getCache()
+ * @method string|null getLoader()
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
@@ -81,6 +83,16 @@ readonly class Options implements \IteratorAggregate, \ArrayAccess
     {
         return static::create([
             'cache' => $cache,
+        ]);
+    }
+
+    /**
+     * Create new instance of options with custom loader and default executor.
+     */
+    public static function loader(string $loader): static
+    {
+        return static::create([
+            'loader' => $loader,
         ]);
     }
 
@@ -182,6 +194,17 @@ readonly class Options implements \IteratorAggregate, \ArrayAccess
         return static::create(\array_merge(
             $this->options,
             ['cache' => $cache]
+        ));
+    }
+
+    /**
+     * Set loader.
+     */
+    public function withLoader(?string $loader): static
+    {
+        return static::create(\array_merge(
+            $this->options,
+            ['loader' => $loader]
         ));
     }
 

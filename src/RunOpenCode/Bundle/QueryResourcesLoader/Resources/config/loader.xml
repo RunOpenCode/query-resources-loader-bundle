@@ -21,7 +21,7 @@
                     label="twig"
             />
         </service>
-        
+
         <service
                 id="RunOpenCode\Bundle\QueryResourcesLoader\Loader\RawLoader"
                 class="RunOpenCode\Bundle\QueryResourcesLoader\Loader\RawLoader"
@@ -34,28 +34,17 @@
         </service>
 
         <service
-                id="RunOpenCode\Bundle\QueryResourcesLoader\Loader\ChainedLoader"
-                class="RunOpenCode\Bundle\QueryResourcesLoader\Loader\ChainedLoader"
-        >
-            <argument
-                    type="tagged_iterator"
-                    tag="runopencode.query_resources_loader.loader"
-                    index-by="label"
-            />
-        </service>
-
-        <service
-                id="RunOpenCode\Bundle\QueryResourcesLoader\Contract\LoaderInterface"
-                alias="RunOpenCode\Bundle\QueryResourcesLoader\Loader\ChainedLoader"
-        />
-
-        <service
                 id="RunOpenCode\Bundle\QueryResourcesLoader\Loader\LoaderMiddleware"
                 class="RunOpenCode\Bundle\QueryResourcesLoader\Loader\LoaderMiddleware"
         >
             <argument
                     type="service"
                     id="RunOpenCode\Bundle\QueryResourcesLoader\Contract\LoaderInterface"
+            />
+            <argument
+                    type="tagged_iterator"
+                    index-by="label"
+                    tag="runopencode.query_resources_loader.loader"
             />
 
             <tag

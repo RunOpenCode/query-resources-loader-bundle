@@ -16,6 +16,7 @@ final class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     {
         $this->assertProcessedConfigurationEquals([
             'default_executor' => null,
+            'default_loader'   => 'twig',
             'cache'            => [
                 'default_ttl' => null,
                 'pool'        => 'cache.app',
@@ -49,6 +50,7 @@ final class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     {
         $this->assertProcessedConfigurationEquals([
             'default_executor' => 'some.default.executor',
+            'default_loader'   => 'twig',
             'cache'            => [
                 'default_ttl' => 3600,
                 'pool'        => 'foo',

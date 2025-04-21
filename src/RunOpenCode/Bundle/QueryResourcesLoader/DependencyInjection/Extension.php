@@ -18,6 +18,7 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * @phpstan-type Config = array{
  *     default_executor: string,
+ *     default_loader: string,
  *     cache: array{
  *         pool: string|null,
  *         default_ttl: int|null,
@@ -47,6 +48,7 @@ use Symfony\Component\DependencyInjection\Reference;
 final class Extension extends BaseExtension
 {
     public const DEFAULT_EXECUTOR  = 'runopencode.query_resources_loader.default_executor';
+    public const DEFAULT_LOADER    = 'runopencode.query_resources_loader.default_loader';
     public const CACHE_POOL        = 'runopencode.query_resources_loader.cache.pool';
     public const CACHE_DEFAULT_TTL = 'runopencode.query_resources_loader.cache.default_ttl';
 
@@ -97,6 +99,8 @@ final class Extension extends BaseExtension
         $container->setParameter(self::CACHE_DEFAULT_TTL, $configuration['cache']['default_ttl']);
         // Set name of the default executor.
         $container->setParameter(self::DEFAULT_EXECUTOR, $configuration['default_executor']);
+        // Set name of the default loader.
+        $container->setParameter(self::DEFAULT_LOADER, $configuration['default_loader']);
 
 
         $this->configureTwigGlobals($configuration, $container);

@@ -19,9 +19,16 @@ final class CacheIntegrationTest extends KernelTestCase
         /** @var QueryResourcesLoaderInterface $loader */
         $loader = $this->getContainer()->get(QueryResourcesLoaderInterface::class);
         /** @var Result $resultSet */
-        $resultSet = $loader->execute('SELECT id, title FROM bar ORDER BY id', null, Options::cached(new CacheIdentity(
-            'foo',
-        )));
+        $resultSet = $loader->execute(
+            'SELECT id, title FROM bar ORDER BY id',
+            null,
+            Options::create([
+                'cache'  => new CacheIdentity(
+                    'foo',
+                ),
+                'loader' => 'raw',
+            ]),
+        );
 
         $this->assertEquals([
             ['id' => 1, 'title' => 'Bar title 1'],
@@ -37,9 +44,16 @@ final class CacheIntegrationTest extends KernelTestCase
         /** @var QueryResourcesLoaderInterface $loader */
         $loader = $this->getContainer()->get(QueryResourcesLoaderInterface::class);
         /** @var Result $resultSet */
-        $resultSet = $loader->execute('SELECT * FROM bar', null, Options::cached(new CacheIdentity(
-            'foo',
-        )));
+        $resultSet = $loader->execute(
+            'SELECT * FROM bar',
+            null,
+            Options::create([
+                'cache'  => new CacheIdentity(
+                    'foo',
+                ),
+                'loader' => 'raw',
+            ]),
+        );
 
         $this->assertEquals([
             ['id' => 1, 'title' => 'Bar title 1'],
