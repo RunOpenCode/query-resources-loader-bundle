@@ -1,3 +1,10 @@
+## [8.1.1](https://github.com/RunOpenCode/query-resources-loader-bundle/compare/8.1.0...8.1.1) (2025-04-20)
+
+
+### Bug Fixes
+
+* **cache:** Fixed issue with cache middleware not caching ([a63bbfd](https://github.com/RunOpenCode/query-resources-loader-bundle/commit/a63bbfd5f9a9c1edfe3db156f4f90332c09e6fe3))
+
 # [8.1.0](https://github.com/RunOpenCode/query-resources-loader-bundle/compare/8.0.2...8.1.0) (2025-04-20)
 
 
