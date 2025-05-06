@@ -15,7 +15,6 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 /**
  * Cache middleware.
@@ -27,8 +26,8 @@ final readonly class CacheMiddleware implements MiddlewareInterface
     public const TAG = 'runopencode_query_resources_loader_cache';
 
     public function __construct(
-        private CacheInterface&TagAwareCacheInterface $cache = new TagAwareAdapter(new ArrayAdapter()),
-        private ?int                                  $defaultTtl = null,
+        private CacheInterface $cache = new TagAwareAdapter(new ArrayAdapter()),
+        private ?int           $defaultTtl = null,
     ) {
         // noop
     }
@@ -71,11 +70,13 @@ final readonly class CacheMiddleware implements MiddlewareInterface
              * @var CacheIdentityInterface $identity
              */
             $item->expiresAfter($identity->getTtl());
-            /** @psalm-suppress UndefinedInterfaceMethod */
-            $item->tag(\array_merge(
-                $identity->getTags(),
-                [self::TAG]
-            ));
+            
+            if (method_exists($item, 'tag')) {
+                $item->tag(\array_merge(
+                    $identity->getTags(),
+                    [self::TAG]
+                ));
+            }
 
             return $result;
         });

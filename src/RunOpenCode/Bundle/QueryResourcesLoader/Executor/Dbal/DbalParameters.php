@@ -195,13 +195,17 @@ class DbalParameters extends Parameters
      * $parameters->set($name, $value->name, Types::STRING);
      * ```
      *
-     * @param string    $name  Parameter name.
-     * @param \UnitEnum $value Parameter value.
+     * @param string     $name  Parameter name.
+     * @param ?\UnitEnum $value Parameter value.
      *
      * @return self Fluent return.
      */
-    final public function enum(string $name, \UnitEnum $value): self
+    final public function enum(string $name, ?\UnitEnum $value): self
     {
+        if (null === $value) {
+            return $this->set($name, null, Types::STRING);
+        }
+        
         $reflection = new \ReflectionEnum($value::class);
 
         if (!$reflection->isBacked()) {

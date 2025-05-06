@@ -2,9 +2,6 @@ Query resources loader bundle
 =============================
 
 [![Packagist](https://img.shields.io/packagist/v/RunOpenCode/query-resources-loader-bundle.svg)](https://packagist.org/packages/runopencode/query-resources-loader-bundle)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/RunOpenCode/query-resources-loader-bundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/RunOpenCode/query-resources-loader-bundle/?branch=master)
-[![Build Status](https://scrutinizer-ci.com/g/RunOpenCode/query-resources-loader-bundle/badges/build.png?b=master)](https://scrutinizer-ci.com/g/RunOpenCode/query-resources-loader-bundle/build-status/master)
-[![Code Coverage](https://scrutinizer-ci.com/g/RunOpenCode/query-resources-loader-bundle/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/RunOpenCode/query-resources-loader-bundle/?branch=master)
 
 The purpose of query resources loader is to help you manage and organize your big, long, database queries, especially in
 application that deals with reporting.

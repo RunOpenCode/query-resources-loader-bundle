@@ -40,11 +40,3 @@ jobs:
                     pipenv run python bin/ci.py --verbose --teardown
                 env:
                     COMPOSER_ROOT_VERSION: ${{ vars.COMPOSER_ROOT_VERSION }}
-
-            -   name: Upload Scrutinizer coverage
-                uses: sudo-bot/action-scrutinizer@latest
-                # Do not run this step on forked versions of the main repository (example: contributor forks)
-                if: github.repository == 'runopencode/query-resources-loader-bundle'
-                with:
-                    cli-args: "--format=php-clover build/phpunit/clover.xml --revision=${{ github.event.pull_request.head.sha || github.sha }}"                    
-
