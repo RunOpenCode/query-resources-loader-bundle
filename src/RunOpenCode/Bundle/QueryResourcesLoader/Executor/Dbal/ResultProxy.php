@@ -160,20 +160,7 @@ final class ResultProxy implements \Countable
             return $count;
         }
 
-        if ($this->result instanceof ArrayResult) {
-            return $this->rowCount();
-        }
-
-        // If rowCount() returns 0, we need to fetch all rows to count them,
-        // and we need to replace result with array result to be able to fetch all rows.
-        $rows        = $this->fetchAllNumeric();
-        $columnNames = [];
-
-        for ($index = 0; $index < $this->columnCount(); ++$index) {
-            $columnNames[] = $this->result->getColumnName($index);
-        }
-
-        $this->result = new ArrayResult($columnNames, $rows);
+        $this->toArrayResult();
 
         return $this->rowCount();
     }
@@ -186,20 +173,7 @@ final class ResultProxy implements \Countable
      */
     public function __serialize(): array
     {
-        $columnNames = [];
-        $rows        = $this->result->fetchAllNumeric();
-
-        for ($index = 0; $index < $this->columnCount(); ++$index) {
-            $columnNames[] = $this->result->getColumnName($index);
-        }
-
-        // Replace result with array result so this resultset can be reused.
-        $this->result = new ArrayResult($columnNames, $rows);
-
-        return [
-            'columnNames' => $columnNames,
-            'rows'        => $rows,
-        ];
+        return $this->toArrayResult()->__serialize(); // @phpstan-ignore-line
     }
 
     /**
@@ -211,6 +185,34 @@ final class ResultProxy implements \Countable
     public function __unserialize(array $data): void
     {
         $this->result = new ArrayResult($data['columnNames'], $data['rows']);
+    }
+
+    private function toArrayResult(): ArrayResult
+    {
+        // Already an array result, nothing to do.
+        if ($this->result instanceof ArrayResult) {
+            return $this->result;
+        }
+
+        // A new implementation of Dbal, let's leverage it.
+        if (\method_exists($this->result, 'getColumnName')) {
+            $rows        = $this->result->fetchAllNumeric();
+            $columnNames = \array_map(fn(int $index): string => $this->result->getColumnName($index), \range(0, $this->columnCount() - 1));
+
+            return ($this->result = new ArrayResult($columnNames, $rows));
+        }
+
+        // A legacy implementation of Dbal, let's use the old way.
+        $data = $this->result->fetchAllAssociative();
+
+        if (0 === \count($data)) {
+            return ($this->result = new ArrayResult([], []));
+        }
+
+        $columnNames = \array_keys($data[0]);
+        $rows        = \array_map(fn(array $row): array => \array_values($row), $data);
+
+        return ($this->result = new ArrayResult($columnNames, $rows));
     }
 
     private function createException(\Throwable $inner, string $method): DriverException

@@ -203,9 +203,9 @@ class DbalParameters extends Parameters
     final public function enum(string $name, ?\UnitEnum $value): self
     {
         if (null === $value) {
-            return $this->set($name, null, Types::STRING);
+            return $this->set($name, null);
         }
-        
+
         $reflection = new \ReflectionEnum($value::class);
 
         if (!$reflection->isBacked()) {
@@ -235,13 +235,13 @@ class DbalParameters extends Parameters
     final public function integerArray(string $name, ?iterable $value): self
     {
         if (null === $value) {
-            return $this->set($name, null, ArrayParameterType::INTEGER);
+            return $this->set($name, null);
         }
 
         $value = \is_array($value) ? $value : \iterator_to_array($value);
 
         if (0 === \count($value)) {
-            return $this->set($name, null, ArrayParameterType::INTEGER);
+            return $this->set($name, null);
         }
 
         return $this->set($name, $value, ArrayParameterType::INTEGER);
@@ -260,21 +260,18 @@ class DbalParameters extends Parameters
     final public function stringArray(string $name, ?iterable $value): self
     {
         if (null === $value) {
-            return $this->set($name, null, ArrayParameterType::INTEGER);
+            return $this->set($name, null);
         }
 
         $value = \is_array($value) ? $value : \iterator_to_array($value);
 
         if (0 === \count($value)) {
-            return $this->set($name, null, ArrayParameterType::STRING);
+            return $this->set($name, null);
         }
 
         return $this->set(
             $name,
-            \array_map(
-                static fn(\Stringable|string $current): string => (string)$current,
-                $value
-            ),
+            \array_map('\strval', $value),
             ArrayParameterType::STRING
         );
     }
@@ -292,21 +289,18 @@ class DbalParameters extends Parameters
     final public function asciiArray(string $name, ?iterable $value): self
     {
         if (null === $value) {
-            return $this->set($name, null, ArrayParameterType::ASCII);
+            return $this->set($name, null);
         }
 
         $value = \is_array($value) ? $value : \iterator_to_array($value);
 
         if (0 === \count($value)) {
-            return $this->set($name, null, ArrayParameterType::ASCII);
+            return $this->set($name, null);
         }
 
         return $this->set(
             $name,
-            \array_map(
-                static fn(\Stringable|string $current): string => (string)$current,
-                $value
-            ),
+            \array_map('\strval', $value),
             ArrayParameterType::ASCII
         );
     }
@@ -324,13 +318,13 @@ class DbalParameters extends Parameters
     final public function binaryArray(string $name, ?iterable $value): self
     {
         if (null === $value) {
-            return $this->set($name, null, ArrayParameterType::BINARY);
+            return $this->set($name, null);
         }
 
         $value = \is_array($value) ? $value : \iterator_to_array($value);
 
         if (0 === \count($value)) {
-            return $this->set($name, null, ArrayParameterType::BINARY);
+            return $this->set($name, null);
         }
 
         return $this->set($name, $value, ArrayParameterType::BINARY);
@@ -355,13 +349,13 @@ class DbalParameters extends Parameters
     final public function enumArray(string $name, ?iterable $value): self
     {
         if (null === $value) {
-            return $this->set($name, null, ArrayParameterType::STRING);
+            return $this->set($name, null);
         }
 
         $value = \is_array($value) ? $value : \iterator_to_array($value);
 
         if (0 === \count($value)) {
-            return $this->set($name, null, ArrayParameterType::BINARY);
+            return $this->set($name, null);
         }
 
         $hasString = false;
