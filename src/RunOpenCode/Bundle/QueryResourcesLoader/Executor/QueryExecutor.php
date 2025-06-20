@@ -38,7 +38,11 @@ final readonly class QueryExecutor
         // Last middleware is the executor.
         $executor = static fn(string $query, Parameters $parameters, Options $options): ExecutionResultInterface => $registry->get($options->executor)->execute($query, $parameters, $options);
 
-        // Reverse middlewares to build chain in correct order.
+        /**
+         * Reverse middlewares to build chain in correct order.
+         *
+         * @psalm-suppress InvalidOperand
+         */
         $middlewares = \array_reverse([...$middlewares]);
 
         // Build middleware chain.

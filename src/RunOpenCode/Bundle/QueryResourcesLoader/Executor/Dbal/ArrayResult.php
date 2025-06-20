@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor\Dbal;
 
 use Doctrine\DBAL\Driver\FetchUtils;
-use Doctrine\DBAL\Driver\Result;
+use Doctrine\DBAL\Driver\Result as DbalDriverResult;
 use Doctrine\DBAL\Exception\InvalidColumnIndex;
+use Doctrine\DBAL\Result as DbalResult;
 
 /**
  * @psalm-suppress InternalClass, InternalMethod
@@ -15,7 +16,7 @@ use Doctrine\DBAL\Exception\InvalidColumnIndex;
  *
  * @internal
  */
-final class ArrayResult implements Result
+final class ArrayResult implements DbalDriverResult
 {
     private int $num = 0;
 
@@ -26,8 +27,31 @@ final class ArrayResult implements Result
      */
     public function __construct(
         private readonly array $columnNames,
-        private array $rows,
+        private array          $rows,
     ) {
+    }
+
+    public static function create(DbalDriverResult|DbalResult $result): self
+    {
+        // A new implementation of Dbal, let's leverage it.
+        if (\method_exists($result, 'getColumnName')) {
+            $rows        = $result->fetchAllNumeric();
+            $columnNames = \array_map(fn(int $index): string => $result->getColumnName($index), \range(0, $result->columnCount() - 1));
+
+            return new self($columnNames, $rows);
+        }
+
+        // A legacy implementation of Dbal, let's use the old way.
+        $data = $result->fetchAllAssociative();
+
+        if (0 === \count($data)) {
+            return new self([], []);
+        }
+
+        $columnNames = \array_keys($data[0]);
+        $rows        = \array_map(fn(array $row): array => \array_values($row), $data);
+
+        return new self($columnNames, $rows);
     }
 
     public function fetchNumeric(): array|false
@@ -107,28 +131,16 @@ final class ArrayResult implements Result
         return [$this->columnNames, $this->rows];
     }
 
-    /** @param mixed[] $data */
+    /** @param array{list<string>, list<list<mixed>>} $data */
     public function __unserialize(array $data): void
     {
-        // Handle objects serialized with DBAL 4.1 and earlier.
-        if (isset($data["\0" . self::class . "\0data"])) {
-            /** @var list<array<string, mixed>> $legacyData */
-            $legacyData = $data["\0" . self::class . "\0data"];
-
-            $this->columnNames = \array_keys($legacyData[0] ?? []);
-            $this->rows        = \array_map(array_values(...), $legacyData);
-
-            return;
-        }
-
-        // @phpstan-ignore-next-line
         [$this->columnNames, $this->rows] = $data;
     }
 
     /** @return list<mixed>|false */
     private function fetch(): array|false
     {
-        if (! isset($this->rows[$this->num])) {
+        if (!isset($this->rows[$this->num])) {
             return false;
         }
 

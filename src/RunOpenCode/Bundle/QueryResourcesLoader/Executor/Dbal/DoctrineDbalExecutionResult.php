@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace RunOpenCode\Bundle\QueryResourcesLoader\Executor\Dbal;
 
-use Doctrine\DBAL\Driver\Result;
-use Doctrine\DBAL\Result as ExecutionResult;
+use Doctrine\DBAL\Driver\Result as DbalDriverResult;
+use Doctrine\DBAL\Result as DbalResult;
 use RunOpenCode\Bundle\QueryResourcesLoader\Contract\ExecutionResultInterface;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NonUniqueResultException;
 use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
@@ -20,13 +20,12 @@ use RunOpenCode\Bundle\QueryResourcesLoader\Exception\NoResultException;
  *
  * @psalm-suppress InternalMethod, InternalClass
  */
-final readonly class DoctrineDbalExecutionResult implements \IteratorAggregate, ExecutionResultInterface, Result
+final class DoctrineDbalExecutionResult implements \IteratorAggregate, ExecutionResultInterface, DbalDriverResult
 {
-    private ResultProxy $result;
-
-    public function __construct(ExecutionResult|ArrayResult $result)
-    {
-        $this->result = new ResultProxy($result);
+    public function __construct(
+        private DbalDriverResult|DbalResult $result
+    ) {
+        // noop.
     }
 
     /**
@@ -208,7 +207,7 @@ final readonly class DoctrineDbalExecutionResult implements \IteratorAggregate, 
      */
     public function rowCount(): int
     {
-        return $this->result->rowCount();
+        return (int)$this->result->rowCount();
     }
 
     /**
@@ -226,6 +225,27 @@ final readonly class DoctrineDbalExecutionResult implements \IteratorAggregate, 
      */
     public function count(): int
     {
-        return $this->result->count();
+        if (0 === $this->columnCount()) {
+            return $this->rowCount();
+        }
+
+        $count = $this->rowCount();
+
+        if ($count > 0) {
+            return $count;
+        }
+
+        $this->__sleep();
+
+        return $this->rowCount();
+    }
+
+    public function __sleep(): array
+    {
+        if (!$this->result instanceof ArrayResult) {
+            $this->result = ArrayResult::create($this->result);
+        }
+
+        return ['result'];
     }
 }

@@ -70,8 +70,8 @@ final readonly class CacheMiddleware implements MiddlewareInterface
              * @var CacheIdentityInterface $identity
              */
             $item->expiresAfter($identity->getTtl());
-            
-            if (method_exists($item, 'tag')) {
+
+            if (\method_exists($item, 'tag')) {
                 $item->tag(\array_merge(
                     $identity->getTags(),
                     [self::TAG]
